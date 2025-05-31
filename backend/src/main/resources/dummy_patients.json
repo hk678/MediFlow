@@ -1,0 +1,82 @@
+[
+  {
+    "gender": "남성",
+    "age": 68,
+    "acuity": "높음",
+    "pain": "심함",
+    "chief_complaint": "흉통",
+    "arrival_transport": "119"
+  },
+  {
+    "gender": "여성",
+    "age": 23,
+    "acuity": "낮음",
+    "pain": "없음",
+    "chief_complaint": "인후통",
+    "arrival_transport": "도보"
+  },
+  {
+    "gender": "남성",
+    "age": 45,
+    "acuity": "보통",
+    "pain": "복부 불편감",
+    "chief_complaint": "우상복부 통증",
+    "arrival_transport": "도보"
+  },
+  {
+    "gender": "여성",
+    "age": 76,
+    "acuity": "높음",
+    "pain": "심함",
+    "chief_complaint": "호흡곤란",
+    "arrival_transport": "119"
+  },
+  {
+    "gender": "남성",
+    "age": 15,
+    "acuity": "낮음",
+    "pain": "없음",
+    "chief_complaint": "열감",
+    "arrival_transport": "보호자 차량"
+  },
+  {
+    "gender": "여성",
+    "age": 53,
+    "acuity": "보통",
+    "pain": "경미",
+    "chief_complaint": "오른쪽 무릎 통증",
+    "arrival_transport": "도보"
+  },
+  {
+    "gender": "남성",
+    "age": 61,
+    "acuity": "높음",
+    "pain": "심함",
+    "chief_complaint": "의식 저하",
+    "arrival_transport": "119"
+  },
+  {
+    "gender": "여성",
+    "age": 34,
+    "acuity": "보통",
+    "pain": "경미",
+    "chief_complaint": "소화불량",
+    "arrival_transport": "도보"
+  },
+  {
+    "gender": "남성",
+    "age": 29,
+    "acuity": "낮음",
+    "pain": "없음",
+    "chief_complaint": "허리 통증",
+    "arrival_transport": "직장 동료 차량"
+  },
+  {
+    "gender": "여성",
+    "age": 48,
+    "acuity": "보통",
+    "pain": "중등도",
+    "chief_complaint": "좌측 가슴 통증",
+    "arrival_transport": "도보"
+  }
+]
