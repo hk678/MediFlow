@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Node.js
+node_modules/
+
+# Java (Spring Boot)
+target/
+*.class
+
+# 환경 변수 파일
+.env
+
+# 기타
+.DS_Store
