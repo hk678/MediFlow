@@ -1,33 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
+import logo from './logo.svg';
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+//import './App.css';
+import MainPage from './Components/MainPage';
+import Detail from './Components/Detail';
+import Admin from './Components/Admin';
+import History from './Components/History';
+import UserInfo from './Components/UserInfo';
+import UserUpdate from './Components/UserUpdate'
+
+
 
 function App() {
-  const [ck, setCk] = useState('');
-
-  useEffect(() => {
-    axios.get('http://localhost:8081/controller/api/hello', {
-      params: { ck: '클릭됨' }
-    })
-      .then((res) => {
-        console.log(res.data);
-        setCk(res.data);
-      })
-      .catch(err => console.error(err));
-  }, []); // 의존성 배열이 비어있으면 최초 한 번만 실행
-
   return (
-    <div>
-      <p onClick={(e) => {
-        // 클릭 시 API 요청 보내도록 변경 가능
-        axios.get('http://localhost:8081/api/hello', {
-          params: { ck: e.target.innerText }
-        })
-          .then(res => setCk(res.data))
-          .catch(err => console.error(err));
-      }}>
-        이걸 클릭
-      </p>
-      <h1>{ck}</h1>
+    <div className="App">
+      {/* 메인 페이지
+      <Router>
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/detail/:pid" element={<Detail />} />
+        </Routes>
+      </Router> */}
+      
+
+      {/* 상세 페이지지 
+      <Detail /> */}
+
+      {/* 관리자 페이지 */}
+      <Admin /> 
+
+      {/* 히스토리리 페이지 
+      <History />*/}
+
+      
+      {/* 환자정보 입력 페이지 
+      <UserInfo /> */}
+
+      {/* 사용자 정보 업데이트 
+      <UserUpdate/> */}
     </div>
   );
 }
