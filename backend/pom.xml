@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>kr.bigdata</groupId>
-	<artifactId>DeepGoing</artifactId>
+	<artifactId>Mediflow</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>DeepGoing</name>
+	<name>Mediflow</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -55,9 +55,8 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>com.oracle.database.jdbc</groupId>
-			<artifactId>ojdbc11</artifactId>
-			<scope>runtime</scope>
+		    <groupId>org.mariadb.jdbc</groupId>
+		    <artifactId>mariadb-java-client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
