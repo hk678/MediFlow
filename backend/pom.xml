@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>kr.bigdata</groupId>
-	<artifactId>DeepGoing</artifactId>
+	<artifactId>MediFlow</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>DeepGoing</name>
+	<name>MediFlow</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
