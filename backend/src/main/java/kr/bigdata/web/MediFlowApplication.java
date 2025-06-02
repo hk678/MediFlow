@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DeepGoingApplication {
+public class MediFlowApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DeepGoingApplication.class, args);
+		SpringApplication.run(MediFlowApplication.class, args);
 	}
 
 }
