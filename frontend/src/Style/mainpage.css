@@ -1,20 +1,17 @@
 /* MainPage.css - 의료 대시보드 전용 CSS */
 
-/* 컨테이너 - 배경색만 담당, 화면 전체 덮음 */
 .medical-dashboard {
   min-height: 100vh;
   background-color: #e5e7eb;
   padding: 0;
 }
 
-/* 컨텐츠 영역 - 너비 제한 및 중앙 정렬 */
 .dashboard-content {
   max-width: 1200px;
   margin: 0 auto;
   padding: 1.5rem;
 }
 
-/* 헤더 */
 .header {
   background-color: white;
   border-radius: 0.5rem;
@@ -45,14 +42,11 @@
   justify-content: center;
 }
 
-.logo-text {
-  color: white;
-  font-size: 0.875rem;
-  font-weight: bold;
-}
 
 .search-container {
   position: relative;
+  margin-left: 4rem;
+  margin-top: 5px;
 }
 
 .search-icon {
@@ -63,30 +57,27 @@
   color: #9ca3af;
   width: 1rem;
   height: 1rem;
+  pointer-events: none;
 }
 
 .search-input {
-  padding-left: 2.5rem;
-  padding-right: 1rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  width: 16rem;
-  outline: none;
+  padding-left: 2rem; /* 아이콘만큼 padding 확보 */
+  height: 36px; /* ✅ 넉넉한 높이로 변경 */
+  font-size: 14px;
+  border-radius: 18px;
+  border: 1px solid #ccc;
+  width: 27rem;
+  box-sizing: border-box;
+  line-height: 36px;
 }
 
 .search-input:focus {
   border-color: #3b82f6;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-  
+  outline: none;
 }
 
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+
 
 .user-icon {
   width: 1.25rem;
@@ -99,7 +90,6 @@
   font-weight: 500;
 }
 
-/* 통계 카드 */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -168,7 +158,6 @@
   color: #374151;
 }
 
-/* 토글 스위치 */
 .toggle-container {
   display: flex;
   justify-content: flex-end;
@@ -205,7 +194,6 @@
   border-radius: 50%;
 }
 
-/* 테이블 */
 .table-container {
   background-color: white;
   border-radius: 20px;
@@ -219,6 +207,7 @@
 
 .table {
   width: 100%;
+  table-layout: fixed; /* 중요 */
   border-collapse: collapse;
 }
 
@@ -226,18 +215,26 @@
   background-color: #CADCF3;
 }
 
-.table-header-cell {
-  padding: 0.75rem 1.5rem;
-  text-align: left;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #6b7280;
-  letter-spacing: 0.05em;
+.table-header-cell,
+.table-cell {
+  text-align: center;
+  padding: 1rem 0.5rem;
+  font-size: 0.875rem;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.table-row {
-  border-bottom: 1px solid #e5e7eb;
-}
+th:nth-child(1), td:nth-child(1) { width: 6%; }
+th:nth-child(2), td:nth-child(2) { width: 10%; }
+th:nth-child(3), td:nth-child(3) { width: 6%; }
+th:nth-child(4), td:nth-child(4) { width: 7%; }
+th:nth-child(5), td:nth-child(5) { width: 6%; }
+th:nth-child(6), td:nth-child(6) { width: 6%; }
+th:nth-child(7), td:nth-child(7) { width: 20%; }
+th:nth-child(8), td:nth-child(8) { width: 10%; }
+th:nth-child(9), td:nth-child(9) { width: 10%; }
 
 .table-row:nth-child(even) {
   background-color: #f8fafc;
@@ -247,14 +244,6 @@
   background-color: white;
 }
 
-.table-cell {
-  padding: 1rem 1.5rem;
-  white-space: nowrap;
-  font-size: 0.875rem;
-  color: #111827;
-}
-
-/* 라벨 */
 .label {
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
@@ -278,7 +267,6 @@
   color: #d97706;
 }
 
-/* 히스토리 링크 */
 .history-link {
   color: #2563eb;
   cursor: pointer;
@@ -288,7 +276,6 @@
   color: #1d4ed8;
 }
 
-/* 페이지네이션 */
 .pagination {
   background-color: white;
   padding: 0.75rem 1rem;
@@ -316,21 +303,21 @@
   color: #374151;
 }
 
-/* 반응형 */
 @media (max-width: 640px) {
   .medical-dashboard {
+    flex-direction: row;
     padding: 1rem;
   }
-  
+
   .header-content {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .search-input {
     width: 100%;
   }

@@ -2,35 +2,16 @@ import React, { useState } from "react";
 import { X } from "lucide-react";
 import '../Style/history.css';
 
-export default function History() {
+export default function History({ patient, onClose }) {
   const [inputValue, setInputValue] = useState('');
+  const patientName = patient.name;
+  const patientPid = patient.pid;
 
-  // Data for history entries
   const historyEntries = [
-    {
-      id: 1,
-      date: "2025-05-28 00:00:00",
-      description: "혈압 호흡 회복중",
-    },
-    {
-      id: 2,
-      date: "2025-05-28 00:00:00",
-      description: "환자 의식 잃어서 대처",
-    },
-    {
-      id: 3,
-      date: "2025-05-28 00:00:00",
-      description: "혈압, 호흡 회복중",
-    },
+    { id: 1, date: "2025-05-28 00:00:00", description: "혈압 호흡 회복중" },
+    { id: 2, date: "2025-05-28 00:00:00", description: "환자 의식 잃어서 대처" },
+    { id: 3, date: "2025-05-28 00:00:00", description: "혈압, 호흡 회복중" },
   ];
-
-  const handleEdit = (id) => {
-    console.log('Edit entry:', id);
-  };
-
-  const handleDelete = (id) => {
-    console.log('Delete entry:', id);
-  };
 
   const handleRegister = () => {
     if (inputValue.trim()) {
@@ -48,18 +29,19 @@ export default function History() {
   return (
     <div className="patient-modal">
       <div className="patient-modal-content">
-        {/* Header */}
+
+        {/* ✅ 상단: 이름 + X버튼을 같은 줄에 배치 */}
         <div className="modal-header">
-          <div className="patient-info">
-            <span className="patient-name">길복자</span>
-            <span className="patient-id">[ 1001 ]</span>
+          <div className="modal-title-container">
+            <span className="patient-name">{patientName}</span>
+            <span className="patient-id">[{patientPid}]</span>
           </div>
-          <button className="close-button">
+          <button className="close-button" onClick={onClose}>
             <X className="close-icon" />
           </button>
         </div>
 
-        {/* History entries */}
+
         <div className="history-container">
           {historyEntries.map((entry) => (
             <div key={entry.id} className="history-entry">
@@ -68,24 +50,13 @@ export default function History() {
                 <span className="history-description">{entry.description}</span>
               </div>
               <div className="history-buttons">
-                <button 
-                  className="history-button"
-                  onClick={() => handleEdit(entry.id)}
-                >
-                  <span className="history-button-text">수정</span>
-                </button>
-                <button 
-                  className="history-button"
-                  onClick={() => handleDelete(entry.id)}
-                >
-                  <span className="history-button-text">삭제</span>
-                </button>
+                <button className="history-button"><span className="history-button-text">수정</span></button>
+                <button className="history-button"><span className="history-button-text">삭제</span></button>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Register section at bottom */}
         <div className="register-section">
           <div className="input-container">
             <input 
@@ -96,14 +67,12 @@ export default function History() {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
             />
-            <button 
-              className="register-button"
-              onClick={handleRegister}
-            >
+            <button className="register-button" onClick={handleRegister}>
               <span className="register-button-text">등록</span>
             </button>
           </div>
         </div>
+
       </div>
     </div>
   );

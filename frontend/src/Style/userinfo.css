@@ -100,7 +100,7 @@
   width: 100%;
   padding: 0;
   border: none;
-  font-size: 16px;
+  font-size: 17px;
   color: #111827;
   outline: none;
   box-sizing: border-box;
@@ -115,7 +115,7 @@
 
 .input-field::placeholder {
   color: #9ca3af;
-  font-size: 13px;
+  font-size: 17px;
 }
 
 /* 라디오 버튼 그룹 */

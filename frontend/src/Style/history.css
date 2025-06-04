@@ -1,3 +1,4 @@
+
 /* patientmodal.css - 환자 히스토리 모달 전용 CSS */
 
 /* 모달 컨테이너 */
@@ -15,17 +16,18 @@
   padding: 0;
 }
 
-/* 헤더 */
+/* ✅ 상단 이름 + X 버튼 */
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  padding: 1rem 1rem 0 1rem;
 }
 
-.patient-info {
+.modal-title-container {
   display: flex;
   align-items: center;
+  gap: 6px;
 }
 
 .patient-name {
@@ -42,16 +44,17 @@
   font-size: 10px;
   line-height: 16px;
   letter-spacing: -0.5px;
-  margin-left: 4px;
 }
 
 .close-button {
   height: 24px;
   width: 24px;
   padding: 0;
+  margin: 0;
   background: transparent;
   border: none;
   cursor: pointer;
+  align-self: flex-start;
 }
 
 .close-button:hover {
@@ -74,24 +77,23 @@
 }
 
 .history-entry {
-  width: calc(100% - 0px); /* 부모 컨테이너에서 패딩을 뺀 전체 너비 */
+  width: 100%;
   height: 45px;
   background-color: #e3f6f7;
   border-radius: 5px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-left: 9px;
-  padding-right: 9px;
-  box-sizing: border-box; /* 패딩을 너비에 포함 */
+  padding: 0 9px;
+  box-sizing: border-box;
 }
 
 .history-info {
   display: flex;
   flex-direction: column;
-  flex: 1; /* 남은 공간을 모두 차지 */
-  min-width: 0; /* 텍스트 오버플로우 방지 */
-  margin-right: 8px; /* 버튼과의 간격 */
+  flex: 1;
+  min-width: 0;
+  margin-right: 8px;
 }
 
 .history-date {
@@ -108,15 +110,15 @@
   font-size: 10px;
   line-height: 20px;
   letter-spacing: -0.5px;
-  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-  overflow: hidden; /* 넘치는 텍스트 숨김 */
-  text-overflow: ellipsis; /* 넘치는 텍스트에 ... 표시 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .history-buttons {
   display: flex;
   gap: 7px;
-  flex-shrink: 0; /* 버튼 크기 고정 */
+  flex-shrink: 0;
 }
 
 .history-button {
@@ -150,7 +152,6 @@
   bottom: 15px;
   left: 13px;
   right: 13px;
-  width: auto; /* width: 100% 제거 */
 }
 
 .input-container {
@@ -162,7 +163,7 @@
   border-radius: 5px;
   border: 0.3px solid rgba(104, 100, 100, 0.62);
   margin-bottom: 8px;
-  box-sizing: border-box; /* 패딩을 너비에 포함 */
+  box-sizing: border-box;
 }
 
 .input-field {
@@ -212,12 +213,12 @@
     width: 280px;
     height: 370px;
   }
-  
+
   .history-container {
     padding-left: 10px;
     padding-right: 10px;
   }
-  
+
   .register-section {
     padding-left: 10px;
     padding-right: 10px;

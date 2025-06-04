@@ -1,6 +1,7 @@
 import React from "react";
 import "../Style/Abc.css";
 import { useParams, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -8,6 +9,7 @@ function Detail() {
   const { pid } = useParams(); // URL에서 pid 받기
   const location = useLocation(); // MainPage에서 넘겨준 데이터 받기
   const { name, age, sex } = location.state || {}; // state 안에서 값 꺼내기
+  const navigate = useNavigate();
 
 
   return (
@@ -230,11 +232,12 @@ function Detail() {
                     <span className="span">입실 시 예측 : </span>{" "}
                     <span className="text-wrapper-49">&nbsp;&nbsp;귀가</span>
                   </p>
-                  <img
+                  {/* <img
                     className="image"
                     src="img/image-18.png"
                     alt="prediction"
-                  />
+                  /> */}
+                  <p>그래프</p>
                   <p className="element-2">
                     <span className="text-wrapper-50">퇴실 시 예측 :</span>{" "}
                     <span className="text-wrapper-51">&nbsp;&nbsp; 일반 병동&nbsp;&nbsp;</span>{" "}
@@ -257,7 +260,7 @@ function Detail() {
             </div>
           </div>
           <div className="overlap-19">
-            <div className="text-wrapper-56">{name}</div>
+            <div className="text-wrapper-56" onClick={() => navigate('/')}>{name}</div>
             <div className="element-3">{age}&nbsp;&nbsp;|&nbsp;&nbsp;{sex}</div>
           </div>
         </div>
