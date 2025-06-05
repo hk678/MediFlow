@@ -1,4 +1,4 @@
-package kr.bigdata.web.DTO;
+package kr.bigdata.web.dto;
 
 public class PatientRequest {
 	
