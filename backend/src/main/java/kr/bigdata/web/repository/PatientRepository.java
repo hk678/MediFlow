@@ -19,5 +19,4 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
 		    WHERE e.status = 'ADMITTED'
 		""")
 		List<PatientSummaryDto> findCurrentlyAdmittedPatients();
-
 }

@@ -8,6 +8,4 @@ public class PatientRequest {
 	    public String pain;
 	    public String chiefcomplaint;
 	    public String arrival_transport;
-	
-
 }
