@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.bigdata.web.DTO.LoginRequest;
+import kr.bigdata.web.dto.LoginRequest;
 
 @RestController
 @RequestMapping("/api/auth")
