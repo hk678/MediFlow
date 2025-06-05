@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import kr.bigdata.web.DTO.LLMResult;
-import kr.bigdata.web.DTO.PatientRequest;
+import kr.bigdata.web.dto.LLMResult;
+import kr.bigdata.web.dto.PatientRequest;
 
 @RestController
 public class LLMController {
