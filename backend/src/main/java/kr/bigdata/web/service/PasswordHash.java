@@ -14,5 +14,4 @@ public class PasswordHash {
             System.out.println("-------------------");
         }
     }
-
 }
