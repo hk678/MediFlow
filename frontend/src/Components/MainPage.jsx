@@ -88,7 +88,7 @@ const resetFilter = () => {
 //    patient.complaint.toLowerCase().includes(searchTerm.toLowerCase())
 //);
 // 환자 검색부분끗-------------------------
-// 주의환자 추가하기기
+// 필터링
 const filteredPatients = patientData.filter((patient) => {
   const matchesSearch = 
     patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -216,7 +216,6 @@ const filteredPatients = patientData.filter((patient) => {
                 ))}
               </tbody>
             </table>
-
           </div>
           {/* 모달창보여주기 */}
           {showModal && (
