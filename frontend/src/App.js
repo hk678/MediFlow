@@ -8,7 +8,7 @@ import Admin from './Components/Admin';
 import History from './Components/History';
 import UserInfo from './Components/UserInfo';
 import UserUpdate from './Components/UserUpdate'
-
+import EmergencyRoom from './Components/EmergencyRoom';
 
 
 function App() {
@@ -18,6 +18,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<MainPage />} />
+          <Route path="emergency" element={<EmergencyRoom />} />
           <Route path="/detail/:pid" element={<Detail />} />
           <Route path="/history/:pid" element={<History />} />
         </Routes>

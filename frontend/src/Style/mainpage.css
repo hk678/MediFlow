@@ -1,21 +1,23 @@
 /* MainPage.css - 의료 대시보드 전용 CSS */
 
+/* 컨테이너 - 배경색만 담당, 화면 전체 덮음 */
 .medical-dashboard {
   min-height: 100vh;
   background-color: #e5e7eb;
   padding: 0;
 }
 
+/* 컨텐츠 영역 - 너비 제한 및 중앙 정렬 */
 .dashboard-content {
   max-width: 1200px;
   margin: 0 auto;
   padding: 1.5rem;
 }
 
+/* 헤더 */
 .header {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  background-color: transparent;
+  box-shadow: none;
   padding: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -33,15 +35,28 @@
 }
 
 .logo {
-  width: 2rem;
-  height: 2rem;
-  background-color: #3b82f6;
+  width: auto;
+  height: auto;
   border-radius: 0.25rem;
+  background-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
 }
 
+.logo-text {
+  color: #3b82f6;
+  font-size: 30px;
+  font-weight: bold;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.logo-text:hover {
+  opacity: 0.8;
+}
 
 .search-container {
   position: relative;
@@ -57,18 +72,17 @@
   color: #9ca3af;
   width: 1rem;
   height: 1rem;
-  pointer-events: none;
+  z-index: 10;
 }
 
 .search-input {
-  padding-left: 2rem; /* 아이콘만큼 padding 확보 */
-  height: 36px; /* ✅ 넉넉한 높이로 변경 */
-  font-size: 14px;
-  border-radius: 18px;
-  border: 1px solid #ccc;
+  border-radius: 15px;
   width: 27rem;
-  box-sizing: border-box;
-  line-height: 36px;
+  height: 40px;
+  padding: 0 1rem 0 2.5rem;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .search-input:focus {
@@ -77,24 +91,62 @@
   outline: none;
 }
 
-
-
-.user-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: #4b5563;
+.user-info {
+  display: flex;
+  align-items: center;
+  /* gap: 15px; */
 }
+
+/* .user-icon {
+  width: 50px;
+  height: 50px;
+  color: #3b82f6;
+  background-color: #dbeafe;
+  border-radius: 50%;
+  padding: 8px;
+} */
 
 .user-name {
-  color: #374151;
-  font-weight: 500;
+  color: #2E81FD;
+  font-weight: 800;
+  font-size: 20px;
 }
 
+/* Logout 버튼 스타일 */
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: none;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+  background-color: #f3f4f6;
+}
+
+.logout-text {
+  color: #374151;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.logout-icon {
+  font-size: 16px;
+  color: #6b7280;
+}
+
+/* Stats cards */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
   margin-bottom: 1.5rem;
+  margin-left: 20px;
 }
 
 @media (min-width: 768px) {
@@ -104,21 +156,69 @@
 }
 
 .stat-card {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  /* background-color: white; */
+  /* border-radius: 15px; */
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
+  /* height: 80px; */
+  /* width: 100%; */
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: center; */
   padding: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .stat-content {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  text-align: center;
+  flex-direction: row;
+  gap: 15px;
+  width: 100%;
+}
+
+.stat-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+/* 위험 환자, 주의 환자 카드 레이아웃 */
+.stat-card-danger .stat-content,
+.stat-card-warning .stat-content {
+  justify-content: space-between;
+}
+
+.stat-card-danger .stat-text,
+.stat-card-warning .stat-text {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+}
+
+.stat-label {
+  font-size: 18px;
+  font-weight: bold;
+  color: #374151;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-right: 50px;
+}
+
+.stat-label:hover {
+  opacity: 0.8;
 }
 
 .stat-icon {
-  width: 2rem;
-  height: 2rem;
+  width: 1.75rem;
+  height: 1.75rem;
 }
 
 .stat-icon.blue {
@@ -134,8 +234,7 @@
 }
 
 .stat-number {
-  font-size: 2rem;
-  line-height: 2.5rem;
+  font-size: 28px;
   font-weight: 700;
 }
 
@@ -151,13 +250,7 @@
   color: #ca8a04;
 }
 
-.stat-label {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-  font-weight: bold;
-  color: #374151;
-}
-
+/* 토글 스위치 */
 .toggle-container {
   display: flex;
   justify-content: flex-end;
@@ -173,6 +266,7 @@
 .toggle-label {
   font-size: 0.875rem;
   color: #4b5563;
+  font-weight: 500;
 }
 
 .toggle-switch {
@@ -180,24 +274,56 @@
   display: inline-block;
   width: 2.5rem;
   height: 1.5rem;
-  background-color: #3b82f6;
   border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toggle-switch.active {
+  background-color: #3b82f6;
+}
+
+.toggle-switch.inactive {
+  background-color: #d1d5db;
 }
 
 .toggle-slider {
   position: absolute;
-  right: 0.25rem;
   top: 0.25rem;
   width: 1rem;
   height: 1rem;
   background-color: white;
   border-radius: 50%;
+  transition: left 0.2s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+.toggle-slider.active {
+  left: 1.25rem;
+}
+
+.toggle-slider.inactive {
+  left: 0.25rem;
+}
+
+/* 테이블 */
 .table-container {
   background-color: white;
   border-radius: 20px;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.table-container.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.table-container.hide {
+  opacity: 0;
+  transform: translateY(-10px);
+  height: 0;
   overflow: hidden;
 }
 
@@ -207,7 +333,6 @@
 
 .table {
   width: 100%;
-  table-layout: fixed; /* 중요 */
   border-collapse: collapse;
 }
 
@@ -215,26 +340,23 @@
   background-color: #CADCF3;
 }
 
-.table-header-cell,
-.table-cell {
-  text-align: center;
-  padding: 1rem 0.5rem;
+.table-header-cell {
+  padding: 0.75rem 1.5rem;
+  text-align: left;
   font-size: 0.875rem;
-  color: #111827;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-weight: 600;
+  color: #374151;
+  letter-spacing: 0.05em;
 }
 
-th:nth-child(1), td:nth-child(1) { width: 6%; }
-th:nth-child(2), td:nth-child(2) { width: 10%; }
-th:nth-child(3), td:nth-child(3) { width: 6%; }
-th:nth-child(4), td:nth-child(4) { width: 7%; }
-th:nth-child(5), td:nth-child(5) { width: 6%; }
-th:nth-child(6), td:nth-child(6) { width: 6%; }
-th:nth-child(7), td:nth-child(7) { width: 20%; }
-th:nth-child(8), td:nth-child(8) { width: 10%; }
-th:nth-child(9), td:nth-child(9) { width: 10%; }
+.table-row {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s;
+}
+
+.table-row:hover {
+  background-color: #f1f5f9 !important;
+}
 
 .table-row:nth-child(even) {
   background-color: #f8fafc;
@@ -244,6 +366,14 @@ th:nth-child(9), td:nth-child(9) { width: 10%; }
   background-color: white;
 }
 
+.table-cell {
+  padding: 1rem 1.5rem;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  color: #111827;
+}
+
+/* 라벨 */
 .label {
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
@@ -267,15 +397,19 @@ th:nth-child(9), td:nth-child(9) { width: 10%; }
   color: #d97706;
 }
 
+/* 히스토리 링크 */
 .history-link {
   color: #2563eb;
   cursor: pointer;
+  transition: color 0.2s;
 }
 
 .history-link:hover {
   color: #1d4ed8;
+  text-decoration: underline;
 }
 
+/* 페이지네이션 */
 .pagination {
   background-color: white;
   padding: 0.75rem 1rem;
@@ -296,6 +430,12 @@ th:nth-child(9), td:nth-child(9) { width: 10%; }
 .pagination-text {
   font-weight: 500;
   color: #6b7280;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.pagination-text:hover {
+  color: #374151;
 }
 
 .pagination-current {
@@ -303,22 +443,105 @@ th:nth-child(9), td:nth-child(9) { width: 10%; }
   color: #374151;
 }
 
+/* 필터 상태 표시 */
+.filter-indicator {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  margin-left: 1rem;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.table-container {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 반응형 */
 @media (max-width: 640px) {
-  .medical-dashboard {
-    flex-direction: row;
+  .dashboard-content {
     padding: 1rem;
   }
-
+  
   .header-content {
     flex-direction: column;
     gap: 1rem;
   }
-
+  
+  .header-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    width: 100%;
+  }
+  
   .stats-grid {
     grid-template-columns: 1fr;
+    margin-left: 0;
   }
-
+  
+  .search-container {
+    margin-left: 0;
+    margin-top: 0;
+    width: 100%;
+  }
+  
   .search-input {
     width: 100%;
+  }
+  
+  
+  .toggle-container {
+    justify-content: flex-start;
+  }
+  
+  .table-container {
+    border-radius: 10px;
+  }
+  
+  .table-header-cell,
+  .table-cell {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .pagination-info {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-info {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .user-name {
+    font-size: 16px;
+  }
+  
+  .logout-text {
+    font-size: 14px;
+  }
+  
+  .stat-number {
+    font-size: 24px;
+  }
+  
+  .stat-label {
+    font-size: 16px;
   }
 }

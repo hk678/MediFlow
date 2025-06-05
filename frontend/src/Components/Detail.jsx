@@ -1,5 +1,5 @@
 import React from "react";
-import "../Style/Abc.css";
+import "../Style/detail.css";
 import { useParams, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
