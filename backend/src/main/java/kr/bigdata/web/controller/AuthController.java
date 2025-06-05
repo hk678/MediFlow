@@ -39,7 +39,7 @@ public class AuthController {
             // **여기서 세션 강제 생성**
             request.getSession(true); // 세션이 없으면 새로 만든다
             
-            // 세션/쿠키, JWT 발급 등 필요하면 추가
+            
             return ResponseEntity.ok().body(Map.of("message", "로그인 성공!"));
         } catch (Exception e) {
             return ResponseEntity.status(401).body(Map.of("message", "로그인 실패!"));

@@ -21,11 +21,11 @@ public class SpringSecurityConfig {
 	@Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/auth/login", "/api/auth/join", "/api/auth/logout").permitAll()
-                .anyRequest().authenticated()
-            )
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(authz -> authz
+            // ↓ 모든 요청 허용
+            .anyRequest().permitAll()
+        )
             
             .logout(logout -> logout
                 .logoutUrl("/api/auth/logout")

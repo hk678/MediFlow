@@ -15,7 +15,7 @@ public class Patient {
     private String patientName;
 
     @Column(name = "GENDER", nullable = false)
-    private boolean gender;  // true = 남성, false = 여성
+    private int gender;  // 0:남, 1:여
 
     @Column(name = "AGE", nullable = false)
     private int age;
@@ -40,11 +40,11 @@ public class Patient {
         this.patientName = patientName;
     }
 
-    public boolean isGender() {
+    public int getGender() {
         return gender;
     }
 
-    public void setGender(boolean gender) {
+    public void setGender(int gender) {
         this.gender = gender;
     }
 
