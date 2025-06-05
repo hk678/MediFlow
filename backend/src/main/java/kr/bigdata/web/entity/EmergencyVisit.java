@@ -34,6 +34,5 @@ public class EmergencyVisit {
     @Column(name = "STATUS")
     private String status;
 
-    // Getter/Setter 생략
 }
 
