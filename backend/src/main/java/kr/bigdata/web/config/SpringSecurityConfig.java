@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import kr.bigdata.web.service.CustomUserDetailsService;
 
@@ -16,32 +17,31 @@ import kr.bigdata.web.service.CustomUserDetailsService;
 @EnableWebSecurity
 public class SpringSecurityConfig {
 	
-	@SuppressWarnings({ "deprecation", "removal" })
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-	    http
-	        .csrf(csrf -> csrf.disable())
-	        .authorizeHttpRequests(authz -> authz
-	            .requestMatchers(
-	                "/api/auth/login",
-	                "/api/auth/join",
-	                "/api/auth/logout",
-	                "/api/patients/**",
-	                "/api/visits/**",
-	                "/api/history/**"
-	            ).permitAll()
-	            .anyRequest().authenticated()
-	        )
-	        .logout(logout -> logout
-	            .logoutUrl("/api/auth/logout")
-	            .logoutSuccessUrl("/api/auth/login?logout")
-	            .invalidateHttpSession(true)
-	            .deleteCookies("JSESSIONID")
-	            .permitAll()
-	        );
-
-	    return http.build();
-	}
+    @SuppressWarnings({ "deprecation", "removal" })
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers(
+                    "/api/auth/login",
+                    "/api/auth/join",
+                    "/api/auth/logout",
+                    "/api/patients/**",
+                    "/api/visits/**",
+                    "/api/history/**"
+                ).permitAll()
+                .anyRequest().authenticated()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/api/auth/logout")
+                .logoutSuccessUrl("/api/auth/login?logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+            );
+        return http.build();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -49,8 +49,10 @@ public class SpringSecurityConfig {
     }
 	
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder, CustomUserDetailsService userDetailsService) 
-            throws Exception {
+    public AuthenticationManager authenticationManager(
+            HttpSecurity http,
+            PasswordEncoder passwordEncoder,
+            CustomUserDetailsService userDetailsService) throws Exception {
         return http
             .getSharedObject(AuthenticationManagerBuilder.class)
             .userDetailsService(userDetailsService)
@@ -58,5 +60,4 @@ public class SpringSecurityConfig {
             .and()
             .build();
     }
-
 }

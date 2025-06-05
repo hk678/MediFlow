@@ -6,8 +6,6 @@ public class PatientRequest {
 	    public int age;
 	    public String acuity;
 	    public String pain;
-	    public String chief_complaint;
+	    public String chiefcomplaint;
 	    public String arrival_transport;
-	
-
 }
