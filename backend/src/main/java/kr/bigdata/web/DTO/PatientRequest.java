@@ -1,4 +1,4 @@
-package kr.bigdata.web.DTO;
+package kr.bigdata.web.dto;
 
 public class PatientRequest {
 	
@@ -6,8 +6,6 @@ public class PatientRequest {
 	    public int age;
 	    public String acuity;
 	    public String pain;
-	    public String chief_complaint;
-	    public String arrival_transport;
-	
-
+	    public String chiefComplaint;
+	    public String arrivalTransport;
 }
