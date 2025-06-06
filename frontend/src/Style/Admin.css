@@ -1,156 +1,203 @@
-/* 로고 + 검색창 정렬용 */
-.logo-and-search {
+/* Admin.css - Admin 페이지 전용 스타일만 (헤더/스탯카드는 mainpage.css 사용) */
+
+/* Admin 페이지 고유 식별자 */
+.admin-page {
+  background-color: #f0f4f8; /* 메인페이지와 구분되는 배경색 */
+}
+
+/* Admin 전용 컨텐츠 영역 */
+.admin-content {
+  margin-top: 2rem;
+}
+
+/* 📊 Admin 그래프 영역 */
+.admin-graph {
+  background-color: white;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  margin-bottom: 30px;
+  border: 2px solid #54a6ff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 👥 Admin 사용자 관리 영역 전체 박스 */
+.admin-table-section {
+  background-color: #e9f0fb;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  border: 2px solid #54a6ff;
+}
+
+/* 👤 Admin 사용자 관리 상단 제목 + 버튼 */
+.admin-table-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0px; /* 로고와 검색창 사이 간격 */
-}
-
-/* MediFlow 로고 텍스트 */
-.logo-text {
-  font-size: 35px;
+  margin-bottom: 15px;
   font-weight: bold;
-  color: #2563eb; /* 파란 계열 */
-  margin-right: 10px;
+  font-size: 18px;
+  color: #333;
 }
 
+.admin-add-button {
+  background-color: #4e89ff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
 
-/* 🟦 전체 대시보드 박스 */
-.dashboard-container {
-    width: 100%;
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #f2f2f2;
-    border-radius: 20px;
-    border: 3px solid #54a6ff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.admin-add-button:hover {
+  background-color: #3a73e8;
+}
+
+/* 🔧 Admin 테이블을 감싸는 스크롤 제한 div */
+.admin-table-scroll-wrapper {
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 12px;
+  background-color: white;
+  border: 1px solid #e1e5e9;
+}
+
+/* 🎨 Admin 스크롤바 스타일 */
+.admin-table-scroll-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.admin-table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: #4e89ff;
+  border-radius: 4px;
+}
+
+.admin-table-scroll-wrapper::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+/* 📋 Admin 테이블 스타일 */
+.admin-user-table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Admin 테이블 헤더 */
+.admin-user-table thead {
+  background-color: #cce0ff;
+}
+
+.admin-user-table th {
+  text-align: center;
+  padding: 15px 12px;
+  font-size: 15px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Admin 테이블 데이터 */
+.admin-user-table td {
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+  color: #333;
+  border-bottom: 1px solid #e1e5e9;
+}
+
+/* Admin 행 배경색 번갈아 적용 */
+.admin-user-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.admin-user-table tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.admin-user-table tbody tr:hover {
+  background-color: #f0f7ff;
+}
+
+/* Admin 클릭 가능한 이름 스타일 */
+.admin-clickable-name {
+  cursor: pointer;
+  color: #2563eb;
+  transition: color 0.2s;
+  font-weight: 500;
+}
+
+.admin-clickable-name:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* 📄 Admin 페이지네이션 */
+.admin-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.admin-pagination button {
+  background-color: #4e89ff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.admin-pagination button:hover {
+  background-color: #3a73e8;
+}
+
+.admin-pagination span {
+  font-weight: bold;
+  color: #2563eb;
+  padding: 8px 12px;
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #4e89ff;
+}
+
+/* Admin 페이지만의 사용자 정보 스타일 재정의 */
+.admin-page .user-name {
+  color: #6b46c1; /* Admin에서는 보라색으로 */
+  font-weight: 700;
+}
+
+/* Admin 페이지만의 로고 텍스트 색상 */
+.admin-page .logo-text {
+  color: #6b46c1; /* Admin에서는 보라색으로 */
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .admin-table-section {
+    padding: 15px;
   }
   
-  /* 🔍 상단 검색창 & 사용자 정보 영역 */
-  .dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
+  .admin-user-table th,
+  .admin-user-table td {
+    padding: 8px;
+    font-size: 12px;
   }
   
-  .search-input {
-    padding: 10px 15px;
-    width: 300px;
-    border-radius: 20px;
-    border: 1px solid #ccc;
-    outline: none;
-  }
-  
-  .user-info {
-    display: flex;
-    align-items: center;
+  .admin-pagination {
     gap: 10px;
-    font-weight: 500;
   }
   
-  /* 📊 그래프 영역 */
-  .dashboard-graph {
-    background-color: white;
-    padding: 20px;
-    border-radius: 15px;
-    text-align: center;
-    margin-bottom: 30px;
+  .admin-pagination button {
+    padding: 6px 10px;
+    font-size: 12px;
   }
-  
-  /* 👥 사용자 관리 영역 전체 박스 */
-  .dashboard-table-section {
-    background-color: #e9f0fb;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  }
-  
-  /* 👤 사용자 관리 상단 제목 + 버튼 */
-  .table-header {
-    /* display: flex; */
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    font-weight: bold;
-    font-size: 18px;
-  }
-  
-  .add-button {
-    background-color: #4e89ff;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 10px;
-    cursor: pointer;
-  }
-  
-  /* 🔧 테이블을 감싸는 스크롤 제한 div */
-  .table-scroll-wrapper {
-    max-height: 300px; /* ✅ 테이블 높이 제한 */
-    overflow-y: auto;
-    border-radius: 12px;
-    background-color: white;
-  }
-  
-  /* 🎨 스크롤바 스타일 */
-  .table-scroll-wrapper::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  .table-scroll-wrapper::-webkit-scrollbar-thumb {
-    background-color: #ccc;
-    border-radius: 4px;
-  }
-  
-  .table-scroll-wrapper::-webkit-scrollbar-track {
-    background-color: #f1f1f1;
-  }
-  
-  /* 📋 테이블 스타일 */
-  .user-table {
-    width: 100%;
-    border-collapse: collapse;
-    overflow: hidden;
-    border-radius: 12px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* 테이블 헤더 */
-  .user-table thead {
-    background-color: #cce0ff;
-  }
-  
-  .user-table th {
-    text-align: center;
-    padding: 12px;
-    font-size: 15px;
-    color: #333;
-  }
-  
-  /* 테이블 데이터 */
-  .user-table td {
-    text-align: center;
-    padding: 12px;
-    font-size: 14px;
-    color: #333;
-  }
-  
-  /* 행 배경색 번갈아 적용 */
-  .user-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-  
-  .user-table tbody tr:nth-child(odd) {
-    background-color: #ffffff;
-  }
-  
-  /* 📄 페이지네이션 */
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin-top: 15px;
-    font-size: 14px;
-  }
+}

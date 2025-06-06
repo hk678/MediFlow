@@ -18,6 +18,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<MainPage />} />
+          <Route path="admin" element={<Admin />} />
           <Route path="emergency" element={<EmergencyRoom />} />
           <Route path="/detail/:pid" element={<Detail />} />
           <Route path="/history/:pid" element={<History />} />
