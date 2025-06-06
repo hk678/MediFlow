@@ -29,7 +29,7 @@ public class User {
     private String userName;
 
     @Column(name = "USER_ROLE", nullable = false, length = 20)
-    private String userRole; // USER / ADMIN
+    private String userRole;
 
     @Column(name = "CREATED_AT", nullable = false)
     private LocalDateTime createdAt;

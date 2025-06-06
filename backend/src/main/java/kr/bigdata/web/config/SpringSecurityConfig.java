@@ -17,16 +17,22 @@ import kr.bigdata.web.service.CustomUserDetailsService;
 @EnableWebSecurity
 public class SpringSecurityConfig {
 	
-	@SuppressWarnings({ "deprecation", "removal" })
-	@Bean
+    @SuppressWarnings({ "deprecation", "removal" })
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-        .csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(authz -> authz
-            // ↓ 모든 요청 허용
-            .anyRequest().permitAll()
-        )
-            
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers(
+                    "/api/auth/login",
+                    "/api/auth/join",
+                    "/api/auth/logout",
+                    "/api/patients/**",
+                    "/api/visits/**",
+                    "/api/history/**"
+                ).permitAll()
+                .anyRequest().authenticated()
+            )
             .logout(logout -> logout
                 .logoutUrl("/api/auth/logout")
                 .logoutSuccessUrl("/api/auth/login?logout")
@@ -43,8 +49,10 @@ public class SpringSecurityConfig {
     }
 	
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder, CustomUserDetailsService userDetailsService) 
-            throws Exception {
+    public AuthenticationManager authenticationManager(
+            HttpSecurity http,
+            PasswordEncoder passwordEncoder,
+            CustomUserDetailsService userDetailsService) throws Exception {
         return http
             .getSharedObject(AuthenticationManagerBuilder.class)
             .userDetailsService(userDetailsService)
@@ -52,8 +60,4 @@ public class SpringSecurityConfig {
             .and()
             .build();
     }
-
-	
-	
-
 }

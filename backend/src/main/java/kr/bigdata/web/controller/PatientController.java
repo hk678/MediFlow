@@ -26,5 +26,4 @@ public class PatientController {
     public List<PatientSummaryDto> getAllCurrentPatients() {
         return patientRepository.findCurrentlyAdmittedPatients();
     }
-
 }

@@ -55,6 +55,5 @@ public class PatientRequest {
 	    private Double po2;
 	    private Double ctco2;
 	    private Double bcb;
-	
-
+  
 }
