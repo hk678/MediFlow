@@ -1,0 +1,380 @@
+/* DischargeModal.css - 환자 퇴실 모달 전용 CSS */
+
+/* 모달 오버레이 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* 퇴실 모달 컨테이너 */
+.discharge-modal {
+  width: 500px;
+  max-height: 80vh;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 모달 헤더 */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 25px;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f8fafc;
+}
+
+.modal-title h3 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #111827;
+  margin: 0 0 5px 0;
+}
+
+.bed-info {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.close-button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.close-icon {
+  width: 20px;
+  height: 20px;
+  color: #6b7280;
+}
+
+/* 환자 정보 섹션 */
+.patient-info-section {
+  padding: 25px;
+  flex: 1;
+}
+
+.patient-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.patient-avatar {
+  width: 60px;
+  height: 60px;
+  background-color: #e5e7eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-icon {
+  width: 30px;
+  height: 30px;
+  color: #6b7280;
+}
+
+.patient-details {
+  flex: 1;
+}
+
+.patient-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 5px;
+}
+
+.patient-basic-info {
+  display: flex;
+  gap: 15px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.patient-age,
+.patient-gender {
+  font-weight: 500;
+}
+
+/* KTAS 배지 */
+.ktas-badge {
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  min-width: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.ktas-text {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.ktas-critical {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.ktas-urgent {
+  background-color: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fed7aa;
+}
+
+.ktas-semi-urgent {
+  background-color: #fef7cd;
+  color: #ca8a04;
+  border: 1px solid #fde68a;
+}
+
+.ktas-non-urgent {
+  background-color: #f0fdf4;
+  color: #059669;
+  border: 1px solid #bbf7d0;
+}
+
+/* 입실 정보 */
+.admission-info {
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  gap: 20px;
+}
+
+.info-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  background-color: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.info-icon {
+  width: 20px;
+  height: 20px;
+  color: #3b82f6;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.info-label {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #111827;
+  font-weight: 600;
+}
+
+/* 주요 증상 섹션 */
+.symptoms-section {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 10px;
+}
+
+.symptoms-content {
+  padding: 15px;
+  background-color: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.symptoms-content p {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* 경고 섹션 */
+.warning-section {
+  padding: 20px 25px;
+  background-color: #fef3c7;
+  border-top: 1px solid #fbbf24;
+  border-bottom: 1px solid #fbbf24;
+}
+
+.warning-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.warning-icon {
+  width: 20px;
+  height: 20px;
+  color: #d97706;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.warning-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.warning-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.warning-message {
+  font-size: 14px;
+  color: #a16207;
+  line-height: 1.4;
+}
+
+/* 모달 푸터 */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 20px 25px;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f8fafc;
+}
+
+.cancel-button {
+  padding: 10px 20px;
+  border: 1px solid #d1d5db;
+  background-color: white;
+  color: #374151;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-button:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.discharge-button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #ef4444;
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.discharge-button:hover {
+  background-color: #dc2626;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .discharge-modal {
+    width: 95vw;
+    max-height: 90vh;
+    margin: 20px;
+  }
+  
+  .modal-header,
+  .patient-info-section,
+  .warning-section,
+  .modal-footer {
+    padding: 15px 20px;
+  }
+  
+  .patient-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .info-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .patient-name {
+    font-size: 20px;
+  }
+  
+  .ktas-badge {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .discharge-modal {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    max-height: none;
+  }
+  
+  .patient-basic-info {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .cancel-button,
+  .discharge-button {
+    width: 100%;
+    padding: 12px;
+  }
+}
