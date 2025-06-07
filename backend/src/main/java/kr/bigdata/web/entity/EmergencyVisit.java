@@ -54,6 +54,10 @@ public class EmergencyVisit {
 
     @Column(name = "STATUS", nullable = false, length = 10)
     private String status;
+    
+    @Column(name = "DIAGNOSIS")
+    private String diagnosis;
+
 
 
 }
