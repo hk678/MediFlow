@@ -1,0 +1,350 @@
+/* emergencyroom.css - Emergency Room 페이지 전용 스타일만 (헤더/스탯카드는 mainpage.css 사용) */
+
+/* Emergency Room 페이지 고유 식별자 */
+.emergency-page {
+  background-color: #f0f9ff; /* 메인페이지와 구분되는 배경색 */
+}
+
+/* Emergency Room 페이지만의 로고 색상 */
+.emergency-page .logo-text {
+  color: #0ea5e9; /* 하늘색으로 구분 */
+}
+
+/* Emergency Room 페이지만의 사용자 정보 색상 */
+.emergency-page .user-name {
+  color: #0ea5e9; /* 하늘색으로 구분 */
+}
+
+/* Emergency Room Layout - 전용 스타일 */
+.emergency-room-container {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 2px solid #0ea5e9;
+}
+
+.emergency-room-layout {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0;
+  height: 600px;
+  padding: 0.5rem;
+  border: 2px solid #ccc3c3;
+  border-radius: 10px;
+  background-color: #ffffff;
+}
+
+/* A구역, B구역 텍스트 배치 */
+.emergency-area-label {
+  position: absolute;
+  font-size: 14px;
+  font-weight: bold;
+  color: #4b5563;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 4px 8px;
+  border-radius: 4px;
+  z-index: 10;
+}
+
+/* A구역 라벨 위치 - 2사분면(왼쪽 상단) 최하단 */
+.emergency-area-label-a {
+  top: 40%;
+  left: 25%;
+  transform: translateX(-50%);
+}
+
+/* B구역 라벨 위치 - 1사분면(오른쪽 상단) 최하단 */
+.emergency-area-label-b {
+  top: 40%;
+  right: 25%;
+  transform: translateX(50%);
+}
+
+/* 4분면 스타일 */
+.emergency-quadrant {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 5px;
+  position: relative;
+  background-color: #ffffff;
+}
+
+/* 우상단 */
+.emergency-quadrant-1 {
+  padding-bottom: 10px;
+  margin-left: 15px;
+}
+
+/* 좌상단 */
+.emergency-quadrant-2 {
+  padding-bottom: 10px;
+  margin-right: 15px;
+}
+
+/* 좌하단 */
+.emergency-quadrant-3 {
+  padding-top: 10px;
+  margin-left: 10px;
+}
+
+/* 우하단 */
+.emergency-quadrant-4 {
+  padding-top: 10px;
+}
+
+.emergency-bed-position {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*** 병상 세로 배치 ***/
+/* 1사분면 병상 세로 배치  */
+.emergency-quadrant-1 .emergency-bed-position:nth-of-type(2) {
+  grid-row: 1 / 3 !important;
+  grid-column: 2 !important;
+  margin-bottom: 20px;
+  transform: translateX(10px);
+}
+
+.emergency-quadrant-1 .emergency-bed-position:nth-of-type(2) .emergency-bed-card {
+  width: 70px;
+  height: 110px;
+}
+
+.emergency-quadrant-1 .emergency-bed-position:nth-of-type(3) {
+  grid-row: 1 / 3 !important;
+  grid-column: 3 !important;
+  margin-bottom: 20px;
+  transform: translateX(-10px);
+}
+
+.emergency-quadrant-1 .emergency-bed-position:nth-of-type(3) .emergency-bed-card {
+  width: 70px;
+  height: 110px;
+}
+
+/* 2사분면 병상 세로 배치  */
+.emergency-quadrant-2 .emergency-bed-position:nth-of-type(2) {
+  grid-row: 1 / 3 !important;
+  grid-column: 2 !important;
+  margin-bottom: 20px;
+  transform: translateX(10px);
+}
+
+.emergency-quadrant-2 .emergency-bed-position:nth-of-type(2) .emergency-bed-card {
+  width: 70px;
+  height: 110px;
+}
+
+.emergency-quadrant-2 .emergency-bed-position:nth-of-type(3) {
+  grid-row: 1 / 3 !important;
+  grid-column: 3 !important;
+  margin-bottom: 20px;
+  transform: translateX(-10px);
+}
+
+.emergency-quadrant-2 .emergency-bed-position:nth-of-type(3) .emergency-bed-card {
+  width: 70px;
+  height: 110px;
+}
+
+/* 3사분면 병상 세로 배치  */
+.emergency-quadrant-3 .emergency-bed-position:nth-of-type(5) {
+  grid-row: 3 / 5 !important;
+  grid-column: 2 !important;
+  margin-top: 20px;
+}
+
+.emergency-quadrant-3 .emergency-bed-position:nth-of-type(5) .emergency-bed-card {
+  width: 70px;
+  height: 110px;
+}
+
+.emergency-quadrant-3 .emergency-bed-position:nth-of-type(6) {
+  grid-row: 3 / 5 !important;
+  grid-column: 3 !important;
+  margin-top: 20px;
+  margin-right: 10px;
+  transform: translateX(-25px);
+}
+
+.emergency-quadrant-3 .emergency-bed-position:nth-of-type(6) .emergency-bed-card {
+  width: 70px;
+  height: 110px;
+}
+
+.emergency-quadrant-3 .emergency-bed-position:nth-of-type(7) {
+  grid-row: 3 / 5 !important;
+  grid-column: 4 !important;
+  margin-top: 20px;
+  margin-right: 20px;
+  transform: translateX(-50px);
+}
+
+.emergency-quadrant-3 .emergency-bed-position:nth-of-type(7) .emergency-bed-card {
+  width: 70px;
+  height: 110px;
+}
+
+.emergency-quadrant-3 .emergency-bed-position:nth-of-type(8) {
+  grid-row: 3 / 5 !important;
+  grid-column: 5 !important;
+  margin-top: 20px;
+  transform: translateX(-68px);
+}
+
+.emergency-quadrant-3 .emergency-bed-position:nth-of-type(8) .emergency-bed-card {
+  width: 70px;
+  height: 110px;
+}
+
+/* 병상 카드 스타일 */
+.emergency-bed-card {
+  width: 110px;
+  height: 55px;
+  border: 3px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 10px;
+}
+
+.emergency-bed-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.emergency-bed-empty {
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+}
+
+.emergency-bed-red {
+  border-color: #dc2626;
+  background-color: #fef2f2;
+}
+
+.emergency-bed-yellow {
+  border-color: #eab308;
+  background-color: #fffbeb;
+}
+
+.emergency-bed-green {
+  border-color: #059669;
+  background-color: #f0fdf4;
+}
+
+.emergency-bed-orange {
+  border-color: #ea580c;
+  background-color: #fff7ed;
+}
+
+.emergency-bed-content {
+  text-align: center;
+  padding: 2px;
+  width: 100%;
+}
+
+.emergency-bed-name {
+  font-size: 8px;
+  line-height: 1.1;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1px;
+}
+
+.emergency-bed-room {
+  font-size: 7px;
+  line-height: 1;
+  color: #6b7280;
+}
+
+/* 1-2사분면 사이 칸막이 */
+.emergency-partition-wall {
+  position: absolute;
+  width: 25px;
+  height: 295px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ccc3c3;
+}
+
+/* Nurse Station - 우측 중앙에 세로 배치 */
+.emergency-nurse-station {
+  position: absolute;
+  right: 15%;
+  bottom: 10px;
+  background-color: #D8D8D8;
+  width: 240px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #0ea5e9;
+  border-radius: 8px;
+}
+
+.emergency-nurse-station-text {
+  font-size: 16px;
+  font-weight: bold;
+  color: #000000;
+}
+
+/* Entrance - 우하단 모서리 */
+.emergency-entrance {
+  position: absolute;
+  top: 55%;
+  right: 0%;
+  border-top-left-radius: 5rem;
+  border-bottom-left-radius: 5rem;
+  margin-right: 0%;
+  writing-mode: vertical-rl;
+  height: 130px;
+  width: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #D8D8D8;
+  border: 2px solid #0ea5e9;
+}
+
+.emergency-entrance-text {
+  font-size: 16px;
+  font-weight: bold;
+  color: #000000;
+  transform: rotate(180deg);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .emergency-room-layout {
+    height: 500px;
+    gap: 0;
+  }
+  
+  .emergency-quadrant {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 6px;
+    padding: 15px;
+  }
+  
+  .emergency-bed-card {
+    width: 45px;
+    height: 35px;
+  }
+  
+  .emergency-bed-name {
+    font-size: 7px;
+  }
+  
+  .emergency-bed-room {
+    font-size: 6px;
+  }
+}
