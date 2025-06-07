@@ -14,7 +14,7 @@
   padding: 1.5rem;
 }
 
-/* 헤더 */
+/* Header - OldEmergencyRoom.css와 동일한 스타일 */
 .header {
   background-color: transparent;
   box-shadow: none;
@@ -60,13 +60,13 @@
 
 .search-container {
   position: relative;
-  margin-left: 4rem;
+  margin-left: 3rem;
   margin-top: 5px;
 }
 
 .search-icon {
   position: absolute;
-  left: 0.75rem;
+  right: 1rem;
   top: 50%;
   transform: translateY(-50%);
   color: #9ca3af;
@@ -76,14 +76,12 @@
 }
 
 .search-input {
-  border-radius: 15px;
-  width: 27rem;
-  height: 40px;
-  padding: 0 1rem 0 2.5rem;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
+  padding: 10px 15px;
+  width: 300px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  outline: none;
+  }
 
 .search-input:focus {
   border-color: #3b82f6;
@@ -94,17 +92,14 @@
 .user-info {
   display: flex;
   align-items: center;
-  /* gap: 15px; */
+  gap: 15px;
 }
 
-/* .user-icon {
-  width: 50px;
-  height: 50px;
-  color: #3b82f6;
-  background-color: #dbeafe;
-  border-radius: 50%;
-  padding: 8px;
-} */
+.user-icon {
+  width: 35px;
+  height: 35px;
+  color: #4b5563;
+}
 
 .user-name {
   color: #2E81FD;
@@ -130,41 +125,41 @@
 }
 
 .logout-text {
-  color: #374151;
+  color: rgb(0, 0, 0);
   font-weight: bold;
   font-size: 18px;
 }
 
 .logout-icon {
-  font-size: 16px;
-  color: #6b7280;
+  font-size: 12px;
+  color: white;
 }
 
-/* Stats cards */
+/* Stats cards - OldEmergencyRoom.css와 동일한 스타일 */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  /* gap: 1rem; */
   margin-bottom: 1.5rem;
-  margin-left: 20px;
-}
+  padding-left: 20px;
+}  
 
 @media (min-width: 768px) {
   .stats-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-left: 20px;
   }
 }
 
 .stat-card {
-  /* background-color: white; */
-  /* border-radius: 15px; */
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
-  /* height: 80px; */
-  /* width: 100%; */
-  /* display: flex; */
-  /* align-items: center; */
-  /* justify-content: center; */
-  padding: 1rem;
+  background-color: white;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  height: 80px;
+  width: 240px;
+  display: flex;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -179,7 +174,6 @@
   text-align: center;
   flex-direction: row;
   gap: 15px;
-  width: 100%;
 }
 
 .stat-text {
@@ -189,27 +183,39 @@
   gap: 2px;
 }
 
-/* 위험 환자, 주의 환자 카드 레이아웃 */
-.stat-card-danger .stat-content,
-.stat-card-warning .stat-content {
+/* 위험 환자, 주의 환자만 별도 스타일링 */
+.stat-card:nth-child(3) .stat-content,
+.stat-card:nth-child(4) .stat-content {
   justify-content: space-between;
 }
 
-.stat-card-danger .stat-text,
-.stat-card-warning .stat-text {
+/* 위험 환자, 주의 환자의 텍스트 부분 */
+.stat-card:nth-child(3) .stat-text,
+.stat-card:nth-child(4) .stat-text {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 15px;
 }
 
+.stat-card-danger .stat-content,
+.stat-card-warning .stat-content {
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.stat-card-danger .stat-text,
+.stat-card-warning .stat-text {
+  text-align: right;
+}
+
 .stat-label {
-  font-size: 18px;
-  font-weight: bold;
-  color: #374151;
+  font-size: 20px;
+  line-height: 16px;
+  font-weight: 1200;
+  color: #000000;
   cursor: pointer;
   transition: opacity 0.2s;
-  margin-right: 50px;
 }
 
 .stat-label:hover {
@@ -235,6 +241,7 @@
 
 .stat-number {
   font-size: 28px;
+  line-height: 26px;
   font-weight: 700;
 }
 
@@ -274,36 +281,30 @@
   display: inline-block;
   width: 2.5rem;
   height: 1.5rem;
+  background-color: #d1d5db;
   border-radius: 9999px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.3s ease;
 }
 
 .toggle-switch.active {
   background-color: #3b82f6;
 }
 
-.toggle-switch.inactive {
-  background-color: #d1d5db;
-}
-
 .toggle-slider {
   position: absolute;
   top: 0.25rem;
+  left: 0.25rem;
   width: 1rem;
   height: 1rem;
   background-color: white;
   border-radius: 50%;
-  transition: left 0.2s ease-in-out;
+  transition: transform 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.toggle-slider.active {
-  left: 1.25rem;
-}
-
-.toggle-slider.inactive {
-  left: 0.25rem;
+.toggle-switch.active .toggle-slider {
+  transform: translateX(1rem);
 }
 
 /* 테이블 */
@@ -371,6 +372,17 @@
   white-space: nowrap;
   font-size: 0.875rem;
   color: #111827;
+}
+
+.clickable {
+  cursor: pointer;
+  color: #2563eb;
+  transition: color 0.2s;
+}
+
+.clickable:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
 }
 
 /* 라벨 */
@@ -441,6 +453,24 @@
 .pagination-current {
   font-weight: 500;
   color: #374151;
+}
+
+/* 모달 오버레이 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background-color: transparent;
 }
 
 /* 필터 상태 표시 */

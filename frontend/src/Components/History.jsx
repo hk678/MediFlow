@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
-import '../Style/history.css';
+import '../Style/History.css';
 
 export default function History({ patient, onClose }) {
   const [inputValue, setInputValue] = useState('');
