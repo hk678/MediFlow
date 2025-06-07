@@ -2,13 +2,13 @@
 import logo from './logo.svg';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 //import './App.css';
-import MainPage from './Components/MainPage';
-import Detail from './Components/Detail';
-import Admin from './Components/Admin';
-import History from './Components/History';
-import UserInfo from './Components/UserInfo';
-import UserUpdate from './Components/UserUpdate'
-import EmergencyRoom from './Components/EmergencyRoom';
+import MainPage from './components/MainPage';
+import Detail from './components/Detail';
+import Admin from './components/Admin';
+import History from './components/History';
+import UserInfo from './components/UserInfo';
+import UserUpdate from './components/UserUpdate'
+import EmergencyRoom from './components/EmergencyRoom';
 
 
 function App() {
