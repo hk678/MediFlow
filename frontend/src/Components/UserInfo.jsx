@@ -2,23 +2,21 @@ import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import '../Style/userinfo.css';
 
-// user, onClose 받아오기기
-export default function UserInfo({ user, onClose }) {   
+export default function UserInfo({ user, onClose }) {
   const [formData, setFormData] = useState({
-    id: '',
+    userId: '',
     password: '',
-    name: '',
-    position: ''
+    userName: '',
+    userRole: ''
   });
 
-    // user 정보가 전달되면 formData 초기화
   useEffect(() => {
     if (user) {
       setFormData({
-        id: user.id || '',
-        password: '', // 비밀번호는 빈칸 유지
-        name: user.name || '',
-        position: user.position || ''
+        userId: user.userId || '',
+        password: '',
+        userName: user.userName || '',
+        userRole: user.userRole || ''
       });
     }
   }, [user]);
@@ -31,10 +29,10 @@ export default function UserInfo({ user, onClose }) {
     }));
   };
 
-  const handlePositionChange = (e) => {
+  const handleRoleChange = (e) => {
     setFormData(prev => ({
       ...prev,
-      position: e.target.value
+      userRole: e.target.value
     }));
   };
 
@@ -43,13 +41,9 @@ export default function UserInfo({ user, onClose }) {
     console.log('사용자 정보:', formData);
   };
 
-    //  닫기 버튼 클릭 시 부모에서 넘긴 함수 호출
   const handleClose = () => {
     if (onClose) onClose();
   };
-
-
-
 
   return (
     <div className="user-info-modal">
@@ -66,9 +60,9 @@ export default function UserInfo({ user, onClose }) {
             <label className="input-label">ID</label>
             <input
               type="text"
-              name="id"
+              name="userId"
               className="input-field"
-              value={formData.id}
+              value={formData.userId}
               onChange={handleInputChange}
               required
             />
@@ -90,10 +84,10 @@ export default function UserInfo({ user, onClose }) {
             <label className="input-label">Name</label>
             <input
               type="text"
-              name="name"
+              name="userName"
               className="input-field"
               placeholder="이름을 입력해주세요"
-              value={formData.name}
+              value={formData.userName}
               onChange={handleInputChange}
               required
             />
@@ -106,39 +100,39 @@ export default function UserInfo({ user, onClose }) {
                 <input
                   type="radio"
                   id="doctor"
-                  name="position"
+                  name="userRole"
                   value="의사"
                   className="radio-input"
-                  checked={formData.position === '의사'}
-                  onChange={handlePositionChange}
+                  checked={formData.userRole === "의사"}
+                  onChange={handleInputChange}
                 />
                 <label htmlFor="doctor" className="radio-label">의사</label>
               </div>
-              
+
               <div className="radio-item">
                 <input
                   type="radio"
                   id="nurse"
-                  name="position"
+                  name="userRole"
                   value="간호사"
                   className="radio-input"
-                  checked={formData.position === '간호사'}
-                  onChange={handlePositionChange}
+                  checked={formData.userRole === "간호사"}
+                  onChange={handleInputChange}
                 />
                 <label htmlFor="nurse" className="radio-label">간호사</label>
               </div>
-              
+
               <div className="radio-item">
                 <input
                   type="radio"
                   id="other"
-                  name="position"
+                  name="userRole"
                   value="기타"
                   className="radio-input"
-                  checked={formData.position === '기타'}
-                  onChange={handlePositionChange}
+                  checked={formData.userRole === "관리자"}
+                  onChange={handleInputChange}
                 />
-                <label htmlFor="other" className="radio-label">기타</label>
+                <label htmlFor="other" className="radio-label">관리자</label>
               </div>
             </div>
           </div>

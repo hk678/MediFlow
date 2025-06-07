@@ -14,7 +14,7 @@ import EmergencyRoom from './Components/EmergencyRoom';
 function App() {
   return (
     <div className="App">
-      {/* 메인 페이지 */}
+      {/* 메인 페이지 
       <Router>
         <Routes>
           <Route path="/" element={<MainPage />} />
@@ -22,14 +22,14 @@ function App() {
           <Route path="/detail/:pid" element={<Detail />} />
           <Route path="/history/:pid" element={<History />} />
         </Routes>
-      </Router> 
+      </Router> */}
       
 
       {/* 상세 페이지지 
       <Detail /> */}
 
-      {/* 관리자 페이지 
-      <Admin /> */}
+      {/* 관리자 페이지 */}
+      <Admin /> 
 
       {/* 히스토리리 페이지 
       <History />*/}

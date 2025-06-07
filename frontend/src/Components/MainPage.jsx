@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, User, Users, Bed, AlertCircle, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import '../Style/mainpage.css';
 import History from './History';
+import axios from 'axios';
+
 
 
 const MainPage = () => {
@@ -12,7 +14,33 @@ const MainPage = () => {
   const [selectedPatient, setSelectedPatient] = useState(null); // 모달관련
   const [showModal, setShowModal] = useState(false); // 모달달
   const [labelFilter, setLabelFilter] = useState('전체'); // '전체' | '주의' | '위험'
+// axios연결
+const [patientData, setPatientData] = useState([]);
 
+useEffect(() => {
+  axios.get('http://localhost:8081/api/patients')
+    .then(response => {
+      const rawData = response.data;
+      const transformed = rawData.map(p => ({
+        pid: p.pid,
+        name: p.name,
+        age: p.age,
+        sex: p.gender ? 'M' : 'F', // boolean을 성별 문자열로
+        bed: p.bed,
+        ktas: p.acuity,
+        complaint: p.chiefComplaint,
+        label: p.label === 1 ? '위험' : (p.label === 0 ? '주의' : '경미'),
+        history: '확인'
+      }));
+      setPatientData(transformed);
+    })
+    .catch(error => {
+      console.error('환자 데이터 불러오기 실패:', error);
+    });
+}, []);
+
+
+// axios 작업업끗---------
 
   // 필터링(주의,위험,전체)환자보기 ---------
 const handleWarningClick = () => {
@@ -57,22 +85,22 @@ const resetFilter = () => {
 
 
   // 샘플 환자 데이터
-  const patientData = [
-    { pid: '1001', name: '김철수', age: 59, sex: 'F',bed: 12, ktas: 2, complaint: 'Chest pain', label: '위험', history: '확인' },
-    { pid: '1002', name: '박소연', age: 34, sex: 'F',bed: 12, ktas: 4, complaint: 'Sore throat', label: '경미', history: '확인' },
-    { pid: '1003', name: '이민호', age: 45, sex: 'M',bed: 12, ktas: 3, complaint: 'Abdominal pain', label: '주의', history: '확인' },
-    { pid: '1004', name: '최하나', age: 78, sex: 'F',bed: 12, ktas: 1, complaint: 'Shortness of breath', label: '위험', history: '확인' },
-    { pid: '1005', name: '김지훈', age: 67, sex: 'M',bed: 12, ktas: 5, complaint: 'Nausea', label: '경미', history: '확인' },
-    { pid: '1006', name: '정한나', age: 22, sex: 'F',bed: 12, ktas: 4, complaint: 'Sprained ankle', label: '경미', history: '확인' },
-    { pid: '1007', name: '오승우', age: 45, sex: 'M',bed: 12, ktas: 4, complaint: 'Fever', label: '주의', history: '확인' },
-    { pid: '1008', name: '김미라', age: 60, sex: 'F',bed: 21, ktas: 4, complaint: 'Altered mental status', label: '경미', history: '확인' },
-    { pid: '1009', name: '한보미', age: 50, sex: 'F',bed: 12, ktas: 2, complaint: 'High blood pressure', label: '위험', history: '확인' },
-    { pid: '1010', name: '양세현', age: 40, sex: 'M',bed: 12, ktas: 5, complaint: 'Skin rash', label: '경미', history: '확인' },
-    { pid: '1011', name: '서지민', age: 29, sex: 'F',bed: 113, ktas: 1, complaint: 'Seizure', label: '위험', history: '확인' },
-    { pid: '1012', name: '박민우', age: 65, sex: 'F',bed: 15, ktas: 3, complaint: 'Dizziness', label: '주의', history: '확인' },
-    { pid: '1013', name: '신아름', age: 37, sex: 'F',bed: 14, ktas: 2, complaint: 'Back pain', label: '위험', history: '확인' },
-    { pid: '1014', name: '김도현', age: 52, sex: 'M',bed: 12, ktas: 2, complaint: 'Cardiac arrest', label: '위험', history: '확인' }
-  ];
+  // const patientData = [
+  //   { pid: '1001', name: '김철수', age: 59, sex: 'F',bed: 12, ktas: 2, complaint: 'Chest pain', label: '위험', history: '확인' },
+  //   { pid: '1002', name: '박소연', age: 34, sex: 'F',bed: 12, ktas: 4, complaint: 'Sore throat', label: '경미', history: '확인' },
+  //   { pid: '1003', name: '이민호', age: 45, sex: 'M',bed: 12, ktas: 3, complaint: 'Abdominal pain', label: '주의', history: '확인' },
+  //   { pid: '1004', name: '최하나', age: 78, sex: 'F',bed: 12, ktas: 1, complaint: 'Shortness of breath', label: '위험', history: '확인' },
+  //   { pid: '1005', name: '김지훈', age: 67, sex: 'M',bed: 12, ktas: 5, complaint: 'Nausea', label: '경미', history: '확인' },
+  //   { pid: '1006', name: '정한나', age: 22, sex: 'F',bed: 12, ktas: 4, complaint: 'Sprained ankle', label: '경미', history: '확인' },
+  //   { pid: '1007', name: '오승우', age: 45, sex: 'M',bed: 12, ktas: 4, complaint: 'Fever', label: '주의', history: '확인' },
+  //   { pid: '1008', name: '김미라', age: 60, sex: 'F',bed: 21, ktas: 4, complaint: 'Altered mental status', label: '경미', history: '확인' },
+  //   { pid: '1009', name: '한보미', age: 50, sex: 'F',bed: 12, ktas: 2, complaint: 'High blood pressure', label: '위험', history: '확인' },
+  //   { pid: '1010', name: '양세현', age: 40, sex: 'M',bed: 12, ktas: 5, complaint: 'Skin rash', label: '경미', history: '확인' },
+  //   { pid: '1011', name: '서지민', age: 29, sex: 'F',bed: 113, ktas: 1, complaint: 'Seizure', label: '위험', history: '확인' },
+  //   { pid: '1012', name: '박민우', age: 65, sex: 'F',bed: 15, ktas: 3, complaint: 'Dizziness', label: '주의', history: '확인' },
+  //   { pid: '1013', name: '신아름', age: 37, sex: 'F',bed: 14, ktas: 2, complaint: 'Back pain', label: '위험', history: '확인' },
+  //   { pid: '1014', name: '김도현', age: 52, sex: 'M',bed: 12, ktas: 2, complaint: 'Cardiac arrest', label: '위험', history: '확인' }
+  // ];
 
   const getLabelClass = (label) => {
     switch(label) {
@@ -197,7 +225,7 @@ const filteredPatients = patientData.filter((patient) => {
                 </tr>
               </thead>
               <tbody>
-                {filteredPatients.map((patient) => (
+                {filteredPatients.slice(0, 20).map((patient) => (
                   <tr key={patient.pid} className="table-row">
                     <td className="table-cell">{patient.pid}</td>
                     <td className="table-cell clickable" onClick={() => goToDetail(patient)}>{patient.name}</td>

@@ -1,12 +1,24 @@
 import "../Style/Admin.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import UserUpdate from "./UserUpdate";
 import UserInfo from "./UserInfo";
+import axios from "axios";
+
 
 const Admin = () => {
   // 모달 상태 추가
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState(null); // "update" 또는 "info"
+  const [userList, setUserList] = useState(["S"]);
+
+  // 사용자 목록 받아오기
+  useEffect(()=> {
+    axios.get("http://localhost:8081/api/admin/users").then((res)=>{
+      console.log("백엔드 응답보기",res.data)
+      setUserList(res.data);
+    })
+  },[]);
+  ///--------받아오기끗----------------------
 
   // 검색 상태
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,24 +45,24 @@ const Admin = () => {
     setModalType(null);
   };
 
-  // 사용자 리스트
-  const userList = [
-    { id: "124545", name: "이도은", position: "의사", lastLogin: "2025-05-29 11:55:44" },
-    { id: "254545", name: "김하늘", position: "간호사", lastLogin: "2025-05-29 11:54:11" },
-    { id: "777777", name: "홍길동", position: "기타", lastLogin: "2025-06-02 13:25:17" },
-    { id: "124545", name: "이도은", position: "의사", lastLogin: "2025-05-29 11:55:44" },
-    { id: "254545", name: "김하늘", position: "간호사", lastLogin: "2025-05-29 11:54:11" },
-    { id: "777777", name: "홍길동", position: "기타", lastLogin: "2025-06-02 13:25:17" },
-    { id: "254545", name: "김하늘", position: "간호사", lastLogin: "2025-05-29 11:54:11" },
-    { id: "777777", name: "홍길동", position: "기타", lastLogin: "2025-06-02 13:25:17" },
-  ];
+  // // 사용자 리스트
+  // const userList = [
+  //   { id: "124545", name: "이도은", position: "의사", lastLogin: "2025-05-29 11:55:44" },
+  //   { id: "254545", name: "김하늘", position: "간호사", lastLogin: "2025-05-29 11:54:11" },
+  //   { id: "777777", name: "홍길동", position: "기타", lastLogin: "2025-06-02 13:25:17" },
+  //   { id: "124545", name: "이도은", position: "의사", lastLogin: "2025-05-29 11:55:44" },
+  //   { id: "254545", name: "김하늘", position: "간호사", lastLogin: "2025-05-29 11:54:11" },
+  //   { id: "777777", name: "홍길동", position: "기타", lastLogin: "2025-06-02 13:25:17" },
+  //   { id: "254545", name: "김하늘", position: "간호사", lastLogin: "2025-05-29 11:54:11" },
+  //   { id: "777777", name: "홍길동", position: "기타", lastLogin: "2025-06-02 13:25:17" },
+  // ];
 
   // 검색어 기반 필터링
   const filteredUsers = userList.filter(
     (user) =>
-      user.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.position.toLowerCase().includes(searchTerm.toLowerCase())
+      user.userId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.userRole?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -99,12 +111,12 @@ const Admin = () => {
             <tbody>
               {filteredUsers.map((user, index) => (
                 <tr key={index}>
-                  <td>{user.id}</td>
+                  <td>{user.userId}</td>
                   <td onClick={() => handleUserClick(user)} className="clickable-name">
-                    {user.name}
+                    {user.userName}
                   </td>
-                  <td>{user.position}</td>
-                  <td>{user.lastLogin}</td>
+                  <td>{user.userRole}</td>
+                  <td>{user.lastLogin || user.createdAt}</td>
                 </tr>
               ))}
             </tbody>
