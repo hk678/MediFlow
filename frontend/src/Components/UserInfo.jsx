@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import '../Style/Userinfo.css';
+import '../Style/userinfo.css';
+import axios from "axios";
 
-// user, onClose 받아오기기
-export default function UserInfo({ user, onClose }) {   
+
+export default function UserInfo({ user, onClose }) {
   const [formData, setFormData] = useState({
-    id: '',
+    userId: '',
     password: '',
-    name: '',
-    position: ''
+    userName: '',
+    userRole: ''
   });
 
-    // user 정보가 전달되면 formData 초기화
   useEffect(() => {
     if (user) {
       setFormData({
-        id: user.id || '',
-        password: '', // 비밀번호는 빈칸 유지
-        name: user.name || '',
-        position: user.position || ''
+        userId: user.userId || '',
+        password: user.password || '',
+        userName: user.userName || '',
+        userRole: user.userRole || ''
       });
     }
   }, [user]);
@@ -31,22 +31,68 @@ export default function UserInfo({ user, onClose }) {
     }));
   };
 
-  const handlePositionChange = (e) => {
+  const handleRoleChange = (e) => {
     setFormData(prev => ({
       ...prev,
-      position: e.target.value
+      userRole: e.target.value
     }));
   };
 
-  const handleSubmit = (e) => {
+  //사용자 정보 수정----------
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('사용자 정보:', formData);
+    try{
+      const response = await  axios.put(
+        `http://localhost:8081/api/admin/users/${formData.userId}`,
+        formData
+      );
+
+      console.log("수정된거:",response.data);
+      alert("수정 되었습니다.")
+      if (onClose) onClose(true); // 수정됨을 알림
+    } catch (err){
+      console.error("오류 : ", err)
+    }
   };
 
-    //  닫기 버튼 클릭 시 부모에서 넘긴 함수 호출
   const handleClose = () => {
     if (onClose) onClose();
   };
+// 수정 끝---------
+
+// 삭제 시작----------
+
+const handleDelelte = async (e) => {
+   if (!window.confirm("정말 삭제하시겠습니까?")) return;
+
+   try {
+    await axios.delete(`http://localhost:8081/api/admin/users/${formData.userId}`);
+    alert('삭제되었습니다.')
+    if (onClose) onClose(true);
+   } catch(err){
+    console.log("삭제 실패 : ", err)
+    alert("삭제 실패패")
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//- 삭제 끗
+
 
 
 
@@ -66,9 +112,9 @@ export default function UserInfo({ user, onClose }) {
             <label className="input-label">ID</label>
             <input
               type="text"
-              name="id"
+              name="userId"
               className="input-field"
-              value={formData.id}
+              value={formData.userId}
               onChange={handleInputChange}
               required
             />
@@ -90,10 +136,10 @@ export default function UserInfo({ user, onClose }) {
             <label className="input-label">Name</label>
             <input
               type="text"
-              name="name"
+              name="userName"
               className="input-field"
               placeholder="이름을 입력해주세요"
-              value={formData.name}
+              value={formData.userName}
               onChange={handleInputChange}
               required
             />
@@ -106,39 +152,39 @@ export default function UserInfo({ user, onClose }) {
                 <input
                   type="radio"
                   id="doctor"
-                  name="position"
+                  name="userRole"
                   value="의사"
                   className="radio-input"
-                  checked={formData.position === '의사'}
-                  onChange={handlePositionChange}
+                  checked={formData.userRole === "의사"}
+                  onChange={handleInputChange}
                 />
                 <label htmlFor="doctor" className="radio-label">의사</label>
               </div>
-              
+
               <div className="radio-item">
                 <input
                   type="radio"
                   id="nurse"
-                  name="position"
+                  name="userRole"
                   value="간호사"
                   className="radio-input"
-                  checked={formData.position === '간호사'}
-                  onChange={handlePositionChange}
+                  checked={formData.userRole === "간호사"}
+                  onChange={handleInputChange}
                 />
                 <label htmlFor="nurse" className="radio-label">간호사</label>
               </div>
-              
+
               <div className="radio-item">
                 <input
                   type="radio"
                   id="other"
-                  name="position"
-                  value="기타"
+                  name="userRole"
+                  value="관리자"
                   className="radio-input"
-                  checked={formData.position === '기타'}
-                  onChange={handlePositionChange}
+                  checked={formData.userRole === "관리자"}
+                  onChange={handleInputChange}
                 />
-                <label htmlFor="other" className="radio-label">기타</label>
+                <label htmlFor="other" className="radio-label">관리자</label>
               </div>
             </div>
           </div>
@@ -148,7 +194,7 @@ export default function UserInfo({ user, onClose }) {
           <button className="submit-button" onClick={handleSubmit}>
             수정
           </button>
-          <button className="submit-button" onClick={handleSubmit}>
+          <button className="submit-button-del" onClick={handleDelelte}>
             삭제
           </button>
         </div>

@@ -1,21 +1,47 @@
+
 import "../Style/Mainpage.css";  // 공통 헤더/스탯카드 스타일
 import "../Style/Admin.css";     // Admin 전용 스타일
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, User, Users, Bed, AlertCircle, AlertTriangle } from 'lucide-react';
 import logoutIcon from '../assets/images/logout-icon.png';
 import UserUpdate from "./UserUpdate";
 import UserInfo from "./UserInfo";
+import axios from "axios";
 
 const Admin = () => {
-  // 모달 상태 추가
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState(null); // "update" 또는 "info"
-
-  // 검색 상태
+  const [userList, setUserList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
-  // 선택한 사용자 정보 상태
   const [selectedUser, setSelectedUser] = useState(null);
+  const [daily, setDaily] = useState([""]);
+
+  // 사용자 목록 불러오기 함수 (재사용 가능)
+  const fetchUsers = () => {
+    axios.get("http://localhost:8081/api/admin/users")
+      .then((res) => {
+        console.log("백엔드 응답보기", res.data);
+        setUserList(res.data);
+      });
+  };
+  
+  // 처음 한 번만 사용자 목록 로딩
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  //daily 불러오기기
+  const fetchDaily = () => {
+    axios. get("http://localhost:8081/api/admin/daily")
+    .then((res)=>{
+      console.log("데이터 응답보기",res.data)
+      setDaily(res.data)
+    })
+  }
+  
+useEffect(()=> {
+  fetchDaily();
+},[])
 
   // 추가 버튼 클릭 시 모달 열기
   const openUpdateModal = () => {
@@ -30,30 +56,21 @@ const Admin = () => {
     setShowModal(true);
   };
 
-  // 모달 닫기
-  const closeModal = () => {
+  //  모달 닫기 + 필요 시 목록 새로고침
+  const closeModal = (refresh = false) => {
     setShowModal(false);
     setModalType(null);
+    if (refresh) {
+      fetchUsers(); //  변경: 수정 후 최신 데이터 반영
+    }
   };
 
-  // 사용자 리스트
-  const userList = [
-    { id: "124545", name: "이도은", position: "의사", lastLogin: "2025-05-29 11:55:44" },
-    { id: "254545", name: "김하늘", position: "간호사", lastLogin: "2025-05-29 11:54:11" },
-    { id: "777777", name: "홍길동", position: "기타", lastLogin: "2025-06-02 13:25:17" },
-    { id: "124545", name: "이도은", position: "의사", lastLogin: "2025-05-29 11:55:44" },
-    { id: "254545", name: "김하늘", position: "간호사", lastLogin: "2025-05-29 11:54:11" },
-    { id: "777777", name: "홍길동", position: "기타", lastLogin: "2025-06-02 13:25:17" },
-    { id: "254545", name: "김하늘", position: "간호사", lastLogin: "2025-05-29 11:54:11" },
-    { id: "777777", name: "홍길동", position: "기타", lastLogin: "2025-06-02 13:25:17" },
-  ];
-
-  // 검색어 기반 필터링
+  // 검색 필터링
   const filteredUsers = userList.filter(
     (user) =>
-      user.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.position.toLowerCase().includes(searchTerm.toLowerCase())
+      user.userId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.userRole?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -78,8 +95,9 @@ const Admin = () => {
               </div>
             </div>
             <div className="user-info">
-              <User className="user-icon" />
+              <span className="user-icon">👤</span>
               <span className="user-name">관리자</span>
+
               <div className="logout-button">
                 <img src={logoutIcon} alt="logout" className="logout-icon" />
                 <span className="logout-text">Logout</span>
@@ -154,18 +172,18 @@ const Admin = () => {
                     <th>Last login</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {filteredUsers.map((user, index) => (
-                    <tr key={index}>
-                      <td>{user.id}</td>
-                      <td onClick={() => handleUserClick(user)} className="admin-clickable-name">
-                        {user.name}
-                      </td>
-                      <td>{user.position}</td>
-                      <td>{user.lastLogin}</td>
-                    </tr>
-                  ))}
-                </tbody>
+                  <tbody>
+                    {filteredUsers.map((user, index) => (
+                      <tr key={index}>
+                        <td>{user.userId}</td>
+                        <td onClick={() => handleUserClick(user)} className="clickable-name">
+                          {user.userName}
+                        </td>
+                        <td>{user.userRole}</td>
+                        <td>{user.lastLogin || user.createdAt}</td>
+                      </tr>
+                    ))}
+                  </tbody>
               </table>
             </div>
 
@@ -176,6 +194,7 @@ const Admin = () => {
               <button>다음 &gt;</button>
             </div>
           </div>
+
         </div>
       </div>
 
