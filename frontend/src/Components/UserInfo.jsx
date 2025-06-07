@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import '../Style/userinfo.css';
+import '../Style/Userinfo.css';
 
 // user, onClose 받아오기기
 export default function UserInfo({ user, onClose }) {   
