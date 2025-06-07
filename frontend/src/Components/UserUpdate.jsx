@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
-import '../Style/userupdate.css';
+import '../Style/Userupdate.css';
 
 // 부모(Admin.jsx)로부터 onClose 함수 받기
 export default function UserUpdate({ onClose }) {

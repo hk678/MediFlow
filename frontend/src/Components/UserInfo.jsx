@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import '../Style/userinfo.css';
+import '../Style/Userinfo.css';
 
 export default function UserInfo({ user, onClose }) {
   const [formData, setFormData] = useState({

@@ -1,5 +1,9 @@
-import "../Style/Admin.css";
+
+import "../Style/Mainpage.css";  // 공통 헤더/스탯카드 스타일
+import "../Style/Admin.css";     // Admin 전용 스타일
 import React, { useState, useEffect } from "react";
+import { Search, User, Users, Bed, AlertCircle, AlertTriangle } from 'lucide-react';
+import logoutIcon from '../assets/images/logout-icon.png';
 import UserUpdate from "./UserUpdate";
 import UserInfo from "./UserInfo";
 import axios from "axios";
@@ -66,68 +70,125 @@ const Admin = () => {
   );
 
   return (
-    <div className="dashboard-container">
-      {/* 상단 검색창 & 관리자 표시 */}
-      <div className="dashboard-header">
-        {/* 로고고 */}
-        <span className="logo-text">MediFlow</span>
-        {/* 검색창창 */}
-        <input
-          type="text"
-          placeholder="Search"
-          className="search-input"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <div className="user-info">
-          <span className="user-icon">👤</span>
-          <span className="user-name">관리자</span>
-        </div>
-      </div>
-
-      {/* 그래프 영역 */}
-      <div className="dashboard-graph">
-        <p>📊 여기에 그래프 들어감</p>
-      </div>
-
-      {/* 사용자 관리 테이블 */}
-      <div className="dashboard-table-section">
-        <div className="table-header">
-          <span>사용자 관리</span>
-          <button className="add-button" onClick={openUpdateModal}>추가</button>
-        </div>
-
-        {/* 테이블 내용 */}
-        <div className="table-scroll-wrapper">
-          <table className="user-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Last login</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.map((user, index) => (
-                <tr key={index}>
-                  <td>{user.userId}</td>
-                  <td onClick={() => handleUserClick(user)} className="clickable-name">
-                    {user.userName}
-                  </td>
-                  <td>{user.userRole}</td>
-                  <td>{user.lastLogin || user.createdAt}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+    <div className="medical-dashboard admin-page">
+      <div className="dashboard-content">
+        {/* 공통 헤더 스타일 사용 (mainpage.css) */}
+        <div className="header">
+          <div className="header-content">
+            <div className="header-left">
+              <div className="logo">
+                <span className="logo-text">MediFlow</span>
+              </div>
+              <div className="search-container">
+                <Search className="search-icon" />
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="search-input"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="user-info">
+              <User className="user-icon" />
+              <span className="user-name">관리자</span>
+              <div className="logout-button">
+                <img src={logoutIcon} alt="logout" className="logout-icon" />
+                <span className="logout-text">Logout</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* 페이지네이션 */}
-        <div className="pagination">
-          <button>&lt; 이전</button>
-          <span>1</span>
-          <button>다음 &gt;</button>
+        {/* 공통 스탯카드 스타일 사용 (mainpage.css) */}
+        <div className="stats-grid">
+          <div className="stat-card">
+            <div className="stat-content">
+              <Users className="stat-icon blue" />
+              <div>
+                <div className="stat-number blue">15</div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="stat-card">
+            <div className="stat-content">
+              <Bed className="stat-icon blue" />
+              <div>
+                <div className="stat-number blue">8/15</div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="stat-card stat-card-danger">
+            <div className="stat-content">
+              <AlertCircle className="stat-icon red" />
+              <div className="stat-text">
+                <div className="stat-label">관리 대상</div>
+                <div className="stat-number red">3</div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="stat-card stat-card-warning">
+            <div className="stat-content">
+              <AlertTriangle className="stat-icon yellow" />
+              <div className="stat-text">
+                <div className="stat-label">신규 가입</div>
+                <div className="stat-number yellow">2</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Admin 전용 영역 - Admin.css 스타일 사용 */}
+        <div className="admin-content">
+          {/* 그래프 영역 */}
+          <div className="admin-graph">
+            <p>📊 관리자 통계 그래프</p>
+          </div>
+
+          {/* 사용자 관리 테이블 */}
+          <div className="admin-table-section">
+            <div className="admin-table-header">
+              <span>사용자 관리</span>
+              <button className="admin-add-button" onClick={openUpdateModal}>추가</button>
+            </div>
+
+            {/* 테이블 내용 */}
+            <div className="admin-table-scroll-wrapper">
+              <table className="admin-user-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Last login</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredUsers.map((user, index) => (
+                    <tr key={index}>
+                      <td>{user.userId}</td>
+                      <td onClick={() => handleUserClick(user)} className="clickable-name">
+                        {user.userName}
+                      </td>
+                      <td>{user.userRole}</td>
+                      <td>{user.lastLogin || user.createdAt}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* 페이지네이션 */}
+            <div className="admin-pagination">
+              <button>&lt; 이전</button>
+              <span>1</span>
+              <button>다음 &gt;</button>
+            </div>
+          </div>
         </div>
       </div>
 
