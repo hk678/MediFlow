@@ -4,27 +4,40 @@ import UserUpdate from "./UserUpdate";
 import UserInfo from "./UserInfo";
 import axios from "axios";
 
-
 const Admin = () => {
-  // 모달 상태 추가
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState(null); // "update" 또는 "info"
-  const [userList, setUserList] = useState(["S"]);
-
-  // 사용자 목록 받아오기
-  useEffect(()=> {
-    axios.get("http://localhost:8081/api/admin/users").then((res)=>{
-      console.log("백엔드 응답보기",res.data)
-      setUserList(res.data);
-    })
-  },[]);
-  ///--------받아오기끗----------------------
-
-  // 검색 상태
+  const [userList, setUserList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
-  // 선택한 사용자 정보 상태
   const [selectedUser, setSelectedUser] = useState(null);
+  const [daily, setDaily] = useState([""]);
+
+  // 사용자 목록 불러오기 함수 (재사용 가능)
+  const fetchUsers = () => {
+    axios.get("http://localhost:8081/api/admin/users")
+      .then((res) => {
+        console.log("백엔드 응답보기", res.data);
+        setUserList(res.data);
+      });
+  };
+  
+  // 처음 한 번만 사용자 목록 로딩
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  //daily 불러오기기
+  const fetchDaily = () => {
+    axios. get("http://localhost:8081/api/admin/daily")
+    .then((res)=>{
+      console.log("데이터 응답보기",res.data)
+      setDaily(res.data)
+    })
+  }
+  
+useEffect(()=> {
+  fetchDaily();
+},[])
 
   // 추가 버튼 클릭 시 모달 열기
   const openUpdateModal = () => {
@@ -39,25 +52,16 @@ const Admin = () => {
     setShowModal(true);
   };
 
-  // 모달 닫기
-  const closeModal = () => {
+  //  모달 닫기 + 필요 시 목록 새로고침
+  const closeModal = (refresh = false) => {
     setShowModal(false);
     setModalType(null);
+    if (refresh) {
+      fetchUsers(); //  변경: 수정 후 최신 데이터 반영
+    }
   };
 
-  // // 사용자 리스트
-  // const userList = [
-  //   { id: "124545", name: "이도은", position: "의사", lastLogin: "2025-05-29 11:55:44" },
-  //   { id: "254545", name: "김하늘", position: "간호사", lastLogin: "2025-05-29 11:54:11" },
-  //   { id: "777777", name: "홍길동", position: "기타", lastLogin: "2025-06-02 13:25:17" },
-  //   { id: "124545", name: "이도은", position: "의사", lastLogin: "2025-05-29 11:55:44" },
-  //   { id: "254545", name: "김하늘", position: "간호사", lastLogin: "2025-05-29 11:54:11" },
-  //   { id: "777777", name: "홍길동", position: "기타", lastLogin: "2025-06-02 13:25:17" },
-  //   { id: "254545", name: "김하늘", position: "간호사", lastLogin: "2025-05-29 11:54:11" },
-  //   { id: "777777", name: "홍길동", position: "기타", lastLogin: "2025-06-02 13:25:17" },
-  // ];
-
-  // 검색어 기반 필터링
+  // 검색 필터링
   const filteredUsers = userList.filter(
     (user) =>
       user.userId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -69,9 +73,7 @@ const Admin = () => {
     <div className="dashboard-container">
       {/* 상단 검색창 & 관리자 표시 */}
       <div className="dashboard-header">
-        {/* 로고고 */}
         <span className="logo-text">MediFlow</span>
-        {/* 검색창창 */}
         <input
           type="text"
           placeholder="Search"
@@ -97,7 +99,6 @@ const Admin = () => {
           <button className="add-button" onClick={openUpdateModal}>추가</button>
         </div>
 
-        {/* 테이블 내용 */}
         <div className="table-scroll-wrapper">
           <table className="user-table">
             <thead>
@@ -123,7 +124,6 @@ const Admin = () => {
           </table>
         </div>
 
-        {/* 페이지네이션 */}
         <div className="pagination">
           <button>&lt; 이전</button>
           <span>1</span>

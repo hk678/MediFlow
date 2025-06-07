@@ -94,6 +94,7 @@ public class AdminService {
     private UserDto convertToDto(User user) {
         return UserDto.builder()
                 .userId(user.getUserId())
+                .password(user.getPassword())
                 .userName(user.getUserName())
                 .userRole(user.getUserRole())
                 .createdAt(user.getCreatedAt())

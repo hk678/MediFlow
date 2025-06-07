@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import '../Style/userinfo.css';
+import axios from "axios";
+
 
 export default function UserInfo({ user, onClose }) {
   const [formData, setFormData] = useState({
@@ -14,7 +16,7 @@ export default function UserInfo({ user, onClose }) {
     if (user) {
       setFormData({
         userId: user.userId || '',
-        password: '',
+        password: user.password || '',
         userName: user.userName || '',
         userRole: user.userRole || ''
       });
@@ -36,14 +38,64 @@ export default function UserInfo({ user, onClose }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  //사용자 정보 수정----------
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('사용자 정보:', formData);
+    try{
+      const response = await  axios.put(
+        `http://localhost:8081/api/admin/users/${formData.userId}`,
+        formData
+      );
+
+      console.log("수정된거:",response.data);
+      alert("수정 되었습니다.")
+      if (onClose) onClose(true); // 수정됨을 알림
+    } catch (err){
+      console.error("오류 : ", err)
+    }
   };
 
   const handleClose = () => {
     if (onClose) onClose();
   };
+// 수정 끝---------
+
+// 삭제 시작----------
+
+const handleDelelte = async (e) => {
+   if (!window.confirm("정말 삭제하시겠습니까?")) return;
+
+   try {
+    await axios.delete(`http://localhost:8081/api/admin/users/${formData.userId}`);
+    alert('삭제되었습니다.')
+    if (onClose) onClose(true);
+   } catch(err){
+    console.log("삭제 실패 : ", err)
+    alert("삭제 실패패")
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//- 삭제 끗
+
+
+
+
 
   return (
     <div className="user-info-modal">
@@ -127,7 +179,7 @@ export default function UserInfo({ user, onClose }) {
                   type="radio"
                   id="other"
                   name="userRole"
-                  value="기타"
+                  value="관리자"
                   className="radio-input"
                   checked={formData.userRole === "관리자"}
                   onChange={handleInputChange}
@@ -142,7 +194,7 @@ export default function UserInfo({ user, onClose }) {
           <button className="submit-button" onClick={handleSubmit}>
             수정
           </button>
-          <button className="submit-button" onClick={handleSubmit}>
+          <button className="submit-button-del" onClick={handleDelelte}>
             삭제
           </button>
         </div>

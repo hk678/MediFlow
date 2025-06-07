@@ -1,21 +1,10 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
+import axios from "axios"; // ✅ axios import
 import '../Style/userupdate.css';
 
-// 부모(Admin.jsx)로부터 onClose 함수 받기
 export default function UserUpdate({ onClose }) {
-  
-const handleSave = () => {
-  console.log("ID:", userData.id);
-  console.log("PW:", userData.password);
-  console.log("Name:", userData.name);
-  console.log("Position:", userData.position);
-  handleClose(); // 👉 저장 후 모달 닫기
-};
-
-
-
-  // 사용자 정보 (입력 가능)
+  // ✅ 사용자 정보 상태
   const [userData, setUserData] = useState({
     id: '',
     password: '',
@@ -23,11 +12,28 @@ const handleSave = () => {
     position: ''
   });
 
+  // ✅ 저장 클릭 시 axios로 POST 요청
+  const handleSave = async () => {
+    const payload = {
+      userId: userData.id,
+      password: userData.password,
+      userName: userData.name,
+      userRole: userData.position,
+    };
 
+    try {
+      await axios.post("http://localhost:8081/api/admin/users", payload); // 서버 주소 맞게 설정
+      alert("사용자 등록 성공!");
+      onClose(true); // 등록 성공 시 모달 닫고 목록 새로고침
+    } catch (error) {
+      console.error("등록 실패", error);
+      alert("등록 실패");
+    }
+  };
 
-
+  // 모달 닫기 함수
   const handleClose = () => {
-    onClose();
+    onClose(false);
   };
 
   return (
@@ -42,9 +48,8 @@ const handleSave = () => {
           </button>
         </div>
 
-        {/* 정보 표시 영역 */}
+        {/* 입력 폼 */}
         <div className="user-form">
-          {/* ID 입력 */}
           <div className="input-group">
             <label className="input-label">ID</label>
             <input
@@ -52,10 +57,10 @@ const handleSave = () => {
               className="user-data"
               value={userData.id}
               onChange={(e) => setUserData({ ...userData, id: e.target.value })}
+              required
             />
           </div>
 
-          {/* PW 입력 */}
           <div className="input-group">
             <label className="input-label">PW</label>
             <input
@@ -63,10 +68,10 @@ const handleSave = () => {
               className="user-data"
               value={userData.password}
               onChange={(e) => setUserData({ ...userData, password: e.target.value })}
+              required
             />
           </div>
 
-          {/* Name 입력 */}
           <div className="input-group">
             <label className="input-label">Name</label>
             <input
@@ -74,56 +79,32 @@ const handleSave = () => {
               className="user-data"
               value={userData.name}
               onChange={(e) => setUserData({ ...userData, name: e.target.value })}
+              required
             />
           </div>
 
-          {/* Position 선택 */}
           <div className="input-group">
             <label className="input-label">Position</label>
             <div className="radio-group">
-              <div className="radio-item">
-                <input
-                  type="radio"
-                  id="doctor"
-                  name="position"
-                  value="의사"
-                  className="radio-input"
-                  checked={userData.position === '의사'}
-                  onChange={(e) => setUserData({ ...userData, position: e.target.value })}
-                />
-                <label htmlFor="doctor" className="radio-label">의사</label>
-              </div>
-
-              <div className="radio-item">
-                <input
-                  type="radio"
-                  id="nurse"
-                  name="position"
-                  value="간호사"
-                  className="radio-input"
-                  checked={userData.position === '간호사'}
-                  onChange={(e) => setUserData({ ...userData, position: e.target.value })}
-                />
-                <label htmlFor="nurse" className="radio-label">간호사</label>
-              </div>
-
-              <div className="radio-item">
-                <input
-                  type="radio"
-                  id="other"
-                  name="position"
-                  value="기타"
-                  className="radio-input"
-                  checked={userData.position === '기타'}
-                  onChange={(e) => setUserData({ ...userData, position: e.target.value })}
-                />
-                <label htmlFor="other" className="radio-label">기타</label>
-              </div>
+              {["의사", "간호사", "관리자"].map((role) => (
+                <div className="radio-item" key={role}>
+                  <input
+                    type="radio"
+                    id={role}
+                    name="position"
+                    value={role}
+                    className="radio-input"
+                    checked={userData.position === role}
+                    onChange={(e) => setUserData({ ...userData, position: e.target.value })}
+                  />
+                  <label htmlFor={role} className="radio-label">{role}</label>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* 버튼 영역 */}
+        {/* 버튼 */}
         <div className="button-container">
           <button className="submit-button" onClick={handleSave}>저장</button>
         </div>
