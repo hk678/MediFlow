@@ -1,12 +1,13 @@
 package kr.bigdata.web.repository;
 
-import kr.bigdata.web.entity.MedicalHistory;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import kr.bigdata.web.entity.MedicalHistory;
 
 @Repository
 public interface MedicalHistoryRepository extends JpaRepository<MedicalHistory, Long> {
@@ -23,4 +24,5 @@ public interface MedicalHistoryRepository extends JpaRepository<MedicalHistory, 
 
     // 특정 방문과 사용자의 히스토리 조회
     List<MedicalHistory> findByVisitIdAndUserIdOrderByRecordTimeDesc(String visitId, String userId);
+
 }

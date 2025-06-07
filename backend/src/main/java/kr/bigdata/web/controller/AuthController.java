@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import kr.bigdata.web.dto.LoginRequest;
 
 @RestController
@@ -45,7 +44,5 @@ public class AuthController {
             return ResponseEntity.status(401).body(Map.of("message", "로그인 실패!"));
         }
     }
-
-
 
 }

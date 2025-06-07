@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import lombok.Setter;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
 	
 	@Id
@@ -29,7 +31,7 @@ public class User {
     private String userName;
 
     @Column(name = "USER_ROLE", nullable = false, length = 20)
-    private String userRole;
+    private String userRole; // '의사', '간호사', '관리자', '기타'
 
     @Column(name = "CREATED_AT", nullable = false)
     private LocalDateTime createdAt;

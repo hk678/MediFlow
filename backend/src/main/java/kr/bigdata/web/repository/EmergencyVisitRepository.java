@@ -7,4 +7,5 @@ import kr.bigdata.web.entity.EmergencyVisit;
 
 @Repository
 public interface EmergencyVisitRepository extends JpaRepository<EmergencyVisit, String> {
+
 }

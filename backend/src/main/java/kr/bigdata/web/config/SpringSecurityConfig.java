@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import kr.bigdata.web.service.CustomUserDetailsService;
 
@@ -17,7 +16,7 @@ import kr.bigdata.web.service.CustomUserDetailsService;
 @EnableWebSecurity
 public class SpringSecurityConfig {
 	
-    @SuppressWarnings({ "deprecation", "removal" })
+	@SuppressWarnings({ "deprecation", "removal" })
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -29,8 +28,10 @@ public class SpringSecurityConfig {
                     "/api/auth/logout",
                     "/api/patients/**",
                     "/api/visits/**",
-                    "/api/history/**"
+                    "/api/history/**",
+                    "/api/admin/**" // 개발 중 임시로 모든 접근 허용
                 ).permitAll()
+                // .requestMatchers("/api/admin/**").hasRole("ADMIN") // 운영시 주석 해제
                 .anyRequest().authenticated()
             )
             .logout(logout -> logout
@@ -42,7 +43,7 @@ public class SpringSecurityConfig {
             );
         return http.build();
     }
-
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
