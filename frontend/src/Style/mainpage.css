@@ -1,10 +1,11 @@
-/* MainPage.css - 의료 대시보드 전용 CSS */
+/* MainPage.css - 개선된 반응형 의료 대시보드 CSS */
 
 /* 컨테이너 - 배경색만 담당, 화면 전체 덮음 */
 .medical-dashboard {
   min-height: 100vh;
   background-color: #e5e7eb;
   padding: 0;
+  overflow-x: hidden;
 }
 
 /* 컨텐츠 영역 - 너비 제한 및 중앙 정렬 */
@@ -12,26 +13,35 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Header - OldEmergencyRoom.css와 동일한 스타일 */
+/* Header - 개선된 레이아웃 */
 .header {
   background-color: transparent;
   box-shadow: none;
   padding: 1rem;
   margin-bottom: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .header-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
+  gap: 2rem;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 2rem;
+  /* 로고와 검색창 사이 간격 줄임 */
+  flex: 1;
+  min-width: 0;
 }
 
 .logo {
@@ -43,15 +53,17 @@
   align-items: center;
   justify-content: center;
   padding: 0;
+  flex-shrink: 0;
 }
 
 .logo-text {
   color: #3b82f6;
-  font-size: 30px;
+  font-size: 50px;
   font-weight: bold;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   cursor: pointer;
   transition: opacity 0.2s;
+  white-space: nowrap;
 }
 
 .logo-text:hover {
@@ -60,8 +72,11 @@
 
 .search-container {
   position: relative;
-  margin-left: 3rem;
-  margin-top: 5px;
+  flex: 1;
+  max-width: 400px;
+  /* 검색창 최대 너비 증가 */
+  min-width: 250px;
+  /* 최소 너비 설정 */
 }
 
 .search-icon {
@@ -76,12 +91,15 @@
 }
 
 .search-input {
-  padding: 10px 15px;
-  width: 300px;
-  border-radius: 20px;
+  padding: 12px 45px 12px 20px;
+  /* 패딩 조정으로 검색창 길이 개선 */
+  width: 100%;
+  border-radius: 25px;
   border: 1px solid #ccc;
   outline: none;
-  }
+  box-sizing: border-box;
+  font-size: 16px;
+}
 
 .search-input:focus {
   border-color: #3b82f6;
@@ -92,7 +110,8 @@
 .user-info {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .user-icon {
@@ -105,18 +124,19 @@
   color: #2E81FD;
   font-weight: 800;
   font-size: 20px;
+  white-space: nowrap;
 }
 
 /* Logout 버튼 스타일 */
 .logout-button {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   border: none;
   background: none;
-  padding: 6px 10px;
+  padding: 8px 12px;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
   transition: background-color 0.2s;
 }
 
@@ -128,6 +148,7 @@
   color: rgb(0, 0, 0);
   font-weight: bold;
   font-size: 18px;
+  white-space: nowrap;
 }
 
 .logout-icon {
@@ -135,32 +156,33 @@
   color: white;
 }
 
-/* Stats cards - OldEmergencyRoom.css와 동일한 스타일 */
+/* Stats cards - 개선된 반응형 */
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  /* gap: 1rem; */
+  display: flex;
+  gap: 1rem;
   margin-bottom: 1.5rem;
-  padding-left: 20px;
-}  
-
-@media (min-width: 768px) {
-  .stats-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-left: 20px;
-  }
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  /* 기본적으로 일자 배열 */
+  overflow-x: auto;
+  /* 작은 화면에서 스크롤 가능 */
 }
 
 .stat-card {
   background-color: white;
   border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  height: 90px;
+  min-width: 240px;
+  /* 최소 너비 보장 */
+  flex: 1;
+  max-width: 280px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  height: 80px;
-  width: 240px;
-  display: flex;
   transition: transform 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
 }
 
 .stat-card:hover {
@@ -171,33 +193,21 @@
 .stat-content {
   display: flex;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  flex-direction: row;
   gap: 15px;
+  padding: 0 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .stat-text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
+  gap: 4px;
 }
 
-/* 위험 환자, 주의 환자만 별도 스타일링 */
-.stat-card:nth-child(3) .stat-content,
-.stat-card:nth-child(4) .stat-content {
-  justify-content: space-between;
-}
+*/
 
-/* 위험 환자, 주의 환자의 텍스트 부분 */
-.stat-card:nth-child(3) .stat-text,
-.stat-card:nth-child(4) .stat-text {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 15px;
-}
-
+/* 위험 환자, 주의 환자 카드 특별 스타일링 */
 .stat-card-danger .stat-content,
 .stat-card-warning .stat-content {
   justify-content: space-between;
@@ -206,16 +216,21 @@
 
 .stat-card-danger .stat-text,
 .stat-card-warning .stat-text {
-  text-align: right;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+  text-align: left;
 }
 
 .stat-label {
   font-size: 20px;
-  line-height: 16px;
-  font-weight: 1200;
+  line-height: 18px;
+  font-weight: 700;
   color: #000000;
   cursor: pointer;
   transition: opacity 0.2s;
+  white-space: nowrap;
 }
 
 .stat-label:hover {
@@ -225,6 +240,7 @@
 .stat-icon {
   width: 1.75rem;
   height: 1.75rem;
+  flex-shrink: 0;
 }
 
 .stat-icon.blue {
@@ -241,8 +257,9 @@
 
 .stat-number {
   font-size: 28px;
-  line-height: 26px;
+  line-height: 28px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .stat-number.blue {
@@ -262,6 +279,7 @@
   display: flex;
   justify-content: flex-end;
   margin-bottom: 1rem;
+  padding: 0 20px;
 }
 
 .toggle-wrapper {
@@ -274,6 +292,7 @@
   font-size: 0.875rem;
   color: #4b5563;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .toggle-switch {
@@ -285,6 +304,7 @@
   border-radius: 9999px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  flex-shrink: 0;
 }
 
 .toggle-switch.active {
@@ -307,13 +327,14 @@
   transform: translateX(1rem);
 }
 
-/* 테이블 */
+/* 테이블 - 반응형 개선 */
 .table-container {
   background-color: white;
   border-radius: 20px;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   overflow: hidden;
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  margin: 0 20px;
 }
 
 .table-container.show {
@@ -330,11 +351,13 @@
 
 .table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 800px;
 }
 
 .table-header {
@@ -342,12 +365,13 @@
 }
 
 .table-header-cell {
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1rem;
   text-align: left;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #374151;
   letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
 .table-row {
@@ -368,7 +392,7 @@
 }
 
 .table-cell {
-  padding: 1rem 1.5rem;
+  padding: 1rem;
   white-space: nowrap;
   font-size: 0.875rem;
   color: #111827;
@@ -392,6 +416,7 @@
   font-weight: 600;
   border-radius: 9999px;
   display: inline-block;
+  white-space: nowrap;
 }
 
 .label-danger {
@@ -414,6 +439,7 @@
   color: #2563eb;
   cursor: pointer;
   transition: color 0.2s;
+  white-space: nowrap;
 }
 
 .history-link:hover {
@@ -444,6 +470,7 @@
   color: #6b7280;
   cursor: pointer;
   transition: color 0.2s;
+  white-space: nowrap;
 }
 
 .pagination-text:hover {
@@ -467,10 +494,15 @@
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .modal-content {
   background-color: transparent;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
 }
 
 /* 필터 상태 표시 */
@@ -490,6 +522,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -500,78 +533,297 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-/* 반응형 */
-@media (max-width: 640px) {
+/* 반응형 미디어 쿼리 - 크게 개선 */
+
+/* 중간 사이즈 (1024px 이하) */
+@media (max-width: 1024px) {
   .dashboard-content {
     padding: 1rem;
   }
-  
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
+
   .header-left {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-    width: 100%;
+    gap: 1.5rem;
   }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
-    margin-left: 0;
-  }
-  
+
   .search-container {
-    margin-left: 0;
-    margin-top: 0;
-    width: 100%;
+    max-width: 300px;
+    min-width: 200px;
   }
-  
-  .search-input {
-    width: 100%;
+
+  .stats-grid {
+    gap: 0.75rem;
   }
-  
-  
-  .toggle-container {
-    justify-content: flex-start;
+
+  .stat-card {
+    min-width: 200px;
+    height: 85px;
   }
-  
+
   .table-container {
-    border-radius: 10px;
+    margin: 0 10px;
   }
-  
-  .table-header-cell,
-  .table-cell {
-    padding: 0.5rem;
-    font-size: 0.75rem;
-  }
-  
-  .pagination-info {
-    gap: 1rem;
+
+  .toggle-container {
+    padding: 0 10px;
   }
 }
 
-@media (max-width: 480px) {
+/* 태블릿 사이즈 (900px 이하) */
+@media (max-width: 900px) {
+  .stats-grid {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 0 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+  }
+
+  .stats-grid::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .stats-grid::-webkit-scrollbar-track {
+    background: #f7fafc;
+    border-radius: 3px;
+  }
+
+  .stats-grid::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+  }
+
+  .stat-card {
+    min-width: 220px;
+    flex-shrink: 0;
+  }
+}
+
+/* 모바일 사이즈 (768px 이하) */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .header-left {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .search-container {
+    max-width: none;
+    min-width: auto;
+    width: 100%;
+  }
+
+  .user-info {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .logo-text {
+    font-size: 36px;
+    text-align: center;
+  }
+
+  .stats-grid {
+    margin: 0;
+    padding: 0;
+    gap: 0.75rem;
+  }
+
+  .stat-card {
+    min-width: 200px;
+  }
+
+  .toggle-container {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .table-container {
+    border-radius: 10px;
+    margin: 0;
+  }
+
+  .table {
+    min-width: 700px;
+  }
+
+  .table-header-cell,
+  .table-cell {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .pagination-info {
+    gap: 2rem;
+  }
+}
+
+/* 작은 모바일 (640px 이하) */
+@media (max-width: 640px) {
+  .dashboard-content {
+    padding: 0.75rem;
+  }
+
+  .header {
+    padding: 0.5rem;
+  }
+
+  .logo-text {
+    font-size: 28px;
+  }
+
+  .search-input {
+    padding: 10px 40px 10px 16px;
+    font-size: 14px;
+  }
+
   .user-info {
     flex-direction: column;
     gap: 8px;
+    align-items: center;
   }
-  
+
   .user-name {
     font-size: 16px;
+    text-align: center;
   }
-  
+
   .logout-text {
     font-size: 14px;
   }
-  
+
+  .stats-grid {
+    gap: 0.5rem;
+    padding: 0;
+  }
+
+  .stat-card {
+    min-width: 180px;
+    height: 80px;
+  }
+
+  .stat-content {
+    gap: 10px;
+    padding: 0 15px;
+  }
+
+  .stat-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
   .stat-number {
     font-size: 24px;
   }
-  
+
   .stat-label {
     font-size: 16px;
+  }
+
+  .table {
+    min-width: 600px;
+  }
+
+  .table-header-cell,
+  .table-cell {
+    padding: 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .pagination-info {
+    gap: 1rem;
+    font-size: 0.75rem;
+  }
+
+  .toggle-label {
+    font-size: 0.75rem;
+  }
+}
+
+/* 아주 작은 모바일 (480px 이하) */
+@media (max-width: 480px) {
+  .dashboard-content {
+    padding: 0.5rem;
+  }
+
+  .header {
+    padding: 0.25rem;
+  }
+
+  .logo-text {
+    font-size: 24px;
+  }
+
+  .search-input {
+    padding: 8px 35px 8px 12px;
+    font-size: 14px;
+  }
+
+  .stats-grid {
+    gap: 0.5rem;
+  }
+
+  .stat-card {
+    min-width: 160px;
+    height: 75px;
+  }
+
+  .stat-content {
+    gap: 8px;
+    padding: 0 12px;
+  }
+
+  .stat-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .stat-number {
+    font-size: 20px;
+  }
+
+  .stat-label {
+    font-size: 14px;
+  }
+
+  .table {
+    min-width: 500px;
+  }
+
+  .table-header-cell,
+  .table-cell {
+    padding: 0.4rem;
+    font-size: 0.65rem;
+  }
+
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+}
+
+/* 스크롤바 개선 */
+@media (max-width: 900px) {
+  .table-wrapper::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  .table-wrapper::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+  }
+
+  .table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
   }
 }
