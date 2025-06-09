@@ -54,6 +54,14 @@ public class AuthController {
 
 			System.out.println("인증 성공: " + authentication.getName());
 			System.out.println("권한: " + authentication.getAuthorities());
+			
+			// 유저 엔티티 가져와서 lastLogin 업데이트
+			User user = userRepository.findByUserId(authentication.getName()).orElse(null);
+			if (user != null) {
+			    user.setLastLogin(LocalDateTime.now());
+			    userRepository.save(user);
+			    System.out.println("마지막 로그인 시간 갱신됨: " + user.getLastLogin());
+			}
 
 			// SecurityContext에 인증 정보 설정
 			SecurityContextHolder.getContext().setAuthentication(authentication);
