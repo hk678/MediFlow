@@ -88,6 +88,7 @@ const resetFilter = () => {
         name: patient.name,
         age: patient.age,
         sex: patient.sex,
+        visitId: patient.visitId
       },
     });
   };

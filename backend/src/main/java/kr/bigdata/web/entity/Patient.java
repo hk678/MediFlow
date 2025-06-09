@@ -20,7 +20,7 @@ public class Patient {
     private String patientName;
 
     @Column(name = "GENDER", nullable = false)
-    private boolean gender;  // true = 남성, false = 여성
+    private int gender;  // 0:남, 1:여
 
     @Column(name = "AGE", nullable = false)
     private int age;

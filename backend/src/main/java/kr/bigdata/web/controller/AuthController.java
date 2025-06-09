@@ -1,5 +1,6 @@
 package kr.bigdata.web.controller;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +19,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import kr.bigdata.web.dto.LoginRequest;
+import kr.bigdata.web.entity.User;
+import kr.bigdata.web.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
 	private final AuthenticationManager authenticationManager;
+	private final UserRepository userRepository;
 
 	@Autowired
-	public AuthController(AuthenticationManager authenticationManager) {
+	public AuthController(AuthenticationManager authenticationManager,
+			UserRepository userRepository) {
 		this.authenticationManager = authenticationManager;
+		this.userRepository = userRepository;
 	}
 
 	// 로그인
@@ -49,6 +55,14 @@ public class AuthController {
 			System.out.println("인증 성공: " + authentication.getName());
 			System.out.println("권한: " + authentication.getAuthorities());
 
+			// 유저 엔티티 가져와서 lastLogin 업데이트
+						User user = userRepository.findByUserId(authentication.getName()).orElse(null);
+						if (user != null) {
+						    user.setLastLogin(LocalDateTime.now());
+						    userRepository.save(user);
+						    System.out.println("마지막 로그인 시간 갱신됨: " + user.getLastLogin());
+						}
+			
 			// SecurityContext에 인증 정보 설정
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
