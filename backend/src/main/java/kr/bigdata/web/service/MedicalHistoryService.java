@@ -63,10 +63,11 @@ public class MedicalHistoryService {
         MedicalHistory history = medicalHistoryRepository.findById(historyId)
                 .orElseThrow(() -> new RuntimeException("히스토리를 찾을 수 없습니다: " + historyId));
         
+        // 프론트 연결을 위해 잠시 주석처리
         // 작성자 본인만 수정 가능하도록 체크
-        if (!history.getUserId().equals(userId)) {
-            throw new RuntimeException("본인이 작성한 히스토리만 수정할 수 있습니다.");
-        }
+//        if (!history.getUserId().equals(userId)) {
+//            throw new RuntimeException("본인이 작성한 히스토리만 수정할 수 있습니다.");
+//        }
         
         history.setContent(request.getContent());
         MedicalHistory updatedHistory = medicalHistoryRepository.save(history);
@@ -82,10 +83,11 @@ public class MedicalHistoryService {
         MedicalHistory history = medicalHistoryRepository.findById(historyId)
                 .orElseThrow(() -> new RuntimeException("히스토리를 찾을 수 없습니다: " + historyId));
         
+        //프론트 연결을 위해 잠시 주석처리
         // 작성자 본인만 삭제 가능하도록 체크
-        if (!history.getUserId().equals(userId)) {
-            throw new RuntimeException("본인이 작성한 히스토리만 삭제할 수 있습니다.");
-        }
+//        if (!history.getUserId().equals(userId)) {
+//            throw new RuntimeException("본인이 작성한 히스토리만 삭제할 수 있습니다.");
+//        }
         
         medicalHistoryRepository.deleteById(historyId);
     }
