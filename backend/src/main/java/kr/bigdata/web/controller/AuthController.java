@@ -1,5 +1,6 @@
 package kr.bigdata.web.controller;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +19,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import kr.bigdata.web.dto.LoginRequest;
+import kr.bigdata.web.entity.User;
+import kr.bigdata.web.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
 	private final AuthenticationManager authenticationManager;
+	private final UserRepository userRepository;
 
 	@Autowired
-	public AuthController(AuthenticationManager authenticationManager) {
+	public AuthController(AuthenticationManager authenticationManager,
+			UserRepository userRepository) {
 		this.authenticationManager = authenticationManager;
+		this.userRepository = userRepository;
 	}
 
 	// 로그인
