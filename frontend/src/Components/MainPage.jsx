@@ -33,7 +33,8 @@ useEffect(() => {
         ktas: p.acuity,
         complaint: p.chiefComplaint,
         label: p.label === 1 ? '위험' : (p.label === 0 ? '주의' : '경미'),
-        history: '확인'
+        history: '확인',
+        visitId: p.visitId
       }));
       setPatientData(transformed);
     })
