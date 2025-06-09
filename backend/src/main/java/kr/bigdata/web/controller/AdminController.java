@@ -33,6 +33,7 @@ public class AdminController {
     private final AiPredictionRepository aiPredictionRepository;
     
     // 사용자 목록 조회
+    // http://localhost:8081/api/admin/users
     @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getUsers() {
         log.info("사용자 목록 조회 요청");
@@ -41,6 +42,13 @@ public class AdminController {
     }
 
     // 사용자 정보 추가
+    // http://localhost:8081/api/admin/users
+//    {
+//        "userId": "test01",
+//        "password": "1234",
+//        "userName": "황민하",
+//        "userRole": "기타"
+//    }
     @PostMapping("/users")
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto, HttpServletRequest request) {
 
@@ -65,6 +73,13 @@ public class AdminController {
     }
     
     // 사용자 정보 수정
+//    http://localhost:8081/api/admin/users/admin01
+//    {
+//        "userId": "admin01",
+//        "password": "1234",
+//        "userName": "박의정",
+//        "userRole": "관리자"
+//    }
     @PutMapping("/users/{userId}")
     public ResponseEntity<UserDto> updateUser(@PathVariable String userId, @RequestBody UserDto userDto) {
     	log.info("사용자 정보 수정 요청: {}", userId);
@@ -78,6 +93,7 @@ public class AdminController {
     }
 
     // 사용자 정보 삭제
+    // http://localhost:8081/api/admin/users/test01
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable String userId, HttpServletRequest request) {
 
@@ -94,6 +110,7 @@ public class AdminController {
     }
     
     // 데일리 점수 통계
+    // http://localhost:8081/api/admin/daily
     @GetMapping("/daily")
     public List<DailyScoreStatDto> getDailyStats() {
         List<Object[]> results = aiPredictionRepository.getDailyAveragePreScoreRaw();
