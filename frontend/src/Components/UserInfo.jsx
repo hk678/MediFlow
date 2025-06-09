@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import '../Style/userinfo.css';
+import '../Style/Userinfo.css';
 import axios from "axios";
 
 
@@ -42,16 +42,16 @@ export default function UserInfo({ user, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('사용자 정보:', formData);
-    try{
-      const response = await  axios.put(
+    try {
+      const response = await axios.put(
         `http://localhost:8081/api/admin/users/${formData.userId}`,
         formData
       );
 
-      console.log("수정된거:",response.data);
+      console.log("수정된거:", response.data);
       alert("수정 되었습니다.")
       if (onClose) onClose(true); // 수정됨을 알림
-    } catch (err){
+    } catch (err) {
       console.error("오류 : ", err)
     }
   };
@@ -59,23 +59,24 @@ export default function UserInfo({ user, onClose }) {
   const handleClose = () => {
     if (onClose) onClose();
   };
-// 수정 끝---------
+  // 수정 끝---------
 
-// 삭제 시작----------
+  // 삭제 시작----------
 
-const handleDelelte = async (e) => {
-   if (!window.confirm("정말 삭제하시겠습니까?")) return;
+  const handleDelelte = async (e) => {
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
-   try {
-    await axios.delete(`http://localhost:8081/api/admin/users/${formData.userId}`);
-    alert('삭제되었습니다.')
-    if (onClose) onClose(true);
-   } catch(err){
-    console.log("삭제 실패 : ", err)
-    alert("삭제 실패패")
+    try {
+      await axios.delete(`http://localhost:8081/api/admin/users/${formData.userId}`);
+      alert('삭제되었습니다.')
+      if (onClose) onClose(true);
+    } catch (err) {
+      console.log("삭제 실패 : ", err)
+      alert("삭제 실패패")
+    }
+
   }
 
-}
 
 
 
@@ -90,8 +91,7 @@ const handleDelelte = async (e) => {
 
 
 
-
-//- 삭제 끗
+  //- 삭제 끗
 
 
 

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PatientSummaryDto {
     private String pid;
+    private String visitId;
     private String name;
     private int age;
     private boolean gender;
