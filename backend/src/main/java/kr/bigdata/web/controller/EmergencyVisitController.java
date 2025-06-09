@@ -3,6 +3,7 @@ package kr.bigdata.web.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import kr.bigdata.web.dto.VisitSummaryDto;
 import kr.bigdata.web.repository.EmergencyVisitRepository;
 import lombok.RequiredArgsConstructor;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
