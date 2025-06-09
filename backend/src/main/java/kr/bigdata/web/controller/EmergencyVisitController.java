@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import kr.bigdata.web.dto.BedStatusDto;
 import kr.bigdata.web.dto.FinalizeDispositionRequest;
 import kr.bigdata.web.dto.VisitDetailDto;
 import kr.bigdata.web.dto.VisitSummaryDto;
@@ -71,4 +72,14 @@ public class EmergencyVisitController {
         );
         return ResponseEntity.ok().build();
     }
+    
+    // 가용 병상 조회 api
+    @GetMapping("/visits/{visitId}/available-beds")
+    public ResponseEntity<BedStatusDto> getAvailableBeds(@PathVariable String visitId) {
+        BedStatusDto result = emergencyVisitService.getAvailableBedInfoForVisit(visitId);
+        if (result == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(result);
+    }
+
+
 }
