@@ -1,34 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../Style/Detail.css";
 import { useParams, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, ChevronLeft, ChevronRight } from 'lucide-react';
+import axios from "axios";
 
 function Detail() {
+  const [history, setHistory] = useState(null);
   const { pid } = useParams();
   const location = useLocation();
-  const { name, age, sex } = location.state || {};
+  const { name, age, sex, visitId} = location.state || {};
+  const [historyData, setHistoryData] = useState([]);
+  const [info, setInfo] = useState([]);
+  const [patientInfo, setPatientInfo] = useState(null);
+
   const navigate = useNavigate();
+
+  
   
   // 좌측 패널 토글 상태
   const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
+  // 인포 부분 만들기
+  useEffect(() => {
+    axios.get(`http://localhost:8081/api/visits/${pid}`)
+      .then((res) => {
+        console.log(res.data[0]); //  visitId 포함 확인
+        setInfo(res.data[0]);
+        setPatientInfo(res.data[0]);
+      })
+      .catch((err) => console.error(err));
+  }, [pid]);
+
+
+  // 인포 끗 -----
+
+
+  //히스토리 띄우기
+    useEffect(() => {
+    if (visitId) {
+      axios
+        .get(`http://localhost:8081/api/visits/${visitId}/history`)
+        .then((res) => setHistoryData(res.data))
+        .catch((err) => console.error("히스토리 불러오기 실패", err));
+    }
+  }, [visitId]);
+
+
 
   // 샘플 데이터
-  const patientInfo = {
-    date: "2025-08-06",
-    adm: "38967799",
-    bed: "A05",
-    ktas: "2",
-    pain: "7",
-    chiefComplaint: "Chest pain",
-    arrivalTransport: "UNKNOWN"
-  };
+  // const patientInfo = {
+  //   date: "2025-08-06",
+  //   adm: "38967799",
+  //   bed: "A05",
+  //   ktas: "2",
+  //   pain: "7",
+  //   chiefComplaint: "Chest pain",
+  //   arrivalTransport: "UNKNOWN"
+  // };
+  
 
-  const historyData = [
-    { number: 1, createdTime: "2025-08-07 11:53:44", content: "혈압 호흡 회복중" },
-    { number: 2, createdTime: "2025-08-07 10:15:44", content: "환자 의식 잃어서 대처" },
-    { number: 3, createdTime: "2025-08-07 10:13:44", content: "혈압, 호흡 회복중" }
-  ];
 
   return (
     <div className="detail-page">
@@ -164,8 +194,8 @@ function Detail() {
                 <ArrowLeft className="back-icon" />
               </button>
               <div className="patient-title">
-                <span className="patient-name">{name || "황채리"}</span>
-                <span className="patient-info">{age || "32"}세 | {sex || "여자"}</span>
+                <span className="patient-name">{name}</span>
+                <span className="patient-info">{age}세 | {sex}</span>
               </div>
             </div>
             <div className="header-right">
@@ -183,26 +213,24 @@ function Detail() {
             <div className="info-section">
               <div className="section-header">
                 <h3>Information</h3>
-                <button className="btn-primary">재진</button>
+                <button className="btn-primary">과거기록</button>
               </div>
               <div className="info-table">
                 <div className="info-table-header">
                   <span>Date</span>
                   <span>ADM</span>
                   <span>Bed</span>
-                  <span>KTAS</span>
                   <span>Pain</span>
                   <span>Chief Complaint</span>
                   <span>Arrival Transport</span>
                 </div>
                 <div className="info-table-row">
-                  <span>{patientInfo.date}</span>
-                  <span>{patientInfo.adm}</span>
-                  <span>{patientInfo.bed}</span>
-                  <span>{patientInfo.ktas}</span>
-                  <span>{patientInfo.pain}</span>
-                  <span>{patientInfo.chiefComplaint}</span>
-                  <span>{patientInfo.arrivalTransport}</span>
+                  <span>{patientInfo?.admissionTime}</span>
+                  <span>{patientInfo?.visitId}</span>
+                  <span>{patientInfo?.bedNumber}</span>
+                  <span>{patientInfo?.pain}</span>
+                  <span>{patientInfo?.chiefComplaint}</span>
+                  <span>{patientInfo?.arrivalTransport}</span>
                 </div>
               </div>
             </div>
@@ -235,7 +263,6 @@ function Detail() {
                 </div>
               </div>
             </div>
-
             {/* History 섹션 */}
             <div className="history-section">
               <h3>History</h3>
@@ -245,13 +272,21 @@ function Detail() {
                   <span>Created time</span>
                   <span>Content</span>
                 </div>
-                {historyData.map((item) => (
-                  <div key={item.number} className="history-table-row">
-                    <span>{item.number}</span>
-                    <span>{item.createdTime}</span>
-                    <span>{item.content}</span>
+            {/* 실험 시작 */}
+                {historyData.length > 0 ? (
+                  historyData.map((item, idx) => (
+                    <div key={idx} className="history-table-row">
+                      <span>{item.number || idx + 1}</span>
+                      <span>{item.recordTime}</span>
+                      <span>{item.content}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="history-table-row">
+                    <span colSpan="3">과거 기록이 없습니다.</span>
                   </div>
-                ))}
+                )}
+            {/* 실험 끗 */}
               </div>
             </div>
           </div>

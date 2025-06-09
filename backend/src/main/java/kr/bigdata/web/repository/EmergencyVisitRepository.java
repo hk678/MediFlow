@@ -20,7 +20,7 @@ public interface EmergencyVisitRepository extends JpaRepository<EmergencyVisit, 
 
     // 환자별 방문 리스트 요약 (VisitSummaryDto로 반환)
     @Query("SELECT new kr.bigdata.web.dto.VisitSummaryDto(" +
-           "e.admissionTime, e.bedNumber, e.acuity, e.pain, e.chiefComplaint, e.arrivalTransport, e.status) " +
+           "e.visitId, e.admissionTime, e.bedNumber, e.acuity, e.pain, e.chiefComplaint, e.arrivalTransport, e.status) " +
            "FROM EmergencyVisit e " +
            "WHERE e.patient.patientId = :patientId " +
            "ORDER BY e.admissionTime DESC")
