@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -45,13 +45,13 @@ public class MedicalHistoryController {
         log.info("POST /api/visits/{}/history", visitId);
         
         try {
-        	
+        	// 테스트용으로 잠깐 주석처리
             // 세션에서 사용자 ID 가져오기
-            String userId = (String) session.getAttribute("userId");
-            if (userId == null) {
-                return ResponseEntity.status(401).build();
-            }
-        	// String userId = "doctor01";
+//            String userId = (String) session.getAttribute("userId");
+//            if (userId == null) {
+//                return ResponseEntity.status(401).build();
+//            }
+        	 String userId = "doctor01";
             
             // 요청 내용 검증
             if (request.getContent() == null || request.getContent().trim().isEmpty()) {
@@ -81,12 +81,13 @@ public class MedicalHistoryController {
         log.info("PUT /api/history/{}", historyId);
         
         try {
-            // 세션에서 사용자 ID 가져오기
-            String userId = (String) session.getAttribute("userId");
-            if (userId == null) {
-                return ResponseEntity.status(401).build();
-            }
-        	// String userId = "doctor01";
+        	// 프론트와의 연결을 위해 잠시 주석
+//            // 세션에서 사용자 ID 가져오기
+//            String userId = (String) session.getAttribute("userId");
+//            if (userId == null) {
+//                return ResponseEntity.status(401).build();
+//            }
+        	String userId = "doctor01";
             
             // 요청 내용 검증
             if (request.getContent() == null || request.getContent().trim().isEmpty()) {
@@ -118,14 +119,16 @@ public class MedicalHistoryController {
         log.info("DELETE /api/history/{}", historyId);
         
         try {
+        	// 백, 프론트 연결 실험을 위해 주석처리
             // 세션에서 사용자 ID 가져오기
-            String userId = (String) session.getAttribute("userId");
-            if (userId == null) {
-                return ResponseEntity.status(401).build();
-            }
-        	// String userId = "doctor01";
-            
-            medicalHistoryService.deleteHistory(historyId, userId);
+//            String userId = (String) session.getAttribute("userId");
+//            if (userId == null) {
+//                return ResponseEntity.status(401).build();
+//            }
+//        	// String userId = "doctor01";
+//            
+//            medicalHistoryService.deleteHistory(historyId, userId);
+            medicalHistoryService.deleteHistory(historyId, null); // 이 줄지우고 나중에 추가하면됨
             return ResponseEntity.ok().build();
             
         } catch (RuntimeException e) {
