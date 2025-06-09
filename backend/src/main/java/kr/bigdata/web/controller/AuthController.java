@@ -84,6 +84,7 @@ public class AuthController {
                 if (user != null) {
                     user.setLastLogin(LocalDateTime.now());
                     userRepository.save(user);
+                    System.out.println("마지막 로그인 시간 갱신됨: " + user.getLastLogin());
                 }
             } catch (Exception e) {
                 System.out.println("로그인 시간 업데이트 실패: " + e.getMessage());

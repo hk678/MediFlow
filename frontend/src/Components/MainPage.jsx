@@ -37,7 +37,8 @@ const MainPage = () => {
           ktas: p.acuity,
           complaint: p.chiefComplaint,
           label: p.label === 1 ? '위험' : (p.label === 0 ? '주의' : '경미'),
-          history: '확인'
+          history: '확인',
+          visitId: p.visitId
         }));
         setPatientData(transformed);
       })
@@ -45,7 +46,6 @@ const MainPage = () => {
         console.error('환자 데이터 불러오기 실패:', error);
       });
   }, []);
-
 
   // 필터링(주의,위험,전체)환자보기
   const handleWarningClick = () => {
@@ -84,6 +84,7 @@ const MainPage = () => {
         name: patient.name,
         age: patient.age,
         sex: patient.sex,
+        visitId: patient.visitId
       },
     });
   };

@@ -4,19 +4,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import kr.bigdata.web.dto.PatientRequest;
+import kr.bigdata.web.dto.AiPredictionResponseDto;
 import kr.bigdata.web.entity.AiPrediction;
-import kr.bigdata.web.entity.EmergencyVisit;
 import kr.bigdata.web.service.AiPredictionService;
 
 @RestController
 @RequestMapping("/api/visits")
 public class AiPredictionController {
 	
+//  컨트롤러에서 엔티티를 바로 사용할 수 있도록 static 메소드 만듬
+    public static AiPredictionResponseDto toDto(AiPrediction entity) {
+    	AiPredictionResponseDto dto = new AiPredictionResponseDto();
+        dto.setPreId(entity.getPreId());
+        dto.setPreType(entity.getPreType());
+        dto.setPreTime(entity.getPreTime());
+        dto.setPreDisposition(entity.getPreDisposition());
+        dto.setPreScore(entity.getPreScore());
+        dto.setReason(entity.getReason());
+        if (entity.getEmergencyVisit() != null) {
+            dto.setVisitId(entity.getEmergencyVisit().getVisitId());
+        }
+        return dto;
+    }
+
 	private final AiPredictionService aiPredictionService;
 
     @Autowired
@@ -26,21 +39,24 @@ public class AiPredictionController {
 
     // 1차 예측 (입실 시 자동)
     @PostMapping("/{visitId}/predict/admission")
-    public AiPrediction predictAdmission(@PathVariable String visitId) {
-        // 입실 예측은 DB의 visitId로 바로 처리 (PatientRequest는 Service에서 내부 생성)
-        return aiPredictionService.predictAdmission(visitId);
+    public AiPredictionResponseDto predictAdmission(@PathVariable String visitId) {
+        AiPrediction entity = aiPredictionService.predictAdmission(visitId);
+        return toDto(entity);  // DTO로 변환해서 반환!
     }
 
     // 2차 예측 (퇴실/최종)
     @PostMapping("/{visitId}/predict/discharge")
-    public AiPrediction predictDischarge(@PathVariable String visitId) {
-        // 퇴실 예측도 visitId로만 처리 (Service에서 LabResults 등 내부 처리)
-        return aiPredictionService.predictDischarge(visitId);
+    public AiPredictionResponseDto predictDischarge(@PathVariable String visitId) {
+        AiPrediction entity = aiPredictionService.predictDischarge(visitId);
+        return toDto(entity);  // DTO로 변환해서 반환!
     }
 
     // 예측 결과 조회
     @GetMapping("/{visitId}/predictions")
-    public AiPrediction getPrediction(@PathVariable String visitId) {
-        return aiPredictionService.getPredictionByVisitId(visitId);
+    public AiPredictionResponseDto getPrediction(@PathVariable String visitId) {
+        AiPrediction entity = aiPredictionService.getPredictionByVisitId(visitId);
+        return toDto(entity); // DTO로 변환해서 반환
     }
+
+
 }
