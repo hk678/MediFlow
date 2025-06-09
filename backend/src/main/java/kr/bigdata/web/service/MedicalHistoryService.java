@@ -1,23 +1,26 @@
 package kr.bigdata.web.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kr.bigdata.web.dto.MedicalHistoryDto;
 import kr.bigdata.web.entity.MedicalHistory;
 import kr.bigdata.web.entity.User;
 import kr.bigdata.web.repository.MedicalHistoryRepository;
 import kr.bigdata.web.repository.UserRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
+@Builder
 public class MedicalHistoryService {
     
     private final MedicalHistoryRepository medicalHistoryRepository;

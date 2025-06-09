@@ -128,7 +128,9 @@ export default function History({ patient, onClose }) {
             <span className="patient-name">{patientName}</span>
             <span className="patient-id">[{patientPid}]</span>
           </div>
+
           <button className="close-button1" onClick={onClose}>
+
             <X className="close-icon1" />
           </button>
         </div>
