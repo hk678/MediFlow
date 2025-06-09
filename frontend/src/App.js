@@ -22,7 +22,7 @@ function App() {
           <Route path="/detail/:pid" element={<Detail />} />
           <Route path="/history/:pid" element={<History />} />
         </Routes>
-      </Router>
+      </Router> 
 
 
       {/* 상세 페이지지 

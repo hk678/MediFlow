@@ -42,7 +42,7 @@ const Admin = () => {
 useEffect(()=> {
   fetchDaily();
 },[])
-
+// -------------------------- 끗----------------------------------
   // 추가 버튼 클릭 시 모달 열기
   const openUpdateModal = () => {
     setModalType("update");
@@ -106,47 +106,7 @@ useEffect(()=> {
           </div>
         </div>
 
-        {/* 공통 스탯카드 스타일 사용 (mainpage.css) */}
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-content">
-              <Users className="stat-icon blue" />
-              <div>
-                <div className="stat-number blue">15</div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="stat-card">
-            <div className="stat-content">
-              <Bed className="stat-icon blue" />
-              <div>
-                <div className="stat-number blue">8/15</div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="stat-card stat-card-danger">
-            <div className="stat-content">
-              <AlertCircle className="stat-icon red" />
-              <div className="stat-text">
-                <div className="stat-label">관리 대상</div>
-                <div className="stat-number red">3</div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="stat-card stat-card-warning">
-            <div className="stat-content">
-              <AlertTriangle className="stat-icon yellow" />
-              <div className="stat-text">
-                <div className="stat-label">신규 가입</div>
-                <div className="stat-number yellow">2</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+        
         {/* Admin 전용 영역 - Admin.css 스타일 사용 */}
         <div className="admin-content">
           {/* 그래프 영역 */}

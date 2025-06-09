@@ -1,11 +1,30 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { X } from "lucide-react";
 import '../Style/History.css';
+import axios from "axios";
 
 export default function History({ patient, onClose }) {
   const [inputValue, setInputValue] = useState('');
+  // 조회회
+  const [history, setHistory] = useState([]);
+  //조회끝끝
   const patientName = patient.name;
   const patientPid = patient.pid;
+
+  //조회불러오기 시작
+  const fetchHistory = () => {
+    axios.get(`http://localhost:8081/api/visits/${patient.visitId}/history`)
+      .then((res)=> {
+        console.log("history보기 :", res.data)
+        console.log("💡 현재 환자 visitId:", patient.visitId);
+      })
+  }
+
+  useEffect(()=>{
+    fetchHistory();
+  }, [])
+
+  // 조회 불러오기 끗끗
 
   const historyEntries = [
     { id: 1, date: "2025-05-28 00:00:00", description: "혈압 호흡 회복중" },
@@ -37,7 +56,7 @@ export default function History({ patient, onClose }) {
             <span className="patient-id">[{patientPid}]</span>
           </div>
           <button className="close-button" onClick={onClose}>
-            <X className="close-icon" />
+            <X className="close-icon1" />
           </button>
         </div>
 
