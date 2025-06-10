@@ -15,21 +15,6 @@ import kr.bigdata.web.service.AiPredictionService;
 @RequestMapping("/api/visits")
 public class AiPredictionController {
 	
-//  컨트롤러에서 엔티티를 바로 사용할 수 있도록 static 메소드 만듬
-    public static AiPredictionResponseDto toDto(AiPrediction entity) {
-    	AiPredictionResponseDto dto = new AiPredictionResponseDto();
-        dto.setPreId(entity.getPreId());
-        dto.setPreType(entity.getPreType());
-        dto.setPreTime(entity.getPreTime());
-        dto.setPreDisposition(entity.getPreDisposition());
-        dto.setPreScore(entity.getPreScore());
-        dto.setReason(entity.getReason());
-        if (entity.getEmergencyVisit() != null) {
-            dto.setVisitId(entity.getEmergencyVisit().getVisitId());
-        }
-        return dto;
-    }
-
 	private final AiPredictionService aiPredictionService;
 
     @Autowired
@@ -40,22 +25,21 @@ public class AiPredictionController {
     // 1차 예측 (입실 시 자동)
     @PostMapping("/{visitId}/predict/admission")
     public AiPredictionResponseDto predictAdmission(@PathVariable String visitId) {
-        AiPrediction entity = aiPredictionService.predictAdmission(visitId);
-        return toDto(entity);  // DTO로 변환해서 반환!
+        AiPrediction prediction = aiPredictionService.predictAdmission(visitId);
+        return aiPredictionService.toDto(prediction);
     }
-
     // 2차 예측 (퇴실/최종)
     @PostMapping("/{visitId}/predict/discharge")
     public AiPredictionResponseDto predictDischarge(@PathVariable String visitId) {
-        AiPrediction entity = aiPredictionService.predictDischarge(visitId);
-        return toDto(entity);  // DTO로 변환해서 반환!
+        AiPrediction prediction = aiPredictionService.predictDischarge(visitId);
+        return aiPredictionService.toDto(prediction);
     }
 
     // 예측 결과 조회
     @GetMapping("/{visitId}/predictions")
     public AiPredictionResponseDto getPrediction(@PathVariable String visitId) {
-        AiPrediction entity = aiPredictionService.getPredictionByVisitId(visitId);
-        return toDto(entity); // DTO로 변환해서 반환
+        AiPrediction prediction = aiPredictionService.getPredictionByVisitId(visitId);
+        return aiPredictionService.toDto(prediction);
     }
 
 
