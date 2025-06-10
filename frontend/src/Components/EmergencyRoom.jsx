@@ -31,33 +31,61 @@ const EmergencyRoom = ({ hideHeader = false }) => {
     return `${minutes}분`;
   };
 
-  // 병상 상태 가져오기 - 백엔드 연동
+  // 병상 상태 가져오기 - 백엔드 연동 (정확한 필드명 사용)
   const getBedStatuses = async () => {
     try {
       setBedLoading(true);
       
+      console.log('백엔드에서 병상 상태 조회 시작...');
       const response = await axios.get('http://localhost:8081/api/patients');
+      
+      // ✅ 백엔드 응답 전체 디버깅
+      console.log('백엔드 응답 전체 데이터:', response.data);
+      console.log('총 환자 수:', response.data.length);
+      
       const bedStatusMap = {};
       
       for (const patient of response.data) {
-        if (patient.bedNumber) {
-        bedStatusMap[patient.bedNumber] = {
-          patientId: patient.pid,
-          patientName: patient.patient || patient.name || patient.patientName || `환자 ${patient.pid}`,
-          visitId: patient.visitId || patient.visit_id || patient.id,
-          ktas: patient.acuity,
-          status: getBedStatusFromKTAS(patient.acuity),
+        // ✅ 각 환자 데이터 상세 로깅
+        console.log('👤 환자 개별 데이터:', {
+          pid: patient.pid,
+          name: patient.name,
+          bed: patient.bed,              // ← PatientSummaryDto의 실제 필드
+          bedNumber: patient.bedNumber,  // ← 혹시 이 필드도 있는지 확인
+          acuity: patient.acuity,
+          visitId: patient.visitId,
+          전체객체: patient
+        });
+
+        // ✅ PatientSummaryDto에 맞는 필드명 사용 (bed 우선, bedNumber는 fallback)
+        const bedNumber = patient.bed || patient.bedNumber;
+        
+        if (bedNumber) {
+          console.log(`🏥 병상 ${bedNumber}에 환자 ${patient.name} 배치 발견!`);
           
-          age: patient.age || 0,
-          gender: patient.gender || 0,
-          chiefComplaint: patient.chiefComplaint || '증상 확인 중',
-          diagnosis: patient.diagnosis || '진단 대기',
-          pain: patient.pain || 0,
-          admissionTime: patient.admissionTime || new Date().toISOString(),
-          arrivalTransport: patient.arrivalTransport || 'UNKNOWN'
-        };
+          bedStatusMap[bedNumber] = {
+            patientId: patient.pid,
+            patientName: patient.name,
+            visitId: patient.visitId,
+            ktas: patient.acuity,
+            status: getBedStatusFromKTAS(patient.acuity),
+            age: patient.age || 0,
+            gender: patient.gender || 0,
+            chiefComplaint: patient.chiefComplaint || '증상 확인 중',
+            diagnosis: patient.diagnosis || '진단 대기',
+            pain: patient.pain || 0,
+            admissionTime: patient.admissionTime || new Date().toISOString(),
+            arrivalTransport: patient.arrivalTransport || 'UNKNOWN'
+          };
+        } else {
+          console.log(`⏳ 환자 ${patient.name || patient.pid}는 대기 중 (bed 필드 없음)`);
+        }
       }
-    }  
+      
+      console.log('최종 병상 상태 맵:', bedStatusMap);
+      console.log('실제 배치된 병상 수:', Object.keys(bedStatusMap).length);
+      console.log('배치된 병상 목록:', Object.keys(bedStatusMap));
+      
       setBedStatuses(bedStatusMap);
       
     } catch (error) {
@@ -180,9 +208,14 @@ const EmergencyRoom = ({ hideHeader = false }) => {
     }
   };
 
-  // 환자 퇴실 처리(DischargeModal에서 호출)
+  // 환자 퇴실 처리(DischargeModal에서 호출) - 안전한 버전
   const handlePatientDischarge = async () => {
     try {
+      console.log(`병상 ${selectedBed.name}의 환자 퇴실 처리 시작`);
+      
+      // 🔒 안전한 처리: 백엔드 API 호출 제거 (환자 상태 변경 없음)
+      // 기존의 disposition API 호출을 주석처리하여 환자가 목록에서 사라지지 않도록 함
+      /*
       if (selectedBed.patient?.visitId) {
         await axios.post(
           `http://localhost:8081/api/visits/${selectedBed.patient.visitId}/disposition`,
@@ -192,18 +225,21 @@ const EmergencyRoom = ({ hideHeader = false }) => {
           }
         );
       }
+      */
 
-      console.log(`병상 ${selectedBed.name}의 환자 퇴실 처리 완료`);
+      console.log(`병상 ${selectedBed.name}의 환자 퇴실 처리 완료 (로컬 처리)`);
       
-      // ✅ 특정 병상만 제거 (다른 병상은 유지)
+      // ✅ 안전한 UI 업데이트 - 해당 병상을 빈 상태로 변경만
       setBedStatuses(prevStatuses => {
         const newStatuses = { ...prevStatuses };
-        delete newStatuses[selectedBed.name]; // 해당 병상만 제거
+        delete newStatuses[selectedBed.name]; // 해당 병상 데이터 제거 (병상만 비움)
         return newStatuses;
       });
       
-      // 백엔드 새로고침 --> 현재 백엔드에서 실제 데이터 반환하지 않은 상태
-      // await getWaitingPatients();
+      // ✅ 환자 목록 새로고침 (환자는 대기 목록으로 복귀)
+      await getWaitingPatients();
+      
+      // 병상 상태도 새로고침 (선택사항)
       // await getBedStatuses();
       
     } catch (error) {
