@@ -1,10 +1,12 @@
 package kr.bigdata.web.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import kr.bigdata.web.entity.AiPrediction;
 import kr.bigdata.web.entity.EmergencyVisit;
@@ -20,20 +22,19 @@ public interface AiPredictionRepository extends JpaRepository<AiPrediction, Long
     // 3. (선택) visitId, preType 조건으로 예측 결과
     List<AiPrediction> findByEmergencyVisit_VisitIdAndPreType(String visitId, String preType);
 
-    // 4. (선택) 데일리 평균 점수 통계 (Raw Object[] 반환)
-    @Query("""
-        SELECT 
-            FUNCTION('DATE_FORMAT', p.preTime, '%Y-%m-%d') as date,
-            AVG(CAST(p.preScore AS double)) as averageScore
-        FROM AiPrediction p
-        WHERE p.preScore IS NOT NULL
-        GROUP BY FUNCTION('DATE_FORMAT', p.preTime, '%Y-%m-%d')
-        ORDER BY FUNCTION('DATE_FORMAT', p.preTime, '%Y-%m-%d')
-        """)
-    List<Object[]> getDailyAveragePreScoreRaw();
-    
     // 가장 최신 퇴실 예측 1건만 조회
     Optional<AiPrediction> findTopByEmergencyVisit_VisitIdAndPreTypeOrderByPreTimeDesc(String visitId, String preType);
-
     
+    @Query(value = """
+        SELECT 
+            FLOOR(pre_score / 10) * 10 as score_range,
+            COUNT(*) as count
+        FROM ai_prediction 
+        WHERE pre_time BETWEEN :startDate AND :endDate
+          AND pre_score IS NOT NULL
+        GROUP BY FLOOR(pre_score / 10) * 10
+        ORDER BY score_range
+        """, nativeQuery = true)
+    List<Object[]> getWeeklyScoreStats(@Param("startDate") LocalDateTime startDate, 
+                                       @Param("endDate") LocalDateTime endDate);
 }

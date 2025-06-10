@@ -7,7 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-
 public class LLMResult {
 	
 		@JsonProperty("risk_score")

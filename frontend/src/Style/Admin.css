@@ -6,41 +6,51 @@
   /* 메인페이지와 구분되는 배경색 */
 }
 
-/* Admin 전용 컨텐츠 영역 */
-.admin-content {
-  margin-top: 2rem;
-}
-
-/* 📊 Admin 그래프 영역 */
+/* Admin 그래프 영역 */
 .admin-graph {
   background-color: white;
   padding: 20px;
+  margin: 20px;
   border-radius: 15px;
   text-align: center;
+  margin-top: 0px;
   margin-bottom: 30px;
-  border: 2px solid #54a6ff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* 👥 Admin 사용자 관리 영역 전체 박스 */
+/* Admin 사용자 관리 영역 전체 박스 */
 .admin-table-section {
   border-radius: 15px;
   padding: 20px;
 }
 
-/* 👤 Admin 사용자 관리 상단 제목 + 버튼 */
-.admin-table-header {
+/* 그래프 상단 제목 */
+.admin-graph-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 15px;
+  margin-left: 33px;
   margin-bottom: 15px;
   font-weight: bold;
   font-size: 18px;
   color: #333;
 }
 
+/* Admin 사용자 관리 상단 제목 + 버튼 */
+.admin-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  margin-left: 15px;
+  font-weight: bold;
+  font-size: 18px;
+  color: #333;
+}
+
 .admin-add-button {
-  background-color: #4e89ff;
+  background-color: #9a74f3;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -54,7 +64,7 @@
   background-color: #3a73e8;
 }
 
-/* 🔧 Admin 테이블을 감싸는 스크롤 제한 div */
+/* Admin 테이블을 감싸는 스크롤 제한 div */
 .admin-table-scroll-wrapper {
   max-height: 400px;
   overflow-y: auto;
@@ -63,7 +73,7 @@
   border: 1px solid #e1e5e9;
 }
 
-/* 🎨 Admin 스크롤바 스타일 */
+/* Admin 스크롤바 스타일 */
 .admin-table-scroll-wrapper::-webkit-scrollbar {
   width: 8px;
 }
@@ -77,7 +87,7 @@
   background-color: #f1f1f1;
 }
 
-/* 📋 Admin 테이블 스타일 */
+/* Admin 테이블 스타일 */
 .admin-user-table {
   width: 100%;
   border-collapse: collapse;
@@ -88,7 +98,7 @@
 
 /* Admin 테이블 헤더 */
 .admin-user-table thead {
-  background-color: #cce0ff;
+  background-color: #e1d1eb;
 }
 
 .admin-user-table th {
@@ -134,7 +144,7 @@
   text-decoration: underline;
 }
 
-/* 📄 Admin 페이지네이션 */
+/* Admin 페이지네이션 */
 .admin-pagination {
   display: flex;
   justify-content: center;
@@ -145,13 +155,11 @@
 }
 
 .admin-pagination button {
-  background-color: none;
+  background-color: #f0f4f8;
   color: black;
   border: none;
   padding: 8px 12px;
-  /* border-radius: 6px; */
   cursor: pointer;
-  /* transition: background-color 0.2s; */
 }
 
 .admin-pagination button:hover {
