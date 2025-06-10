@@ -45,11 +45,11 @@ public class MedicalHistoryController {
 		try {
 			// 테스트용으로 잠깐 주석처리
 			// 세션에서 사용자 ID 가져오기
-//            String userId = (String) session.getAttribute("userId");
-//            if (userId == null) {
-//                return ResponseEntity.status(401).build();
-//            }
-			String userId = "doctor01";
+            String userId = (String) session.getAttribute("userId");
+            if (userId == null) {
+                return ResponseEntity.status(401).build();
+            }
+			//String userId = "doctor01";
 
 			// 요청 내용 검증
 			if (request.getContent() == null || request.getContent().trim().isEmpty()) {

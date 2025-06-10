@@ -15,10 +15,106 @@ function Detail() {
   const [info, setInfo] = useState([]);
   const [patientInfo, setPatientInfo] = useState(null);
   const navigate = useNavigate();
-  // 과거기록 버튼
-  const [showPastRecordModal, setShowPastRecordModal] = useState(false);
+  const [prediction, setPrediction] = useState('');
+  const [predictionReason, setPredictionReason] = useState('');
+  const [predictionScore, setPredictionScore] = useState('');
+  const [dischargePrediction, setDischargePrediction] = useState('');
+  const [dischargeReason, setDischargeReason] = useState('');
+  const [bedInfo,setBedInfo] = useState('');
 
-  // 🎯 과거 기록 존재 여부 상태 추가
+  // 최종 예측 
+// 실험 한번
+  const sendFinal = (visitId,dischargePrediction,dischargeReason) => {
+    axios.post(`http://localhost:8081/api/visits/${visitId}/disposition`, {
+      disposition: dischargePrediction,
+      reason: dischargeReason
+    }).then(res=>{
+      console.log("최종배치 확인",res)
+      console.log("visitId 타입 확인:", typeof visitId, visitId);
+    }).catch(err=>{
+      console.error("실패",err);
+      console.log("visitId 타입 확인:", typeof visitId, visitId);
+    });
+  };
+
+
+  // 최종 예측 끝 ----
+  // 2차 예측
+  useEffect(() => {
+    if (visitId) {
+      axios.post(`http://localhost:8081/api/visits/${visitId}/predict/discharge`)
+      .then(res => {
+        console.log("퇴실 예측 응답:", res.data);
+        setDischargePrediction(res.data.preDisposition);
+        setDischargeReason(res.data.reason);
+      })
+      .catch(err => {
+        console.error("퇴실 예측 실패:", err);
+        setDischargePrediction('예측 실패');
+      });
+    }
+  }, [visitId]);
+  
+  const renderDischargePrediction = () => {
+    if (dischargePrediction === '') return '예측 중...';
+    switch (String(dischargePrediction)) {
+      case '0': return '귀가';
+      case '1': return '일반 병동';
+      case '2': return '중환자실';
+      default: return `${dischargePrediction}`;
+    }
+  };
+  
+  
+  // 1차 예측 
+  
+  useEffect(() => {
+    if (visitId) {
+      axios.post(`http://localhost:8081/api/visits/${visitId}/predict/admission`)
+      .then(res => {
+        console.log("예측 응답:", res.data.preDisposition); //  응답 결과 로그
+        console.log("전체 예측 응답:", res.data);
+        setPrediction(res.data.preDisposition); // 0,1,2 로 불러와짐
+        setPredictionReason(res.data.reason);
+        setPredictionScore(res.data.preScore);
+      })
+      .catch(err => {
+        console.error('예측 실패:', err);
+        setPrediction('예측 실패');
+      });
+    }
+  }, [visitId]);
+  
+  // 알기쉽게 변환환
+  const renderPrediction = () => {
+    if (prediction === '') return '예측 중...';
+    switch (String(prediction)) {
+      case '0':
+        return '귀가';
+        case '1':
+          return '일반 병동';
+          case '2':
+            return '중환자실';
+            default:
+              return `${prediction}`;
+            }
+          };
+          
+          // 1차 예측 끝끝
+          
+          // 병상 들고오기
+          useEffect((visitId)=>{
+            axios.get(`http://localhost:8081/api/visits/${visitId}/available-beds`)
+              .then(res=>{
+                console.log("침대 확인",res.data.availableCount)
+                setBedInfo(res.data.availableCount);
+              })
+          },[visitId]);
+          
+          // 과거기록 버튼
+          const [showPastRecordModal, setShowPastRecordModal] = useState(false);
+          
+          // 🎯 과거 기록 존재 여부 상태 추가
   const [hasPastRecords, setHasPastRecords] = useState(false); // null: 확인 중, true/false: 결과
   const [checkingPastRecords, setCheckingPastRecords] = useState(true);
 
@@ -48,6 +144,7 @@ function Detail() {
   }, [pid]);
 
 
+
   // 인포 부분 끝 -----------------------------------------------
 
 
@@ -69,17 +166,6 @@ function Detail() {
   };
 
 
-  // 샘플 데이터
-  // const patientInfo = {
-  //   date: "2025-08-06",
-  //   adm: "38967799",
-  //   bed: "A05",
-  //   ktas: "2",
-  //   pain: "7",
-  //   chiefComplaint: "Chest pain",
-  //   arrivalTransport: "UNKNOWN"
-  // };
-  
 
   return (
     <div className="detail-page">
@@ -272,23 +358,23 @@ function Detail() {
                 <div className="figure-container">
                   <div className="figure-chart">
                     <div className="figure-needle"></div>
-                    <div className="figure-center">65</div>
+                    <div className="figure-center">{predictionScore}</div>
                   </div>
-                  <button className="disposition-btn-success">최종 배치</button>
+                  <button className="disposition-btn-success" onClick={() => sendFinal(visitId, dischargePrediction, dischargeReason)}>최종 배치</button>
                 </div>
                 <div className="prediction-info">
                   <div className="prediction-item">
                     <span className="label">입실 시 예측:</span>
-                    <span className="value">귀가</span>
+                    <span className="value">{renderPrediction()}</span>
                   </div>
                   <div className="prediction-item">
                     <span className="label">퇴실 시 예측:</span>
-                    <span className="value">일반 병동</span>
-                    <span className="sub-value">(가용 병상 수: 1/20)</span>
+                    <span className="value">{renderDischargePrediction()}</span>
+                    <span className="sub-value">(가용 병상 수: {bedInfo}/20)</span>
                   </div>
                   <div className="prediction-item">
                     <span className="label">예측 근거:</span>
-                    <span className="value">LLM이 왜 이렇게 최종 배치를 예측했는지 이유를 알려주는 블록</span>
+                    <span className="value">{predictionReason}</span>
                   </div>
                 </div>
               </div>
