@@ -1,6 +1,6 @@
 import "../Style/Mainpage.css";  // 공통 헤더/스탯카드 스타일
 import "../Style/Admin.css";     // Admin 전용 스타일
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Search, User, Users, Bed, AlertCircle, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import logoutIcon from '../assets/images/logout-icon.png';
@@ -9,6 +9,7 @@ import UserUpdate from "./UserUpdate";
 import UserInfo from "./UserInfo";
 import axios from "axios";
 import { useAuth } from './AuthContext'; // AuthContext 추가
+import WeeklyChart from './WeeklyChart';
 
 const Admin = () => {
   const [showModal, setShowModal] = useState(false);
@@ -18,6 +19,9 @@ const Admin = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [daily, setDaily] = useState([""]);
   const navigate = useNavigate();
+  const [weeklyData, setWeeklyData] = useState([]);
+  const [chartLoading, setChartLoading] = useState(true);
+  const [chartError, setChartError] = useState(null);
 
   // AuthContext 사용
   const { user, logout } = useAuth();
@@ -55,7 +59,7 @@ const Admin = () => {
   axios.defaults.withCredentials = true;
 
   // 사용자 목록 불러오기 함수 (재사용 가능)
-  const fetchUsers = () => {
+  const fetchUsers = useCallback(() => {
     axios.get("http://localhost:8081/api/admin/users", {
       withCredentials: true  // 세션 쿠키 포함
     })
@@ -72,39 +76,54 @@ const Admin = () => {
           navigate('/');
         }
       });
-  };
+  }, [navigate]);
 
   // 처음 한 번만 사용자 목록 로딩
   useEffect(() => {
     if (user?.userRole === '관리자') {
       fetchUsers();
     }
-  }, [user]);
+  }, [user, fetchUsers]);
 
-  //daily 불러오기기
-  const fetchDaily = () => {
-    axios.get("http://localhost:8081/api/admin/daily", {
-      withCredentials: true  // 세션 쿠키 포함
+  // 주간 데이터 불러오기 함수
+  const fetchWeeklyData = useCallback(() => {
+    setChartLoading(true);
+    axios.get("http://localhost:8081/api/admin/weekly", {
+      withCredentials: true
     })
       .then((res) => {
-        console.log("데이터 응답보기", res.data);
-        setDaily(res.data);
+        console.log("주간 데이터 응답보기", res.data);
+
+        // 데이터 변환
+        const transformedData = res.data.map(item => ({
+          preScore: `${item.preScore}-${item.preScore + 9}`,
+          lastWeek: item.lastWeekCount,
+          thisWeek: item.thisWeekCount
+        }));
+
+        setWeeklyData(transformedData);
+        setChartError(null);
       })
       .catch((error) => {
-        console.error("일일 데이터 조회 실패:", error);
-        // 403 에러 처리
+        console.error("주간 데이터 조회 실패:", error);
+        setChartError("주간 데이터를 불러오는데 실패했습니다.");
         if (error.response?.status === 403) {
           console.error("권한이 없습니다. 관리자 권한이 필요합니다.");
           navigate('/');
         }
+      })
+      .finally(() => {
+        setChartLoading(false);
       });
-  }
+  }, [navigate]);
 
+  // 기존 useEffect에 주간 데이터 로딩 추가
   useEffect(() => {
     if (user?.userRole === '관리자') {
-      fetchDaily();
+      fetchUsers();
+      fetchWeeklyData(); // 추가
     }
-  }, [user]);
+  }, [user, fetchUsers, fetchWeeklyData]);
 
   // 로그아웃 핸들러 추가
   const handleLogout = async () => {
@@ -118,23 +137,32 @@ const Admin = () => {
     }
   };
 
-  // 추가 버튼 클릭 시 모달 열기
-  const openUpdateModal = () => {
+  // 추가 버튼 클릭 시 모달 열기 - 수정된 버전
+  const openUpdateModal = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("추가 버튼 클릭됨"); // 디버깅용
+    setSelectedUser(null); // 추가 모드에서는 selectedUser를 null로 설정
     setModalType("update");
     setShowModal(true);
   };
 
-  // 이름 클릭 시 정보 모달 열기
-  const handleUserClick = (user) => {
-    setSelectedUser(user);
+  // 이름 클릭 시 정보 모달 열기 - 수정된 버전
+  const handleUserClick = (clickedUser, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("사용자 클릭됨:", clickedUser); // 디버깅용
+    setSelectedUser(clickedUser);
     setModalType("info");
     setShowModal(true);
   };
 
-  //  모달 닫기 + 필요 시 목록 새로고침
+  //  모달 닫기 + 필요 시 목록 새로고침 - 수정된 버전
   const closeModal = (refresh = false) => {
+    console.log("모달 닫기, 새로고침:", refresh); // 디버깅용
     setShowModal(false);
     setModalType(null);
+    setSelectedUser(null);
     if (refresh) {
       fetchUsers(); //  변경: 수정 후 최신 데이터 반영
     }
@@ -196,15 +224,23 @@ const Admin = () => {
         {/* Admin 전용 영역 - Admin.css 스타일 사용 */}
         <div className="admin-content">
           {/* 그래프 영역 */}
-          <div className="admin-graph">
-            <p>📊 관리자 통계 그래프</p>
-          </div>
+          <WeeklyChart
+            data={weeklyData}
+            loading={chartLoading}
+            error={chartError}
+          />
 
           {/* 사용자 관리 테이블 */}
           <div className="admin-table-section">
             <div className="admin-table-header">
               <span>사용자 관리</span>
-              <button className="admin-add-button" onClick={openUpdateModal}>추가</button>
+              <button
+                className="admin-add-button"
+                onClick={openUpdateModal}
+                type="button"
+              >
+                추가
+              </button>
             </div>
 
             {/* 테이블 내용 */}
@@ -219,14 +255,17 @@ const Admin = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredUsers.map((user, index) => (
-                    <tr key={index}>
-                      <td>{user.userId}</td>
-                      <td onClick={() => handleUserClick(user)} className="clickable-name">
-                        {user.userName}
-                      </td>
-                      <td>{user.userRole}</td>
-                      <td>{user.lastLogin || user.createdAt}</td>
+                  {filteredUsers.map((userData, index) => (
+                    <tr
+                      key={`user-${userData.userId || index}`}
+                      onClick={(e) => handleUserClick(userData, e)}
+                      className="clickable-name"
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <td>{userData.userId}</td>
+                      <td>{userData.userName}</td>
+                      <td>{userData.userRole}</td>
+                      <td>{userData.lastLogin || userData.createdAt}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -235,18 +274,22 @@ const Admin = () => {
 
             {/* 페이지네이션 */}
             <div className="admin-pagination">
-              <button>&lt; 이전</button>
+              <button type="button">&lt; 이전</button>
               <span>1</span>
-              <button>다음 &gt;</button>
+              <button type="button">다음 &gt;</button>
             </div>
           </div>
 
         </div>
       </div>
 
-      {/* 모달 조건 분기 */}
-      {showModal && modalType === "update" && <UserUpdate onClose={closeModal} />}
-      {showModal && modalType === "info" && <UserInfo user={selectedUser} onClose={closeModal} />}
+      {/* 모달 조건 분기 - 수정된 버전 */}
+      {showModal && modalType === "update" && (
+        <UserUpdate onClose={closeModal} />
+      )}
+      {showModal && modalType === "info" && selectedUser && (
+        <UserInfo user={selectedUser} onClose={closeModal} />
+      )}
     </div>
   );
 };

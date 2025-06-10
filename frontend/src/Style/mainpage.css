@@ -159,14 +159,17 @@
 /* Stats cards - 개선된 반응형 */
 .stats-grid {
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
   margin-bottom: 1.5rem;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   flex-wrap: nowrap;
   /* 기본적으로 일자 배열 */
   overflow-x: auto;
+<<<<<<< Updated upstream
   /* 작은 화면에서 스크롤 가능 */
+=======
+>>>>>>> Stashed changes
 }
 
 .stat-card {
@@ -174,10 +177,14 @@
   border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   height: 90px;
+<<<<<<< Updated upstream
   min-width: 240px;
   /* 최소 너비 보장 */
+=======
+  min-width: 200px;
+>>>>>>> Stashed changes
   flex: 1;
-  max-width: 280px;
+  max-width: 250px;
   display: flex;
   align-items: center;
   justify-content: center;
