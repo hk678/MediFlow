@@ -18,7 +18,6 @@ const MainPage = () => {
   const [labelFilter, setLabelFilter] = useState('전체');
   const [showEmergencyRoom, setShowEmergencyRoom] = useState(false);
 
-
   // AuthContext 사용
   const { user, isAuthenticated, logout } = useAuth();
 
@@ -26,29 +25,27 @@ const MainPage = () => {
   const [patientData, setPatientData] = useState([]);
 
   useEffect(() => {
-   axios.get('http://localhost:8081/api/patients')
-    .then(response => {
-      const rawData = response.data;
-      console.log(response)
-      const transformed = rawData.map(p => ({
-        pid: p.pid,
-        name: p.name,
-        age: p.age,
-        sex: p.gender ? 'M' : 'F', // boolean을 성별 문자열로
-        bed: p.bed,
-        ktas: p.acuity,
-        complaint: p.chiefComplaint,
-        label: p.label === 1 ? '위험' : (p.label === 0 ? '주의' : '경미'),
-        history: '확인',
-        visitId: p.visitId
-      }));
-      console.log(transformed)
-      setPatientData(transformed);
-    })
-    .catch(error => {
-      console.error('환자 데이터 불러오기 실패:', error);
-    });
-}, []);
+    axios.get('http://localhost:8081/api/patients')
+      .then(response => {
+        const rawData = response.data;
+        const transformed = rawData.map(p => ({
+          pid: p.pid,
+          name: p.name,
+          age: p.age,
+          sex: p.gender ? 'M' : 'F', // boolean을 성별 문자열로
+          bed: p.bed,
+          ktas: p.acuity,
+          complaint: p.chiefComplaint,
+          label: p.label === 1 ? '위험' : (p.label === 0 ? '주의' : '경미'),
+          history: '확인',
+          visitId: p.visitId
+        }));
+        setPatientData(transformed);
+      })
+      .catch(error => {
+        console.error('환자 데이터 불러오기 실패:', error);
+      });
+  }, []);
 
   // 필터링(주의,위험,전체)환자보기
   const handleWarningClick = () => {

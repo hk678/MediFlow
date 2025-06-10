@@ -29,7 +29,7 @@ public class SpringSecurityConfig {
         http
             // CORS 설정 추가
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf.disable())	
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .maximumSessions(1)
@@ -43,13 +43,12 @@ public class SpringSecurityConfig {
                     "/api/auth/status",
                     "/api/patients/**",
                     "/api/visits/**", 
-                    "/api/history/**",
-                    "/api/admin/**"
+                    "/api/history/**"
                 ).permitAll()
-                // 인증 필요
-//                .requestMatchers(
-                    
-//                ).authenticated()
+                // 나머지는 인증 필요
+                .requestMatchers(
+                    "/api/admin/**"
+                ).authenticated()
                 .anyRequest().authenticated()
             );
         

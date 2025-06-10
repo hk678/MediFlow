@@ -3,19 +3,19 @@ import { X, User, Clock, AlertCircle } from "lucide-react";
 import axios from "axios";
 import '../Style/Emergencymodal.css';
 
-// 🆕 KTAS 등급에 따른 병상 상태 결정 함수 추가
-const getBedStatusFromKTAS = (ktas) => {
-  switch (ktas) {
-    case 1:
-    case 2:
-      return 'red';
-    case 3:
-      return 'yellow';
-    case 4:
-    case 5:
-      return 'green';
-    default:
-      return 'empty';
+// KTAS 등급과 Label에 따른 병상 상태 결정 (
+  const getBedStatusFromKTAS = (ktas) => {
+    switch (ktas) {
+      case 1:
+      case 2:
+        return 'red';
+      case 3:
+        return 'yellow';
+      case 4:
+      case 5:
+        return 'green';
+      default:
+        return 'empty';
   }
 };
 
@@ -34,6 +34,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
     
     // 이벤트 리스너 추가
     document.addEventListener('keydown', handleEscapeKey);
+    
     return () => {
       document.removeEventListener('keydown', handleEscapeKey);
     };
@@ -46,7 +47,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
     }
   };
 
-  // 환자 필터링 (검색어 기반) - 🔧 안전한 필터링으로 수정
+  // 환자 필터링 (검색어 기반)
   const filteredPatients = patients.filter(patient =>
     (patient.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (patient.complaint || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -63,96 +64,124 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
 
   // 환자 배치 - 백엔드 연동
   const handleAssignConfirm = async () => {
-    if (!selectedPatient) return;
+  if (!selectedPatient) return;
 
-    setIsAssigning(true);
-    
-    try {
-      console.log('배치 시작:', {
-        patient: selectedPatient.name,
-        bed: bed?.name,
-        visitId: selectedPatient.visitId
-      });
+  setIsAssigning(true);
+  
+  try {
+    console.log('배치 시작:', {
+      patient: selectedPatient.name,
+      bed: bed?.name,
+      visitId: selectedPatient.visitId
+    });
 
-      // 1. AI 예측 실행 (선택사항 - 환자 데이터가 있는 경우)
-      if (selectedPatient.visitId) {
-        try {
-          await axios.post(`http://localhost:8081/api/visits/${selectedPatient.visitId}/predict/admission`);
-          console.log('AI 예측 완료');
-        } catch (aiError) {
-          console.warn('AI 예측 실패:', aiError.message);
-        }
-      }
+    let backendSuccess = false;
 
-      // 2. 병상 유형에 따른 disposition 결정
-      let disposition = 1; // 기본값: 일반병동
-      
-      if (bed?.name?.startsWith('B')) {
-        disposition = 2; // ICU
-      }
+    // 1. 백엔드 API 시도 (visitId가 있는 경우만)
+    if (selectedPatient.visitId) {
+      try {
+        // AI 예측 API 호출
+        console.log('AI 예측 시도...');
+        await axios.post(
+          `http://localhost:8081/api/visits/${selectedPatient.visitId}/predict/admission`,
+          {},
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            withCredentials: true,
+            timeout: 5000
+          }
+        );
+        console.log('AI 예측 성공');
 
-      // 3. 병상 배치 API 호출
-      const assignmentData = {
-        disposition: disposition,
-        reason: `응급실 ${bed?.name} 병상 배치 - ${selectedPatient.name} 환자`
-      };
+        // 병상 배치 API 호출
+        const disposition = bed?.name?.startsWith('B') ? 2 : 1;
+        const assignmentData = {
+          disposition: disposition,
+          reason: `응급실 ${bed?.name} 병상 배치 - ${selectedPatient.name} 환자`
+        };
 
-      if (selectedPatient.visitId) {
+        console.log('병상 배치 API 시도...');
         await axios.post(
           `http://localhost:8081/api/visits/${selectedPatient.visitId}/disposition`,
           assignmentData,
           {
             headers: {
               'Content-Type': 'application/json',
-            }
+              'Accept': 'application/json'
+            },
+            withCredentials: true,
+            timeout: 5000
           }
         );
+        console.log('병상 배치 API 성공');
+        backendSuccess = true;
+
+      } catch (apiError) {
+        console.warn('백엔드 API 실패 (프론트엔드로 처리):', {
+          status: apiError.response?.status,
+          message: apiError.message,
+          visitId: selectedPatient.visitId
+        });
+        // 백엔드 실패해도 계속 진행
       }
-
-      // 4. 성공 메시지 및 UI 업데이트
-      alert(`${selectedPatient.name} 환자가 ${bed?.name} 병상에 성공적으로 배치되었습니다.`);
-      
-      // 🆕 5. 새로운 병상 상태 데이터 생성
-      const newBedStatus = {
-        patientId: selectedPatient.pid,
-        patientName: selectedPatient.name,
-        visitId: selectedPatient.visitId,
-        ktas: selectedPatient.ktas,
-        status: getBedStatusFromKTAS(selectedPatient.ktas),
-        age: selectedPatient.age,
-        gender: selectedPatient.sex,
-        chiefComplaint: selectedPatient.complaint
-      };
-
-      // 🆕 6. 부모 컴포넌트에 새 병상 상태 전달
-      if (onAssign) {
-        onAssign(selectedPatient, bed?.name, newBedStatus);
-      }
-
-      // 7. 모달 닫기
-      onClose();
-
-    } catch (error) {
-      console.error('환자 배치 실패:', error);
-      
-      let errorText = '환자 배치에 실패했습니다.';
-      
-      if (error.response?.status === 404) {
-        errorText = '환자 정보를 찾을 수 없습니다.';
-      } else if (error.response?.status === 400) {
-        errorText = '잘못된 배치 요청입니다.';
-      } else if (error.response?.data?.message) {
-        errorText = error.response.data.message;
-      }
-      
-      alert(errorText);
-
-    } finally {
-      setIsAssigning(false);
+    } else {
+      console.warn('⚠️ visitId 없음, 프론트엔드만으로 처리');
     }
-  };
 
-  // KTAS 레벨에 따른 스타일 클래스
+    // 2. 로컬 스토리지에 배치 정보 저장 (항상 실행)
+    const savedAssignments = JSON.parse(localStorage.getItem('patientAssignments') || '{}');
+    savedAssignments[bed?.name] = {
+      patientId: selectedPatient.pid,
+      patientName: selectedPatient.name,
+      visitId: selectedPatient.visitId,
+      ktas: selectedPatient.ktas,
+      status: getBedStatusFromKTAS(selectedPatient.ktas),
+      age: selectedPatient.age,
+      gender: selectedPatient.sex,
+      chiefComplaint: selectedPatient.complaint,
+      timestamp: new Date().toISOString(),
+      backendSynced: backendSuccess  // 백엔드 동기화 여부 표시
+    };
+    localStorage.setItem('patientAssignments', JSON.stringify(savedAssignments));
+
+    console.log('로컬 스토리지 저장 완료:', savedAssignments[bed?.name]);
+
+    // 3. 성공 메시지
+    const syncMessage = backendSuccess ? '(백엔드 연동 완료)' : '(프론트엔드 배치)';
+    alert(`${selectedPatient.name} 환자가 ${bed?.name} 병상에 성공적으로 배치되었습니다. ${syncMessage}`);
+    
+    // 4. 새로운 병상 상태 데이터 생성
+    const newBedStatus = {
+      patientId: selectedPatient.pid,
+      patientName: selectedPatient.name,
+      visitId: selectedPatient.visitId,
+      ktas: selectedPatient.ktas,
+      status: getBedStatusFromKTAS(selectedPatient.ktas),
+      age: selectedPatient.age,
+      gender: selectedPatient.sex,
+      chiefComplaint: selectedPatient.complaint
+    };
+
+    // 5. 부모 컴포넌트에 새 병상 상태 전달
+    if (onAssign) {
+      onAssign(selectedPatient, bed?.name, newBedStatus);
+    }
+
+    // 6. 모달 닫기
+    onClose();
+
+  } catch (error) {
+    console.error('환자 배치 실패:', error);
+    alert('환자 배치에 실패했습니다.');
+  } finally {
+    setIsAssigning(false);
+  }
+};
+
+  // KTAS 레벨에 따른 스타일 클래스명
   const getKtasClass = (ktas) => {
     if (ktas <= 2) return 'ktas-critical';
     if (ktas === 3) return 'ktas-urgent';
@@ -172,6 +201,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
     }
   };
 
+  // 모달창 구조 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="patient-select-modal">
@@ -235,7 +265,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
                     <div className="patient-status">
                       <div className={`ktas-badge ${getKtasClass(patient.ktas)}`}>
                         KTAS {patient.ktas}
-                        <span className="ktas-text">{getKtasText(patient.ktas)}</span>
+                        <span className="emergency-ktas-text">{getKtasText(patient.ktas)}</span>
                       </div>
                       <div className="waiting-time">
                         <Clock className="clock-icon" />

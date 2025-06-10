@@ -18,10 +18,10 @@ const EmergencyRoom = ({ hideHeader = false }) => {
   const [showDischargeModal, setShowDischargeModal] = useState(false);
   const [selectedBed, setSelectedBed] = useState(null);
 
-  // 대기 환자 백엔드 연동 
+  // 대기 환자 백엔드 연동
   const [waitingPatients, setWaitingPatients] = useState([]);
 
-  // 병상 상태 백엔드 연동 
+  // 병상 상태 백엔드 연동
   const [bedStatuses, setBedStatuses] = useState({});
   const [bedLoading, setBedLoading] = useState(true);
 
@@ -41,28 +41,52 @@ const EmergencyRoom = ({ hideHeader = false }) => {
       
       for (const patient of response.data) {
         if (patient.bedNumber) {
-        bedStatusMap[patient.bedNumber] = {
-          patientId: patient.pid,
-          patientName: patient.patient || patient.name || patient.patientName || `환자 ${patient.pid}`,
-          visitId: patient.visitId || patient.visit_id || patient.id,
-          ktas: patient.acuity,
-          status: getBedStatusFromKTAS(patient.acuity),
-          
-          age: patient.age || 0,
-          gender: patient.gender || 0,
-          chiefComplaint: patient.chiefComplaint || '증상 확인 중',
-          diagnosis: patient.diagnosis || '진단 대기',
-          pain: patient.pain || 0,
-          admissionTime: patient.admissionTime || new Date().toISOString(),
-          arrivalTransport: patient.arrivalTransport || 'UNKNOWN'
-        };
+          bedStatusMap[patient.bedNumber] = {
+            patientId: patient.pid,
+            patientName: patient.patient,
+            visitId: patient.visitId || patient.visit_id || patient.id,
+            ktas: patient.acuity,
+            status: getBedStatusFromKTAS(patient.acuity),
+            age: patient.age,
+            gender: patient.gender,
+            chiefComplaint: patient.chiefComplaint,
+            diagnosis: patient.diagnosis || '진단 대기',
+            pain: patient.pain || 0,
+            admissionTime: patient.admissionTime || new Date().toISOString(),
+            arrivalTransport: patient.arrivalTransport || 'UNKNOWN'
+          };
+        }
       }
-    }  
+      
+      // 로컬 스토리지에서 토글 유지용 배치 정보 복원
+      const savedAssignments = JSON.parse(localStorage.getItem('patientAssignments') || '{}');
+
+      // 🔍 디버깅 로그 추가
+      console.log('=== 디버깅 시작 ===');
+      console.log('savedAssignments:', savedAssignments);
+      
+      // 로컬 스토리지의 배치 정보를 백엔드 데이터와 병합
+      for (const [bedName, assignment] of Object.entries(savedAssignments)) {
+        // 백엔드에 없고 로컬에만 있는 배치 정보 추가
+        if (!bedStatusMap[bedName]) {
+          bedStatusMap[bedName] = {
+            ...assignment,
+            status: assignment.status || getBedStatusFromKTAS(assignment.ktas)
+          };
+          console.log(`병상 ${bedName} 복원:`, bedStatusMap[bedName]);
+        }
+      }
+
+      console.log('최종 bedStatusMap:', bedStatusMap);
+
       setBedStatuses(bedStatusMap);
       
     } catch (error) {
       console.error('병상 상태 조회 실패:', error);
-      setBedStatuses({});
+      
+      // 백엔드 실패 시 로컬 스토리지만으로도 동작
+      const savedAssignments = JSON.parse(localStorage.getItem('patientAssignments') || '{}');
+      setBedStatuses(savedAssignments);
     } finally {
       setBedLoading(false);
     }
@@ -109,7 +133,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
     } 
   };
    
-  // 컴포넌트 마운트 시 데이터 로드 
+  // 컴포넌트 마운트 시 데이터 로드
   useEffect(() => {
     getBedStatuses();
     getWaitingPatients();
@@ -151,23 +175,39 @@ const EmergencyRoom = ({ hideHeader = false }) => {
     }
   };
 
-  // 🔧 환자 배치 처리 - 매개변수 수정 및 즉시 UI 업데이트
+  // 환자 배치 처리 - 오류 때문에 console log 입력 
   const handlePatientAssign = async (patient, bedName, newBedStatus) => {
     try {
       console.log(`환자 ${patient.name}을 병상 ${bedName}에 배치 완료`);
       
-      // 🆕 즉시 UI 업데이트 - 로컬 상태에 새 병상 정보 추가
+      // 1. 즉시 UI 업데이트 - 로컬 상태에 새 병상 정보 추가
       setBedStatuses(prevStatuses => ({
         ...prevStatuses,
-        [bedName]: newBedStatus
+        [bedName]: {
+          ...newBedStatus,
+          source: 'newAssignment'
+        }
       }));
       
-      // 🆕 대기환자 목록에서 해당 환자 제거
+      // 2. 대기환자 목록에서 해당 환자 제거
       setWaitingPatients(prevPatients => 
         prevPatients.filter(p => p.pid !== patient.pid)
       );
       
-      // 백엔드 새로고침 (백그라운드에서 실행)
+      // 3. 로컬 스토리지에도 저장 (토글 전환시 병상정보 유지)
+      const savedAssignments = JSON.parse(localStorage.getItem('patientAssignments') || '{}');
+      savedAssignments[bedName] = {
+        patientId: patient.pid,
+        patientName: patient.name,
+        visitId: patient.visitId,
+        assignedAt: new Date().toISOString(),
+        bedNumber: bedName
+      };
+      localStorage.setItem('patientAssignments', JSON.stringify(savedAssignments));
+      
+      console.log('로컬 스토리지 저장 완료:', savedAssignments);
+      
+      // 4. 백엔드 새로고침 (백그라운드에서 실행)
       setTimeout(async () => {
         await getWaitingPatients();
       }, 1000);
@@ -180,31 +220,30 @@ const EmergencyRoom = ({ hideHeader = false }) => {
     }
   };
 
-  // 환자 퇴실 처리(DischargeModal에서 호출)
+  // 환자 퇴실 처리(DischargeModal에서 호출) - 안전한 버전
+  // EmergencyRoom.jsx - 191~220줄 handlePatientDischarge 함수 완전 교체
+
   const handlePatientDischarge = async () => {
     try {
-      if (selectedBed.patient?.visitId) {
-        await axios.post(
-          `http://localhost:8081/api/visits/${selectedBed.patient.visitId}/disposition`,
-          {
-            disposition: 0,
-            reason: `${selectedBed.name} 병상에서 퇴실 처리`
-          }
-        );
-      }
-
       console.log(`병상 ${selectedBed.name}의 환자 퇴실 처리 완료`);
       
-      // ✅ 특정 병상만 제거 (다른 병상은 유지)
+      // 1. 즉시 UI 업데이트 - 해당 병상을 빈 상태로 변경
       setBedStatuses(prevStatuses => {
         const newStatuses = { ...prevStatuses };
-        delete newStatuses[selectedBed.name]; // 해당 병상만 제거
+        delete newStatuses[selectedBed.name]; // 해당 병상 데이터 제거
         return newStatuses;
       });
       
-      // 백엔드 새로고침 --> 현재 백엔드에서 실제 데이터 반환하지 않은 상태
-      // await getWaitingPatients();
-      // await getBedStatuses();
+      // 2. 로컬 스토리지에서도 해당 배치 제거
+      const savedAssignments = JSON.parse(localStorage.getItem('patientAssignments') || '{}');
+      delete savedAssignments[selectedBed.name];
+      localStorage.setItem('patientAssignments', JSON.stringify(savedAssignments));
+      
+      console.log('💾 로컬 스토리지 퇴실 처리 완료');
+      
+      // 3. 백엔드 새로고침
+      await getWaitingPatients();
+      await getBedStatuses();
       
     } catch (error) {
       console.error('퇴실 처리 실패:', error);
@@ -222,6 +261,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
     setSelectedBed(null);
   };
 
+  // 병상 4구역으로 분리
   const baseBedLayouts = {
     // 1사분면 (B구역 - ICU)
     quadrant1: [
@@ -308,6 +348,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
     }
   };
 
+  // 병상 클릭 
   const BedCard = ({ bed }) => (
     <div 
       className={getBedClassName(bed.status)}
@@ -340,6 +381,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
     </div>
   );
 
+  //응급실 병상 페이지 구조 
   return (
     <div className="medical-dashboard emergency-page">
       <div className="dashboard-content">
@@ -434,7 +476,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
             </div>
           </div>
         </div>
-
+        {/*  */}
         {showPatientModal && (
           <EmergencyModal 
             bed={selectedBed}
@@ -443,7 +485,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
             onClose={closeModal}
           />
         )}
-
+        {/* 퇴실 모달 */}
         {showDischargeModal && (
           <DischargeModal 
             bed={selectedBed}
