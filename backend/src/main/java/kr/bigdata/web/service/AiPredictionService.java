@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import kr.bigdata.web.dto.AiPredictionResponseDto;
 import kr.bigdata.web.dto.LLMResult;
 import kr.bigdata.web.dto.PatientRequest;
 import kr.bigdata.web.entity.AiPrediction;
@@ -26,6 +27,21 @@ public class AiPredictionService {
     private LLMService llmService;
     @Autowired
     private LabResultsRepository labResultsRepository; // 혹시 선언 안 했으면 추가
+    
+ // AiPredictionService.java
+
+    public AiPredictionResponseDto toDto(AiPrediction prediction) {
+        AiPredictionResponseDto dto = new AiPredictionResponseDto();
+        dto.setPreId(prediction.getPreId());
+        dto.setPreType(prediction.getPreType());
+        dto.setPreDisposition(prediction.getPreDisposition());
+        dto.setPreScore(prediction.getPreScore());
+        dto.setReason(prediction.getReason());
+        dto.setVisitId(prediction.getEmergencyVisit().getVisitId());
+        dto.setPreTime(prediction.getPreTime());
+        return dto;
+    }
+
 
     // 1차 예측: 입실 시
     public AiPrediction predictAdmission(String visitId) {

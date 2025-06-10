@@ -17,7 +17,7 @@ import kr.bigdata.web.dto.LLMResultWrapper;
 @Service
 public class LLMService {
 	
-	private final String FLASK_URL = "http://127.0.0.1:5000/predict";
+	private final String FLASK_URL = "http://127.0.0.1:5000/predict/admission";
     private final String FLASK_DISCHARGE_URL = "http://127.0.0.1:5000/predict/discharge";
     private final RestTemplate restTemplate = new RestTemplate();
 
