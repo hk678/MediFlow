@@ -81,6 +81,48 @@ const MainPage = () => {
   const dangerCount = patientData.filter(p => p.label === '위험').length;
   const warningCount = patientData.filter(p => p.label === '주의').length;
   
+  // AuthContext 사용
+  const { user, isAuthenticated, logout } = useAuth();
+
+  // axios연결
+  const [patientData, setPatientData] = useState([]);
+
+  useEffect(() => {
+    axios.get('http://localhost:8081/api/patients')
+      .then(response => {
+        const rawData = response.data;
+        const transformed = rawData.map(p => ({
+          pid: p.pid,
+          name: p.name,
+          age: p.age,
+          sex: p.gender ? 'M' : 'F', // boolean을 성별 문자열로
+          bed: p.bed,
+          ktas: p.acuity,
+          complaint: p.chiefComplaint,
+          label: p.label === 1 ? '위험' : (p.label === 0 ? '주의' : '경미'),
+          history: '확인',
+          visitId: p.visitId
+        }));
+        setPatientData(transformed);
+      })
+      .catch(error => {
+        console.error('환자 데이터 불러오기 실패:', error);
+      });
+  }, []);
+
+  // 필터링(주의,위험,전체)환자보기
+  const handleWarningClick = () => {
+    setLabelFilter('주의');
+  };
+
+  const handleDangerClick = () => {
+    setLabelFilter('위험');
+  };
+
+  const resetFilter = () => {
+    setLabelFilter('전체');
+  };
+
   // 리스트 전환 토글
   const handleToggle = () => {
     setShowEmergencyRoom(!showEmergencyRoom);

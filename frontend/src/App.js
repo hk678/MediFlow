@@ -13,6 +13,7 @@ import EmergencyRoom from './Components/EmergencyRoom';
 
 
 
+
 // function App() {
 //   return (
 //     <div className="App">
@@ -29,6 +30,7 @@ import EmergencyRoom from './Components/EmergencyRoom';
 //     </div>
 //   );
 // }
+
 function App() {
   return (
     <div className="App">
@@ -38,7 +40,6 @@ function App() {
             {/* 로그인 페이지 (인증 불필요) */}
             <Route path="/login" element={<Login />} />
 
-            
             {/* 보호된 라우트들 */}
             <Route
               path="/"

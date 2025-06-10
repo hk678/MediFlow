@@ -3,19 +3,36 @@ import { X, User, Clock, AlertCircle } from "lucide-react";
 import axios from "axios";
 import '../Style/Emergencymodal.css';
 
-// 🆕 KTAS 등급에 따른 병상 상태 결정 함수 추가
-const getBedStatusFromKTAS = (ktas) => {
-  switch (ktas) {
-    case 1:
-    case 2:
-      return 'red';
-    case 3:
-      return 'yellow';
-    case 4:
-    case 5:
-      return 'green';
-    default:
-      return 'empty';
+// KTAS 등급과 Label에 따른 병상 상태 결정 (수정된 버전)
+// const getBedStatusFromKTAS = (ktas, label) => {
+//   // 1순위: label 필드가 있으면 우선 사용
+//   if (label !== undefined && label !== null) {
+//     switch (label) {
+//       case 1: // 위험
+//         return 'red';
+//       case 0: // 주의  
+//         return 'yellow';
+//       case -1: // 경미
+//         return 'green';
+//       default:
+//         // label이 있지만 알 수 없는 값인 경우 KTAS로 fallback
+//         break;
+//     }
+//   }
+
+// 2순위: KTAS 값으로 판단
+  const getBedStatusFromKTAS = (ktas) => {
+    switch (ktas) {
+      case 1:
+      case 2:
+        return 'red';
+      case 3:
+        return 'yellow';
+      case 4:
+      case 5:
+        return 'green';
+      default:
+        return 'empty';
   }
 };
 
@@ -94,6 +111,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
       // 3. 병상 배치 API 호출
       const assignmentData = {
         disposition: disposition,
+        bedNumber: bed?.name,
         reason: `응급실 ${bed?.name} 병상 배치 - ${selectedPatient.name} 환자`
       };
 
@@ -102,6 +120,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
           `http://localhost:8081/api/visits/${selectedPatient.visitId}/disposition`,
           assignmentData,
           {
+            withCredentials: true,
             headers: {
               'Content-Type': 'application/json',
             }
@@ -235,7 +254,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
                     <div className="patient-status">
                       <div className={`ktas-badge ${getKtasClass(patient.ktas)}`}>
                         KTAS {patient.ktas}
-                        <span className="ktas-text">{getKtasText(patient.ktas)}</span>
+                        <span className="emergency-ktas-text">{getKtasText(patient.ktas)}</span>
                       </div>
                       <div className="waiting-time">
                         <Clock className="clock-icon" />
