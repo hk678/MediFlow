@@ -54,6 +54,8 @@ export default function History({ patient, onClose }) {
   const fetchHistory = () => {
     axios.get(`http://localhost:8081/api/visits/${patient.visitId}/history`)
       .then((res) => {
+        console.log("visitId 확인:", patient.visitId);
+        console.log("📌 히스토리 불러옴:", res.data); // 👈 여기 콘솔 추가!
         setHistory(res.data); 
       })
       .catch((err) => {
