@@ -24,6 +24,7 @@ useEffect(() => {
   axios.get('http://localhost:8081/api/patients')
     .then(response => {
       const rawData = response.data;
+      console.log(response)
       const transformed = rawData.map(p => ({
         pid: p.pid,
         name: p.name,
@@ -36,6 +37,7 @@ useEffect(() => {
         history: '확인',
         visitId: p.visitId
       }));
+      console.log(transformed)
       setPatientData(transformed);
     })
     .catch(error => {
