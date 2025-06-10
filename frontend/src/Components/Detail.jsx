@@ -4,6 +4,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from "axios";
+import PastRecordModal from './PastRecordModal'; 
 
 function Detail() {
   const [history, setHistory] = useState(null);
@@ -13,26 +14,41 @@ function Detail() {
   const [historyData, setHistoryData] = useState([]);
   const [info, setInfo] = useState([]);
   const [patientInfo, setPatientInfo] = useState(null);
-
   const navigate = useNavigate();
+  // 과거기록 버튼
+  const [showPastRecordModal, setShowPastRecordModal] = useState(false);
 
-  
+  // 🎯 과거 기록 존재 여부 상태 추가
+  const [hasPastRecords, setHasPastRecords] = useState(false); // null: 확인 중, true/false: 결과
+  const [checkingPastRecords, setCheckingPastRecords] = useState(true);
+
   
   // 좌측 패널 토글 상태
   const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
-  // 인포 부분 만들기
+
+  // 인포 부분 만들기 - 
   useEffect(() => {
     axios.get(`http://localhost:8081/api/visits/${pid}`)
       .then((res) => {
         console.log(res.data[0]); //  visitId 포함 확인
         setInfo(res.data[0]);
         setPatientInfo(res.data[0]);
+
+        // 과거 기록 존재 여부 확인
+        const hasRecords = res.data && res.data.length > 0;
+        setHasPastRecords(hasRecords);
+        setCheckingPastRecords(false);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        // 에러 시, 과거 기록 비활성화
+        setHasPastRecords(false);
+        setCheckingPastRecords(false);
+        });
   }, [pid]);
 
 
-  // 인포 끗 -----
+  // 인포 부분 끝 -----------------------------------------------
 
 
   //히스토리 띄우기
@@ -45,6 +61,12 @@ function Detail() {
     }
   }, [visitId]);
 
+  // 과거 기록 모달창 함수
+  const handlePastRecordClick = () => {
+    if (hasPastRecords && !checkingPastRecords) {
+      setShowPastRecordModal(true);
+    }
+  };
 
 
   // 샘플 데이터
@@ -58,7 +80,6 @@ function Detail() {
   //   arrivalTransport: "UNKNOWN"
   // };
   
-
 
   return (
     <div className="detail-page">
@@ -213,7 +234,16 @@ function Detail() {
             <div className="info-section">
               <div className="section-header">
                 <h3>Information</h3>
-                <button className="btn-primary">과거기록</button>
+                {/* 과거 기록 여부에 따른 버튼 활성화&비활성화 */}
+                <button 
+                  className={`btn-primary ${(!hasPastRecords || checkingPastRecords) ? 'btn-disabled' : ''}`}
+                  onClick={handlePastRecordClick}
+                  disabled={!hasPastRecords || checkingPastRecords}
+                  title={checkingPastRecords ? '과거 기록 확인 중...' : 
+                         !hasPastRecords ? '과거 기록이 없습니다' : '과거 기록 보기'}
+                >
+                  {checkingPastRecords ? '확인 중...' : '과거기록'}
+                </button>
               </div>
               <div className="info-table">
                 <div className="info-table-header">
@@ -286,7 +316,16 @@ function Detail() {
                     <span colSpan="3">과거 기록이 없습니다.</span>
                   </div>
                 )}
-            {/* 실험 끗 */}
+            {/* 실험 종료 */}
+
+            {/* 과거 기록 모달창 */}
+            {showPastRecordModal && (
+              <PastRecordModal
+                patientName={name}
+                patientPid={pid}
+                onClose={() => setShowPastRecordModal(false)}
+              />
+            )}
               </div>
             </div>
           </div>

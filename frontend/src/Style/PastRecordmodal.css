@@ -1,0 +1,320 @@
+/* PastRecordmodal.css - 과거 기록 모달 전용 CSS */
+
+/* 모달 오버레이 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* 모달 컨테이너 */
+.past-records-modal {
+  background-color: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 1000px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* 모달 헤더 */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f8fafc;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #111827;
+  margin: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.close-button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.close-icon {
+  width: 20px;
+  height: 20px;
+  color: #6b7280;
+}
+
+/* 모달 내용 */
+.modal-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modal-description {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+/* 로딩 및 에러 상태 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: #6b7280;
+}
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 14px;
+}
+
+/* 🎯 데이터 없음 메시지 */
+.no-records-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.no-records-message p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* 🎯 Detail.jsx History 섹션과 동일한 테이블 구조 */
+.past-records-table {
+  border-radius: 15px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 30px;
+}
+
+.past-records-table-header {
+  display: grid;
+  grid-template-columns: 100px 100px 60px 60px 60px 1fr 120px;
+  background-color: #c9dcf3;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.past-records-table-row {
+  display: grid;
+  grid-template-columns: 100px 100px 60px 60px 60px 1fr 120px;
+  background-color: white;
+  padding: 12px;
+  font-size: 12px;
+  color: #111827;
+  border-top: 1px solid #e5e7eb;
+  transition: background-color 0.2s;
+}
+
+.past-records-table-row:hover {
+  background-color: #f9fafb;
+}
+
+.past-records-table-header span,
+.past-records-table-row span {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 🎯 KTAS 배경색 */
+.ktas-text {
+  padding: 3px 4px;
+  margin: 0 auto;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+  display: inline-block;
+  width: 20px;
+}
+
+.ktas-1 {
+  background-color: #dc2626; /* 빨간색 - 응급 */
+}
+
+.ktas-2 {
+  background-color: #ea580c; /* 주황색 - 긴급 */
+}
+
+.ktas-3 {
+  background-color: #eab308; /* 노란색 - 준긴급 */
+}
+
+.ktas-4 {
+  background-color: #16a34a; /* 초록색 - 덜 긴급 */
+}
+
+.ktas-5 {
+  background-color: #2563eb; /* 파란색 - 비응급 */
+}
+
+/* 통계 섹션 */
+.statistics-section {
+  background-color: #f8fafc;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+.statistics-section h3 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #111827;
+  margin: 0 0 15px 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 16px;
+  color: #111827;
+  font-weight: bold;
+}
+
+/* 모달 푸터 */
+.modal-footer {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f8fafc;
+}
+
+.btn-secondary {
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .past-records-modal {
+    width: 95%;
+    max-height: 95vh;
+  }
+  
+  .modal-header {
+    padding: 15px;
+  }
+  
+  .modal-title {
+    font-size: 18px;
+  }
+  
+  .modal-content {
+    padding: 15px;
+  }
+  
+  .past-records-table-header,
+  .past-records-table-row {
+    grid-template-columns: 80px 80px 50px 50px 50px 1fr 100px;
+    gap: 5px;
+    font-size: 11px;
+  }
+  
+  .ktas-text {
+    padding: 2px 4px;
+    font-size: 10px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .modal-footer {
+    padding: 15px;
+  }
+  
+  .no-records-message {
+    padding: 30px;
+  }
+  
+  .no-records-message p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .past-records-table-header,
+  .past-records-table-row {
+    grid-template-columns: 70px 70px 40px 40px 40px 1fr 80px;
+    font-size: 10px;
+    padding: 8px;
+  }
+  
+  .ktas-text {
+    padding: 1px 2px;
+    font-size: 9px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
