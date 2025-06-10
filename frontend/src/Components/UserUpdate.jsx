@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import axios from "axios"; // ✅ axios import
-import '../Style/UserUpdate.css';
+import '../Style/Userupdate.css';
 
 
 export default function UserUpdate({ onClose }) {
