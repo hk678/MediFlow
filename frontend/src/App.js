@@ -11,23 +11,6 @@ import UserInfo from './Components/UserInfo';
 import UserUpdate from './Components/UserUpdate';
 import EmergencyRoom from './Components/EmergencyRoom';
 
-// function App() {
-//   return (
-//     <div className="App">
-//       <AuthProvider> {/* 이건 유지 */}
-//         <Router>
-//           <Routes>
-//             <Route path="/" element={<MainPage />} />
-//             <Route path="/emergency" element={<EmergencyRoom />} />
-//             <Route path="/detail/:pid" element={<Detail />} />
-//             <Route path="/history/:pid" element={<History />} />
-//           </Routes>
-//         </Router>
-//       </AuthProvider>
-//     </div>
-//   );
-// }
-
 function App() {
   return (
     <div className="App">
