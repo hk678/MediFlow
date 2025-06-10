@@ -240,6 +240,12 @@
 .emergency-ktas-text {
   font-size: 10px;
   font-weight: 500;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  direction: ltr !important;
+  display: inline-block;
+  white-space: nowrap;
+  transform: none !important;
 }
 
 .ktas-critical {

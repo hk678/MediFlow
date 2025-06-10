@@ -11,10 +11,6 @@ import UserInfo from './Components/UserInfo';
 import UserUpdate from './Components/UserUpdate';
 import EmergencyRoom from './Components/EmergencyRoom';
 
-<<<<<<< Updated upstream
-=======
-
-
 // function App() {
 //   return (
 //     <div className="App">
@@ -31,7 +27,7 @@ import EmergencyRoom from './Components/EmergencyRoom';
 //     </div>
 //   );
 // }
->>>>>>> Stashed changes
+
 function App() {
   return (
     <div className="App">
@@ -40,11 +36,7 @@ function App() {
           <Routes>
             {/* 로그인 페이지 (인증 불필요) */}
             <Route path="/login" element={<Login />} />
-<<<<<<< Updated upstream
-
-=======
             
->>>>>>> Stashed changes
             {/* 보호된 라우트들 */}
             <Route
               path="/"
@@ -108,6 +100,5 @@ function App() {
     </div>
   );
 }
-
 
 export default App;
