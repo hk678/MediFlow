@@ -353,6 +353,12 @@
   cursor: pointer;
 }
 
+.btn-disabled {
+  background-color: #9ca3af !important;
+  cursor: not-allowed !important;
+  opacity: 0.6;
+}
+
 .info-table {
   border-radius: 15px;
   overflow: hidden;

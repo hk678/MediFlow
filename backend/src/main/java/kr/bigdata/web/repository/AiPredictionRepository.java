@@ -31,4 +31,9 @@ public interface AiPredictionRepository extends JpaRepository<AiPrediction, Long
         ORDER BY FUNCTION('DATE_FORMAT', p.preTime, '%Y-%m-%d')
         """)
     List<Object[]> getDailyAveragePreScoreRaw();
+    
+    // 가장 최신 퇴실 예측 1건만 조회
+    Optional<AiPrediction> findTopByEmergencyVisit_VisitIdAndPreTypeOrderByPreTimeDesc(String visitId, String preType);
+
+    
 }

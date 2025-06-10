@@ -2,7 +2,8 @@
 
 /* Admin 페이지 고유 식별자 */
 .admin-page {
-  background-color: #f0f4f8; /* 메인페이지와 구분되는 배경색 */
+  background-color: #f0f4f8;
+  /* 메인페이지와 구분되는 배경색 */
 }
 
 /* Admin 전용 컨텐츠 영역 */
@@ -23,11 +24,8 @@
 
 /* 👥 Admin 사용자 관리 영역 전체 박스 */
 .admin-table-section {
-  background-color: #e9f0fb;
   border-radius: 15px;
   padding: 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  border: 2px solid #54a6ff;
 }
 
 /* 👤 Admin 사용자 관리 상단 제목 + 버튼 */
@@ -147,37 +145,48 @@
 }
 
 .admin-pagination button {
-  background-color: #4e89ff;
-  color: white;
+  background-color: none;
+  color: black;
   border: none;
   padding: 8px 12px;
-  border-radius: 6px;
+  /* border-radius: 6px; */
   cursor: pointer;
-  transition: background-color 0.2s;
+  /* transition: background-color 0.2s; */
 }
 
 .admin-pagination button:hover {
-  background-color: #3a73e8;
+  color: #3a73e8;
 }
 
 .admin-pagination span {
   font-weight: bold;
-  color: #2563eb;
   padding: 8px 12px;
-  background-color: white;
-  border-radius: 6px;
-  border: 1px solid #4e89ff;
 }
 
 /* Admin 페이지만의 사용자 정보 스타일 재정의 */
-.admin-page .user-name {
-  color: #6b46c1; /* Admin에서는 보라색으로 */
-  font-weight: 700;
+.admin-page .admin-user-icon {
+  width: 35px;
+  height: 35px;
+}
+
+.admin-page .admin-user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.admin-page .admin-user-name {
+  color: #8251f4;
+  font-size: 16px;
+  /* Admin에서는 보라색으로 */
+  font-weight: 800;
 }
 
 /* Admin 페이지만의 로고 텍스트 색상 */
 .admin-page .logo-text {
-  color: #6b46c1; /* Admin에서는 보라색으로 */
+  color: #8251f4;
+  /* Admin에서는 보라색으로 */
 }
 
 /* 반응형 */
@@ -185,17 +194,17 @@
   .admin-table-section {
     padding: 15px;
   }
-  
+
   .admin-user-table th,
   .admin-user-table td {
     padding: 8px;
     font-size: 12px;
   }
-  
+
   .admin-pagination {
     gap: 10px;
   }
-  
+
   .admin-pagination button {
     padding: 6px 10px;
     font-size: 12px;

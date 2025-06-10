@@ -1,5 +1,7 @@
 package kr.bigdata.web.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,4 +18,5 @@ public class PatientSummaryDto {
     private int acuity;
     private String chiefComplaint;
     private Integer label;
+    private String visitId; // 새로 추가
 }

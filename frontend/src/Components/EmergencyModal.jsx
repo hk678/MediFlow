@@ -1,10 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { X, User, Clock, AlertCircle } from "lucide-react";
+import axios from "axios";
 import '../Style/Emergencymodal.css';
+
+// 🆕 KTAS 등급에 따른 병상 상태 결정 함수 추가
+const getBedStatusFromKTAS = (ktas) => {
+  switch (ktas) {
+    case 1:
+    case 2:
+      return 'red';
+    case 3:
+      return 'yellow';
+    case 4:
+    case 5:
+      return 'green';
+    default:
+      return 'empty';
+  }
+};
 
 const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isAssigning, setIsAssigning] = useState(false);
 
   // ESC 키로 모달 닫기 기능
   useEffect(() => {
@@ -13,11 +31,9 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
         onClose();
       }
     };
-
+    
     // 이벤트 리스너 추가
     document.addEventListener('keydown', handleEscapeKey);
-
-    // 컴포넌트 언마운트 시 이벤트 리스너 제거
     return () => {
       document.removeEventListener('keydown', handleEscapeKey);
     };
@@ -25,17 +41,16 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
 
   // 모달 오버레이 클릭 시 닫기
   const handleOverlayClick = (event) => {
-    // 모달 내부 클릭 시에는 닫지 않음
     if (event.target === event.currentTarget) {
       onClose();
     }
   };
 
-  // 환자 필터링 (검색어 기반)
+  // 환자 필터링 (검색어 기반) - 🔧 안전한 필터링으로 수정
   const filteredPatients = patients.filter(patient =>
-    patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    patient.complaint.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    patient.pid.includes(searchTerm)
+    (patient.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (patient.complaint || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (patient.pid || '').includes(searchTerm)
   );
 
   // KTAS 레벨에 따른 우선순위 정렬
@@ -46,10 +61,94 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
     setSelectedPatient(patient);
   };
 
-  // 배치 확인
-  const handleAssignConfirm = () => {
-    if (selectedPatient) {
-      onAssign(selectedPatient);
+  // 환자 배치 - 백엔드 연동
+  const handleAssignConfirm = async () => {
+    if (!selectedPatient) return;
+
+    setIsAssigning(true);
+    
+    try {
+      console.log('배치 시작:', {
+        patient: selectedPatient.name,
+        bed: bed?.name,
+        visitId: selectedPatient.visitId
+      });
+
+      // 1. AI 예측 실행 (선택사항 - 환자 데이터가 있는 경우)
+      if (selectedPatient.visitId) {
+        try {
+          await axios.post(`http://localhost:8081/api/visits/${selectedPatient.visitId}/predict/admission`);
+          console.log('AI 예측 완료');
+        } catch (aiError) {
+          console.warn('AI 예측 실패:', aiError.message);
+        }
+      }
+
+      // 2. 병상 유형에 따른 disposition 결정
+      let disposition = 1; // 기본값: 일반병동
+      
+      if (bed?.name?.startsWith('B')) {
+        disposition = 2; // ICU
+      }
+
+      // 3. 병상 배치 API 호출
+      const assignmentData = {
+        disposition: disposition,
+        reason: `응급실 ${bed?.name} 병상 배치 - ${selectedPatient.name} 환자`
+      };
+
+      if (selectedPatient.visitId) {
+        await axios.post(
+          `http://localhost:8081/api/visits/${selectedPatient.visitId}/disposition`,
+          assignmentData,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          }
+        );
+      }
+
+      // 4. 성공 메시지 및 UI 업데이트
+      alert(`${selectedPatient.name} 환자가 ${bed?.name} 병상에 성공적으로 배치되었습니다.`);
+      
+      // 🆕 5. 새로운 병상 상태 데이터 생성
+      const newBedStatus = {
+        patientId: selectedPatient.pid,
+        patientName: selectedPatient.name,
+        visitId: selectedPatient.visitId,
+        ktas: selectedPatient.ktas,
+        status: getBedStatusFromKTAS(selectedPatient.ktas),
+        age: selectedPatient.age,
+        gender: selectedPatient.sex,
+        chiefComplaint: selectedPatient.complaint
+      };
+
+      // 🆕 6. 부모 컴포넌트에 새 병상 상태 전달
+      if (onAssign) {
+        onAssign(selectedPatient, bed?.name, newBedStatus);
+      }
+
+      // 7. 모달 닫기
+      onClose();
+
+    } catch (error) {
+      console.error('환자 배치 실패:', error);
+      
+      let errorText = '환자 배치에 실패했습니다.';
+      
+      if (error.response?.status === 404) {
+        errorText = '환자 정보를 찾을 수 없습니다.';
+      } else if (error.response?.status === 400) {
+        errorText = '잘못된 배치 요청입니다.';
+      } else if (error.response?.data?.message) {
+        errorText = error.response.data.message;
+      }
+      
+      alert(errorText);
+
+    } finally {
+      setIsAssigning(false);
     }
   };
 
@@ -80,7 +179,6 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
         <div className="modal-header">
           <div className="modal-title">
             <h3>환자 배치 - 병상 {bed?.name}</h3>
-            <p className="bed-info">배치할 환자를 선택해주세요 (ESC로 닫기)</p>
           </div>
           <button className="close-button" onClick={onClose}>
             <X className="close-icon" />
@@ -159,9 +257,9 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
           <button 
             className="assign-button"
             onClick={handleAssignConfirm}
-            disabled={!selectedPatient}
+            disabled={!selectedPatient || isAssigning}
           >
-            배치하기
+            {isAssigning ? '배치 중...' : '배치하기'}
           </button>
         </div>
       </div>

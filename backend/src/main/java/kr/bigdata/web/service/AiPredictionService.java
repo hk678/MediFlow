@@ -3,10 +3,16 @@ package kr.bigdata.web.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import kr.bigdata.web.dto.AiPredictionResponseDto;
 import kr.bigdata.web.dto.LLMResult;
+import kr.bigdata.web.dto.LLMResultWrapper;
 import kr.bigdata.web.dto.PatientRequest;
 import kr.bigdata.web.entity.AiPrediction;
 import kr.bigdata.web.entity.EmergencyVisit;
@@ -19,6 +25,8 @@ import kr.bigdata.web.repository.LabResultsRepository;
 @Service
 public class AiPredictionService {
 
+	@Autowired
+    private RestTemplate restTemplate;
     @Autowired
     private EmergencyVisitRepository emergencyVisitRepository;
     @Autowired
@@ -58,8 +66,16 @@ public class AiPredictionService {
         req.setPain(visit.getPain());
         req.setChiefComplaint(visit.getChiefComplaint());
         req.setArrivalTransport(visit.getArrivalTransport());
+        
+     // ⬇️ 여기서 Flask 호출 → LLMResultWrapper로 받기!
+     		HttpHeaders headers = new HttpHeaders();
+     		headers.setContentType(MediaType.APPLICATION_JSON);
+     		HttpEntity<PatientRequest> requestEntity = new HttpEntity<>(req, headers);
 
-        LLMResult llmResult = llmService.predict(req);
+     		ResponseEntity<LLMResultWrapper> response = restTemplate.postForEntity("http://127.0.0.1:5000/predict/admission",
+     				requestEntity, LLMResultWrapper.class);
+
+        LLMResult llmResult = response.getBody().getResult();
 
         AiPrediction prediction = new AiPrediction();
         prediction.setEmergencyVisit(visit);
@@ -68,6 +84,8 @@ public class AiPredictionService {
         prediction.setPreScore(llmResult.getRiskScore()); // Integer라면 바로 할당!
         prediction.setReason(llmResult.getClinicalReason());
         prediction.setPreTime(java.time.LocalDateTime.now());
+        
+        
 
         aiPredictionRepository.save(prediction);
         return prediction;
@@ -141,8 +159,20 @@ public class AiPredictionService {
             req.setCtco2(lab.getCtco2());
             req.setBcb(lab.getBcb());
         }
+        
+     // Flask 서버로 2차 예측 요청
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.APPLICATION_JSON);
+	    HttpEntity<PatientRequest> requestEntity = new HttpEntity<>(req, headers);
 
-        LLMResult llmResult = llmService.predictDischarge(req);
+		 // ⭐ 여기서 실제 Flask로 보냄! (Flask 코드와 라우팅 이름 반드시 일치해야 함!)
+	    ResponseEntity<LLMResultWrapper> response = restTemplate.postForEntity(
+	        "http://127.0.0.1:5000/predict/discharge",
+	        requestEntity,
+	        LLMResultWrapper.class
+	    );
+
+        LLMResult llmResult = response.getBody().getResult();
 
         AiPrediction prediction = new AiPrediction();
         prediction.setEmergencyVisit(visit);

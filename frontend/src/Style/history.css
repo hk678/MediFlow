@@ -16,18 +16,17 @@
   padding: 0;
 }
 
-/* ✅ 상단 이름 + X 버튼 */
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1rem 0 1rem;
+  padding: 1rem 1rem 0.5rem 1rem;
 }
 
-.modal-title-container {
+.modal-title-combined {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px; /* 이름과 ID 간격 */
 }
 
 .patient-name {
@@ -46,15 +45,15 @@
   letter-spacing: -0.5px;
 }
 
-.close-button {
+
+.close-button1 {
   height: 24px;
   width: 24px;
   padding: 0;
-  margin: 0;
+  margin-left: auto; /* 자동으로 오른쪽 밀어줌 */
   background: transparent;
   border: none;
   cursor: pointer;
-  align-self: flex-start;
 }
 
 .close-button:hover {
@@ -62,7 +61,7 @@
   border-radius: 4px;
 }
 
-.close-icon {
+.close-icon1 {
   height: 16px;
   width: 16px;
 }

@@ -15,10 +15,13 @@ public class PatientRequest {
 	    public int age;
 	    public int acuity;
 	    public int pain;
+  
 	    @JsonProperty("chief_complaint")
 	    public String chiefComplaint;
+  
 	    @JsonProperty("arrival_transport")
 	    public String arrivalTransport;
+  
 	    private Double hemoglobin;
 	    private Double wbc;
 	    private Double plateletCount;
