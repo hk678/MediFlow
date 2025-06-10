@@ -43,12 +43,13 @@ public class SpringSecurityConfig {
                     "/api/auth/status",
                     "/api/patients/**",
                     "/api/visits/**", 
-                    "/api/history/**"
-                ).permitAll()
-                // 나머지는 인증 필요
-                .requestMatchers(
+                    "/api/history/**",
                     "/api/admin/**"
-                ).authenticated()
+                ).permitAll()
+                // 인증 필요
+//                .requestMatchers(
+                    
+//                ).authenticated()
                 .anyRequest().authenticated()
             );
         

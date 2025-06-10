@@ -3,7 +3,6 @@ import { X } from "lucide-react";
 import '../Style/Userinfo.css';
 import axios from "axios";
 
-
 export default function UserInfo({ user, onClose }) {
   const [formData, setFormData] = useState({
     userId: '',
@@ -31,83 +30,84 @@ export default function UserInfo({ user, onClose }) {
     }));
   };
 
-  const handleRoleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      userRole: e.target.value
-    }));
-  };
-
-  //사용자 정보 수정----------
+  // 사용자 정보 수정
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('사용자 정보:', formData);
+    e.stopPropagation();
+    console.log('사용자 정보 수정:', formData);
+
     try {
       const response = await axios.put(
         `http://localhost:8081/api/admin/users/${formData.userId}`,
-        formData
+        formData,
+        { withCredentials: true }
       );
 
-      console.log("수정된거:", response.data);
-      alert("수정 되었습니다.")
+      console.log("수정된 거:", response.data);
+      alert("수정되었습니다.");
       if (onClose) onClose(true); // 수정됨을 알림
     } catch (err) {
-      console.error("오류 : ", err)
+      console.error("수정 오류 : ", err);
+      alert("수정에 실패했습니다.");
     }
   };
 
-  const handleClose = () => {
+  // 모달 배경 클릭 시 닫기
+  const handleModalClick = (e) => {
+    if (e.target === e.currentTarget) {
+      handleClose();
+    }
+  };
+
+  const handleClose = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (onClose) onClose();
   };
-  // 수정 끝---------
 
-  // 삭제 시작----------
+  // 삭제 기능
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-  const handleDelelte = async (e) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     try {
-      await axios.delete(`http://localhost:8081/api/admin/users/${formData.userId}`);
-      alert('삭제되었습니다.')
+      await axios.delete(
+        `http://localhost:8081/api/admin/users/${formData.userId}`,
+        { withCredentials: true }
+      );
+      alert('삭제되었습니다.');
       if (onClose) onClose(true);
     } catch (err) {
-      console.log("삭제 실패 : ", err)
-      alert("삭제 실패패")
+      console.error("삭제 실패 : ", err);
+      alert("삭제 실패");
     }
+  };
 
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  //- 삭제 끗
-
-
-
-
+  // 폼 제출 방지
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    handleSubmit(e);
+  };
 
   return (
-    <div className="user-info-modal">
-      <div className="user-info-content">
+    <div className="user-info-modal" onClick={handleModalClick}>
+      <div className="user-info-content" onClick={(e) => e.stopPropagation()}>
         <div className="user-info-header">
           <h2 className="user-info-title">사용자 정보</h2>
-          <button className="close-button" onClick={handleClose}>
+          <button
+            className="close-button"
+            onClick={handleClose}
+            type="button"
+          >
             <X className="close-icon" />
           </button>
         </div>
 
-        <form className="user-form" onSubmit={handleSubmit}>
+        <form className="user-form" onSubmit={handleFormSubmit}>
           <div className="input-group">
             <label className="input-label">ID</label>
             <input
@@ -116,6 +116,7 @@ export default function UserInfo({ user, onClose }) {
               className="input-field"
               value={formData.userId}
               onChange={handleInputChange}
+              placeholder="아이디를 입력해주세요"
               required
             />
           </div>
@@ -128,6 +129,7 @@ export default function UserInfo({ user, onClose }) {
               className="input-field"
               value={formData.password}
               onChange={handleInputChange}
+              placeholder="비밀번호를 입력해주세요"
               required
             />
           </div>
@@ -177,24 +179,32 @@ export default function UserInfo({ user, onClose }) {
               <div className="radio-item">
                 <input
                   type="radio"
-                  id="other"
+                  id="admin"
                   name="userRole"
                   value="관리자"
                   className="radio-input"
                   checked={formData.userRole === "관리자"}
                   onChange={handleInputChange}
                 />
-                <label htmlFor="other" className="radio-label">관리자</label>
+                <label htmlFor="admin" className="radio-label">관리자</label>
               </div>
             </div>
           </div>
         </form>
 
         <div className="button-container">
-          <button className="submit-button" onClick={handleSubmit}>
-            수정
+          <button
+            className="submit-button"
+            onClick={handleSubmit}
+            type="button"
+          >
+            저장
           </button>
-          <button className="submit-button-del" onClick={handleDelelte}>
+          <button
+            className="submit-button-del"
+            onClick={handleDelete}
+            type="button"
+          >
             삭제
           </button>
         </div>
