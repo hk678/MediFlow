@@ -43,13 +43,14 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
+  margin-left: 15px;
   font-weight: bold;
   font-size: 18px;
   color: #333;
 }
 
 .admin-add-button {
-  background-color: #4e89ff;
+  background-color: #9a74f3;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -97,7 +98,7 @@
 
 /* Admin 테이블 헤더 */
 .admin-user-table thead {
-  background-color: #cce0ff;
+  background-color: #e1d1eb;
 }
 
 .admin-user-table th {

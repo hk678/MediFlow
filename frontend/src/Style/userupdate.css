@@ -2,10 +2,10 @@
 
 /* 모달 컨테이너 */
 .user-info-modal {
-  position: fixed; /* 🔥 화면 기준으로 고정 */
+  position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -100%); /* 🔥 완벽한 정중앙 정렬 */
+  transform: translate(-50%, -100%);
   width: 370px;
   height: auto;
   border-radius: 10px;
@@ -13,224 +13,239 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   border: 1px solid #e5e7eb;
-  z-index: 9999; /* 다른 요소 위로 */
+  z-index: 9999;
+  /* 다른 요소 위로 */
 }
-  
-  .user-info-content {
-    padding: 0;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* 헤더 */
-  .user-info-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 12px 20px;
-    position: relative;
-  }
-  
-  .user-info-title {
-    font-weight: bold;
-    font-size: 14px;
-    color: #111827;
-    margin: 0;
-  }
-  
-  .close-button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 2px;
-    border-radius: 4px;
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  
-  .close-button:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-  
-  .close-icon {
-    width: 16px;
-    height: 16px;
-    color: #6b7280;
-  }
-  
-  /* 폼 영역 */
-  .user-form {
-    flex: 1;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    border: 1.5px solid #3b82f6;
-    border-radius: 8px;
-    margin: 10px 20px 0 20px;
-    background-color: white;
-    overflow: hidden;
-  }
-  
-  /* 입력 필드 그룹 */
-  .input-group {
-    display: flex;
-    flex-direction: row; /* 행 방향으로 변경 */
-    align-items: center; /* 세로 중앙 정렬 */
-    border-bottom: 1px solid #e5e7eb;
-    padding: 12px 15px;
-    min-height: 45px;
-  }
-  
-  .input-group:last-of-type {
-    border-bottom: none;
-    padding-bottom: 15px;
-  }
-  
-  .input-label {
-    font-size: 13px;
-    font-weight: bold;
-    color: #374151;
-    margin-bottom: 0; /* margin-bottom 제거 */
-    margin-right: 15px; /* 오른쪽 여백 추가 */
-    min-width: 60px; /* 라벨 최소 너비 설정 */
-    flex-shrink: 0; /* 라벨 크기 고정 */
-  }
-  
-  .input-field {
-    width: 100%;
-    padding: 0;
-    border: none;
-    font-size: 13px;
-    color: #111827;
-    outline: none;
-    box-sizing: border-box;
-    background: transparent;
-    margin-top: 0; /* margin-top 제거 */
-    flex: 1; /* 남은 공간 모두 차지 */
-  }
-  
-  .input-field:focus {
-    outline: none;
-  }
-  
-  .input-field::placeholder {
-    color: #9ca3af;
-    font-size: 13px;
-  }
-  
-  /* 라디오 버튼 그룹 */
-  .radio-group {
-    display: flex;
-    gap: 15px;
-    margin-top: 0; /* margin-top 제거 */
-    flex: 1; /* 남은 공간 차지 */
-  }
-  
-  .radio-item {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  
-  .radio-input {
-    width: 14px;
-    height: 14px;
-    cursor: pointer;
-    accent-color: #3b82f6;
-  }
-  
-  .radio-label {
-    font-size: 13px;
-    color: #374151;
-    cursor: pointer;
-  }
-  
-  /* 사용자 데이터 표시 */
-  .user-data {
-    font-size: 13px;
-    color: #111827;
-    margin-top: 2px;
-    flex: 1;
-  }
-  
-  /* 버튼 영역 - 2개 버튼용 */
-  .button-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    padding: 15px 20px 20px 20px;
-  }
-  
-  .submit-button {
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 16px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    min-width: 50px;
-  }
-  
-  .delete-button {
-    background-color: #6b7280;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 16px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    min-width: 50px;
-  }
-  
-  .submit-button:hover {
-    background-color: #2563eb;
-  }
-  
-  .submit-button:active {
-    background-color: #1d4ed8;
-  }
-  
-  .delete-button:hover {
-    background-color: #4b5563;
-  }
-  
-  .delete-button:active {
-    background-color: #374151;
-  }
 
-  .modal-overlay {
+.user-info-content {
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 헤더 */
+.user-info-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 20px;
+  position: relative;
+}
+
+.user-info-title {
+  font-weight: bold;
+  font-size: 14px;
+  color: #111827;
+  margin: 0;
+}
+
+.close-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 4px;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.close-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.close-icon {
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+}
+
+/* 폼 영역 */
+.user-form {
+  flex: 1;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1.5px solid #3b82f6;
+  border-radius: 8px;
+  margin: 10px 20px 0 20px;
+  background-color: white;
+  overflow: hidden;
+}
+
+/* 입력 필드 그룹 */
+.input-group {
+  display: flex;
+  flex-direction: row;
+  /* 행 방향으로 변경 */
+  align-items: center;
+  /* 세로 중앙 정렬 */
+  border-bottom: 1px solid #e5e7eb;
+  padding: 12px 15px;
+  min-height: 45px;
+}
+
+.input-group:last-of-type {
+  border-bottom: none;
+  padding-bottom: 15px;
+}
+
+.input-label {
+  font-size: 13px;
+  font-weight: bold;
+  color: #374151;
+  margin-bottom: 0;
+  /* margin-bottom 제거 */
+  margin-right: 15px;
+  /* 오른쪽 여백 추가 */
+  min-width: 60px;
+  /* 라벨 최소 너비 설정 */
+  flex-shrink: 0;
+  /* 라벨 크기 고정 */
+}
+
+.input-field {
+  width: 100%;
+  padding: 0;
+  border: none;
+  font-size: 13px;
+  color: #111827;
+  outline: none;
+  box-sizing: border-box;
+  background: transparent;
+  margin-top: 0;
+  /* margin-top 제거 */
+  flex: 1;
+  /* 남은 공간 모두 차지 */
+}
+
+.input-field:focus {
+  outline: none;
+}
+
+.input-field::placeholder {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+/* 라디오 버튼 그룹 */
+.radio-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 0;
+  /* margin-top 제거 */
+  flex: 1;
+  /* 남은 공간 차지 */
+}
+
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.radio-input {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: #3b82f6;
+}
+
+.radio-label {
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+}
+
+/* 사용자 데이터 표시 */
+.user-data {
+  font-size: 13px;
+  color: #111827;
+  margin-top: 2px;
+  flex: 1;
+}
+
+/* 버튼 영역 - 2개 버튼용 */
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 20px 20px 20px;
+}
+
+.submit-button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  min-width: 50px;
+}
+
+.delete-button {
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  min-width: 50px;
+}
+
+.submit-button:hover {
+  background-color: #2563eb;
+}
+
+.submit-button:active {
+  background-color: #1d4ed8;
+}
+
+.delete-button:hover {
+  background-color: #4b5563;
+}
+
+.delete-button:active {
+  background-color: #374151;
+}
+
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.3); /* 어두운 반투명 배경 */
+  background-color: rgba(0, 0, 0, 0.3);
+  /* 어두운 반투명 배경 */
   display: flex;
-  justify-content: center;  /* 가로 중앙 */
-  align-items: center;      /* 세로 중앙 */
-  z-index: 9999;            /* 맨 위에 보이도록 */
+  justify-content: center;
+  /* 가로 중앙 */
+  align-items: center;
+  /* 세로 중앙 */
+  z-index: 9999;
+  /* 맨 위에 보이도록 */
 }
-  
-  /* 반응형 */
-  @media (max-width: 480px) {
-    .user-info-modal {
-      width: 260px;
-    }
-    
-    .user-form {
-      margin: 10px 15px 0 15px;
-    }
-    
-    .radio-group {
-      gap: 12px;
-    }
+
+/* 반응형 */
+@media (max-width: 480px) {
+  .user-info-modal {
+    width: 260px;
   }
+
+  .user-form {
+    margin: 10px 15px 0 15px;
+  }
+
+  .radio-group {
+    gap: 12px;
+  }
+}

@@ -166,10 +166,6 @@
   flex-wrap: nowrap;
   /* 기본적으로 일자 배열 */
   overflow-x: auto;
-<<<<<<< Updated upstream
-  /* 작은 화면에서 스크롤 가능 */
-=======
->>>>>>> Stashed changes
 }
 
 .stat-card {
@@ -177,12 +173,7 @@
   border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   height: 90px;
-<<<<<<< Updated upstream
-  min-width: 240px;
-  /* 최소 너비 보장 */
-=======
   min-width: 200px;
->>>>>>> Stashed changes
   flex: 1;
   max-width: 250px;
   display: flex;
