@@ -15,7 +15,7 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
 	@Query("""
 		    SELECT new kr.bigdata.web.dto.PatientSummaryDto(
 		        p.patientId, p.patientName, p.age, p.gender,
-		        e.bedNumber, e.acuity, e.chiefComplaint, e.finalDisposition
+		        e.bedNumber, e.acuity, e.chiefComplaint, e.finalDisposition, e.visitId
 		    )
 		    FROM EmergencyVisit e
 		    JOIN e.patient p
@@ -27,7 +27,7 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
 	@Query("""
 		    SELECT new kr.bigdata.web.dto.PatientSummaryDto(
 		        p.patientId, p.patientName, p.age, p.gender,
-		        e.bedNumber, e.acuity, e.chiefComplaint, e.finalDisposition
+		        e.bedNumber, e.acuity, e.chiefComplaint, e.finalDisposition, e.visitId
 		    )
 		    FROM EmergencyVisit e
 		    JOIN e.patient p

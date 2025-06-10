@@ -16,4 +16,5 @@ public class PatientSummaryDto {
     private int acuity;
     private String chiefComplaint;
     private Integer label;
+    private String visitId; // 새로 추가
 }
