@@ -17,57 +17,75 @@ const MainPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [labelFilter, setLabelFilter] = useState('전체');
   const [showEmergencyRoom, setShowEmergencyRoom] = useState(false);
+  const [bedStatus, setBedStatus] = useState(null);
+  // // 병상부분---
+  // useEffect(() => {
+    //     axios.get(`http://localhost:8081/api/visits/${visitId}/available-beds`)
+    //       .then(res => setBedStatus(res.data))
+    //       .catch(err => {
+      //         console.error('병상 정보 조회 실패:', err);
+      //         setBedStatus(null);
+      //       });
+      // }, []);
+      // // 병상 끝----
+      
+      
+      
+      
+      
+      // AuthContext 사용 인데 오류나서 잠깐 주석처리함
+      const { user, isAuthenticated, logout } = useAuth();
+      
+      // axios연결
+      const [patientData, setPatientData] = useState([]);
+      
+      useEffect(() => {
+        axios.get('http://localhost:8081/api/patients')
+        .then(response => {
+          const rawData = response.data;
+          console.log(response)
+          const transformed = rawData.map(p => ({
+            pid: p.pid,
+            name: p.name,
+            age: p.age,
+            sex: p.gender ? 'M' : 'F', // boolean을 성별 문자열로
+            bed: p.bed,
+            ktas: p.acuity,
+            complaint: p.chiefComplaint,
+            label: p.label === 1 ? '위험' : (p.label === 0 ? '주의' : '경미'),
+            history: '확인',
+            visitId: p.visitId
+          }));
+          console.log(transformed)
+          setPatientData(transformed);
+        })
+        .catch(error => {
+          console.error('환자 데이터 불러오기 실패:', error);
+        });
+      }, []);
+      
+      // 필터링(주의,위험,전체)환자보기
+      const handleWarningClick = () => {
+        setLabelFilter('주의');
+      };
+      
+      const handleDangerClick = () => {
+        setLabelFilter('위험');
+      };
+      
+      const resetFilter = () => {
+        setLabelFilter('전체');
+      };
 
-
-  // AuthContext 사용
-  const { user, isAuthenticated, logout } = useAuth();
-
-  // axios연결
-  const [patientData, setPatientData] = useState([]);
-
-  useEffect(() => {
-   axios.get('http://localhost:8081/api/patients')
-    .then(response => {
-      const rawData = response.data;
-      console.log(response)
-      const transformed = rawData.map(p => ({
-        pid: p.pid,
-        name: p.name,
-        age: p.age,
-        sex: p.gender ? 'M' : 'F', // boolean을 성별 문자열로
-        bed: p.bed,
-        ktas: p.acuity,
-        complaint: p.chiefComplaint,
-        label: p.label === 1 ? '위험' : (p.label === 0 ? '주의' : '경미'),
-        history: '확인',
-        visitId: p.visitId
-      }));
-      console.log(transformed)
-      setPatientData(transformed);
-    })
-    .catch(error => {
-      console.error('환자 데이터 불러오기 실패:', error);
-    });
-}, []);
-
-  // 필터링(주의,위험,전체)환자보기
-  const handleWarningClick = () => {
-    setLabelFilter('주의');
-  };
-
-  const handleDangerClick = () => {
-    setLabelFilter('위험');
-  };
-
-  const resetFilter = () => {
-    setLabelFilter('전체');
-  };
-
+  const totalCount = patientData.length;
+  const dangerCount = patientData.filter(p => p.label === '위험').length;
+  const warningCount = patientData.filter(p => p.label === '주의').length;
+  
   // 리스트 전환 토글
   const handleToggle = () => {
     setShowEmergencyRoom(!showEmergencyRoom);
   };
-
+  
   // 모달 열기
   const openHistoryModal = (patient) => {
     setSelectedPatient(patient);
@@ -118,6 +136,18 @@ const MainPage = () => {
     return matchesSearch && matchesLabel;
   });
 
+  // 한명만 보이는 이유 찾기
+  useEffect(() => {
+  console.log("=== 진단용 출력 ===");
+  console.log("검색어:", searchTerm);
+  console.log("라벨 필터:", labelFilter);
+  console.log("전체 환자 수:", patientData.length);
+  console.log("필터링 후:", filteredPatients.length);
+}, [searchTerm, labelFilter, patientData]);
+
+
+
+
   return (
     <div className="medical-dashboard">
       <div className="dashboard-content">
@@ -165,7 +195,7 @@ const MainPage = () => {
             <div className="stat-content">
               <Bed className="stat-icon blue" />
               <div>
-                <div className="stat-number blue">19/28</div>
+                <div className="stat-number blue">{totalCount}/29</div>
               </div>
             </div>
           </div>
@@ -175,7 +205,7 @@ const MainPage = () => {
               <AlertCircle className="stat-icon red" />
               <div className="stat-text">
                 <div className="stat-label">위험 환자</div>
-                <div className="stat-number red">6</div>
+                <div className="stat-number red">{dangerCount}</div>
               </div>
             </div>
           </div>
@@ -185,7 +215,7 @@ const MainPage = () => {
               <AlertTriangle className="stat-icon yellow" />
               <div className="stat-text">
                 <div className="stat-label">주의 환자</div>
-                <div className="stat-number yellow">7</div>
+                <div className="stat-number yellow">{warningCount}</div>
               </div>
             </div>
           </div>

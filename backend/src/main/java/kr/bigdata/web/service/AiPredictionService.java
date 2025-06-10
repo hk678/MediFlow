@@ -24,6 +24,8 @@ import kr.bigdata.web.repository.LabResultsRepository;
 
 @Service
 public class AiPredictionService {
+	
+
 
 	@Autowired
     private RestTemplate restTemplate;

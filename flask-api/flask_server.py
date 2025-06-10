@@ -199,7 +199,7 @@ sample_outputs = [
 # LangChain은 LLM 객체로 OpenAI 연동
 llm = ChatOpenAI(
     openai_api_key=os.getenv("OPENAI_API_KEY"),
-    model="gpt-4-1106-preview",
+    model="gpt-4o",
     temperature=0.0   # ← 여기에서 0.0~0.2 정도로 주면 됨!
 )
 
