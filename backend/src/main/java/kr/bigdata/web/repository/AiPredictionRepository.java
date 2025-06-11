@@ -13,28 +13,28 @@ import kr.bigdata.web.entity.EmergencyVisit;
 
 public interface AiPredictionRepository extends JpaRepository<AiPrediction, Long> {
 
-    // 1. 특정 방문 전체 예측 결과 조회 (EmergencyVisit FK 기준)
-    List<AiPrediction> findByEmergencyVisit(EmergencyVisit emergencyVisit);
+	// visitId + preType으로 예측 결과 "1개만" 조회 (없으면 Optional.empty)
+	Optional<AiPrediction> findByEmergencyVisit_VisitIdAndPreType(String visitId, String preType);
 
-    // 2. visitId(문자열) 기준 최신 예측 결과 (Optional)
-    Optional<AiPrediction> findTopByEmergencyVisit_VisitIdOrderByPreTimeDesc(String visitId);
+	// visitId + preType(discharge) 기준 최신 예측 1건
+	Optional<AiPrediction> findTopByEmergencyVisit_VisitIdAndPreTypeOrderByPreTimeDesc(String visitId, String preType);
 
-    // 3. (선택) visitId, preType 조건으로 예측 결과
-    List<AiPrediction> findByEmergencyVisit_VisitIdAndPreType(String visitId, String preType);
+	// 특정 방문에 대한 모든 예측 기록(이력)이 필요할 때 사용
+	List<AiPrediction> findByEmergencyVisit(EmergencyVisit emergencyVisit);
 
-    // 가장 최신 퇴실 예측 1건만 조회
-    Optional<AiPrediction> findTopByEmergencyVisit_VisitIdAndPreTypeOrderByPreTimeDesc(String visitId, String preType);
-    
-    @Query(value = """
-        SELECT 
-            FLOOR(pre_score / 10) * 10 as score_range,
-            COUNT(*) as count
-        FROM ai_prediction 
-        WHERE pre_time BETWEEN :startDate AND :endDate
-          AND pre_score IS NOT NULL
-        GROUP BY FLOOR(pre_score / 10) * 10
-        ORDER BY score_range
-        """, nativeQuery = true)
-    List<Object[]> getWeeklyScoreStats(@Param("startDate") LocalDateTime startDate, 
-                                       @Param("endDate") LocalDateTime endDate);
+	// visitId로 최신 예측 1건만 보고 싶을 때 사용
+	Optional<AiPrediction> findTopByEmergencyVisit_VisitIdOrderByPreTimeDesc(String visitId);
+
+	@Query(value = """
+			SELECT
+			    FLOOR(pre_score / 10) * 10 as score_range,
+			    COUNT(*) as count
+			FROM ai_prediction
+			WHERE pre_time BETWEEN :startDate AND :endDate
+			  AND pre_score IS NOT NULL
+			GROUP BY FLOOR(pre_score / 10) * 10
+			ORDER BY score_range
+			""", nativeQuery = true)
+	List<Object[]> getWeeklyScoreStats(@Param("startDate") LocalDateTime startDate,
+			@Param("endDate") LocalDateTime endDate);
 }
