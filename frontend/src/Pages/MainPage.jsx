@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Search, User, Users, Bed, AlertCircle, AlertTriangle } from 'lucide-react';
+import { Search, Users, Bed, AlertCircle, AlertTriangle } from 'lucide-react';
 import logoutIcon from '../assets/images/logout-icon.png';
 import UserIcon from '../assets/images/user-icon.png';
 import { useNavigate } from 'react-router-dom';
 import '../Style/Mainpage.css';
-import History from './History';
+import History from '../Components/History';
 import axios from 'axios';
 import EmergencyRoom from './EmergencyRoom';
-import { useAuth } from './AuthContext'; // AuthContext 추가
+import { useAuth } from '../Components/AuthContext';
 
 const MainPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,79 +18,27 @@ const MainPage = () => {
   const [labelFilter, setLabelFilter] = useState('전체');
   const [showEmergencyRoom, setShowEmergencyRoom] = useState(false);
   const [bedStatus, setBedStatus] = useState(null);
-  // // 병상부분---
-  // useEffect(() => {
-    //     axios.get(`http://localhost:8081/api/visits/${visitId}/available-beds`)
-    //       .then(res => setBedStatus(res.data))
-    //       .catch(err => {
-      //         console.error('병상 정보 조회 실패:', err);
-      //         setBedStatus(null);
-      //       });
-      // }, []);
-      // // 병상 끝----
-      
-      
-      
-      
-      
-      // AuthContext 사용 인데 오류나서 잠깐 주석처리함
-      const { user, isAuthenticated, logout } = useAuth();
-      
-      // axios연결
-      const [patientData, setPatientData] = useState([]);
-      
-      useEffect(() => {
-        axios.get('http://localhost:8081/api/patients')
-        .then(response => {
-          const rawData = response.data;
-          console.log(response)
-          const transformed = rawData.map(p => ({
-            pid: p.pid,
-            name: p.name,
-            age: p.age,
-            sex: p.gender ? 'M' : 'F', // boolean을 성별 문자열로
-            bed: p.bed,
-            ktas: p.acuity,
-            complaint: p.chiefComplaint,
-            label: p.label === 1 ? '위험' : (p.label === 0 ? '주의' : '경미'),
-            history: '확인',
-            visitId: p.visitId
-          }));
-          console.log(transformed)
-          setPatientData(transformed);
-        })
-        .catch(error => {
-          console.error('환자 데이터 불러오기 실패:', error);
-        });
-      }, []);
-      
-      // 필터링(주의,위험,전체)환자보기
-      const handleWarningClick = () => {
-        setLabelFilter('주의');
-      };
-      
-      const handleDangerClick = () => {
-        setLabelFilter('위험');
-      };
-      
-      const resetFilter = () => {
-        setLabelFilter('전체');
-      };
+  const [patientData, setPatientData] = useState([]);
 
-  const totalCount = patientData.length;
-  const dangerCount = patientData.filter(p => p.label === '위험').length;
-  const warningCount = patientData.filter(p => p.label === '주의').length;
-  
   // AuthContext 사용
   const { user, isAuthenticated, logout } = useAuth();
 
-  // axios연결
-  const [patientData, setPatientData] = useState([]);
+  // 병상 정보 조회 (필요시 주석 해제)
+  // useEffect(() => {
+  //   axios.get(`http://localhost:8081/api/visits/${visitId}/available-beds`)
+  //     .then(res => setBedStatus(res.data))
+  //     .catch(err => {
+  //       console.error('병상 정보 조회 실패:', err);
+  //       setBedStatus(null);
+  //     });
+  // }, []);
 
+  // 환자 데이터 가져오기
   useEffect(() => {
     axios.get('http://localhost:8081/api/patients')
       .then(response => {
         const rawData = response.data;
+        console.log(response);
         const transformed = rawData.map(p => ({
           pid: p.pid,
           name: p.name,
@@ -103,12 +51,18 @@ const MainPage = () => {
           history: '확인',
           visitId: p.visitId
         }));
+        console.log(transformed);
         setPatientData(transformed);
       })
       .catch(error => {
         console.error('환자 데이터 불러오기 실패:', error);
       });
   }, []);
+
+  // 카운트 계산
+  const totalCount = patientData.length;
+  const dangerCount = patientData.filter(p => p.label === '위험').length;
+  const warningCount = patientData.filter(p => p.label === '주의').length;
 
   // 필터링(주의,위험,전체)환자보기
   const handleWarningClick = () => {
@@ -127,7 +81,7 @@ const MainPage = () => {
   const handleToggle = () => {
     setShowEmergencyRoom(!showEmergencyRoom);
   };
-  
+
   // 모달 열기
   const openHistoryModal = (patient) => {
     setSelectedPatient(patient);
@@ -178,17 +132,14 @@ const MainPage = () => {
     return matchesSearch && matchesLabel;
   });
 
-  // 한명만 보이는 이유 찾기
+  // 디버깅용 useEffect
   useEffect(() => {
-  console.log("=== 진단용 출력 ===");
-  console.log("검색어:", searchTerm);
-  console.log("라벨 필터:", labelFilter);
-  console.log("전체 환자 수:", patientData.length);
-  console.log("필터링 후:", filteredPatients.length);
-}, [searchTerm, labelFilter, patientData]);
-
-
-
+    console.log("=== 진단용 출력 ===");
+    console.log("검색어:", searchTerm);
+    console.log("라벨 필터:", labelFilter);
+    console.log("전체 환자 수:", patientData.length);
+    console.log("필터링 후:", filteredPatients.length);
+  }, [searchTerm, labelFilter, patientData, filteredPatients]);
 
   return (
     <div className="medical-dashboard">
@@ -213,7 +164,7 @@ const MainPage = () => {
             </div>
             <div className="user-info">
               <img src={UserIcon} alt="user" className="user-icon" />
-              <span className="user-name">{user.userRole} {user.userName}</span>
+              <span className="user-name">{user?.userRole} {user?.userName}</span>
               <div className="logout-button" onClick={handleLogout}>
                 <img src={logoutIcon} alt="logout" className="logout-icon" />
                 <span className="logout-text">Logout</span>
@@ -263,7 +214,7 @@ const MainPage = () => {
           </div>
         </div>
 
-        {/* Toggle Switch */}
+        {/* 토글 스위치 */}
         <div className="toggle-container">
           <div className="toggle-wrapper">
             <span className="toggle-label">
@@ -297,7 +248,7 @@ const MainPage = () => {
                 </thead>
                 <tbody>
                   {filteredPatients.slice(0, 20).map((patient) => (
-                    <tr key={patient.pid} className="table-row" >
+                    <tr key={patient.pid} className="table-row">
                       <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.pid}</td>
                       <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.name}</td>
                       <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.age}</td>
@@ -317,7 +268,7 @@ const MainPage = () => {
               </table>
             </div>
 
-            {/* Pagination */}
+            {/* 페이지네이션 */}
             <div className="pagination">
               <div className="pagination-info">
                 <span className="pagination-text">&lt; 이전</span>

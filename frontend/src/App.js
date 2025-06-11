@@ -2,17 +2,14 @@ import logo from './logo.svg';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './Components/AuthContext';
 import ProtectedRoute from './Components/ProtectedRoute';
-import Login from './Components/Login';
-import MainPage from './Components/MainPage';
-import Detail from './Components/Detail';
-import Admin from './Components/Admin';
+import Login from './Pages/Login';
+import MainPage from './Pages/MainPage';
+import Detail from './Pages/Detail';
+import Admin from './Pages/Admin';
 import History from './Components/History';
 import UserInfo from './Components/UserInfo';
 import UserUpdate from './Components/UserUpdate';
-import EmergencyRoom from './Components/EmergencyRoom';
-
-
-
+import EmergencyRoom from './Pages/EmergencyRoom';
 
 // function App() {
 //   return (

@@ -5,11 +5,11 @@ import { Search, User, Users, Bed, AlertCircle, AlertTriangle } from 'lucide-rea
 import { useNavigate } from 'react-router-dom';
 import logoutIcon from '../assets/images/logout-icon.png';
 import AdminUserIcon from '../assets/images/admin-user-icon.svg'; // 관리자 유저 아이콘 추가
-import UserUpdate from "./UserUpdate";
-import UserInfo from "./UserInfo";
+import UserUpdate from "../Components/UserUpdate";
+import UserInfo from "../Components/UserInfo";
 import axios from "axios";
-import { useAuth } from './AuthContext'; // AuthContext 추가
-import WeeklyChart from './WeeklyChart';
+import { useAuth } from '../Components/AuthContext'; // AuthContext 추가
+import WeeklyChart from '../Components/WeeklyChart';
 
 const Admin = () => {
   const [showModal, setShowModal] = useState(false);

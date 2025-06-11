@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import '../Style/History.css';
 import axios from "axios";
-import EditModal from './EditModal'; 
+import EditModal from '../Pages/EditModal';
 
 export default function History({ patient, onClose }) {
   const [inputValue, setInputValue] = useState('');
@@ -19,36 +19,36 @@ export default function History({ patient, onClose }) {
 
   // 수정보달 함수  
   const handleEditClick = (entry) => {
-  setEditingId(entry.historyId);
-  setEditingValue(entry.content);
-  setEditModalOpen(true);
-};
+    setEditingId(entry.historyId);
+    setEditingValue(entry.content);
+    setEditModalOpen(true);
+  };
 
   const handleEditSubmit = () => {
-  if (!editingValue.trim()) return;
+    if (!editingValue.trim()) return;
 
-  axios.put(`http://localhost:8081/api/history/${editingId}`, {
-    content: editingValue
-  }, {
-    withCredentials: true
-  })
-    .then(() => {
-      console.log("수정 성공");
-      setEditModalOpen(false);
-      setEditingId(null);
-      setEditingValue('');
-      fetchHistory(); // 새로고침
+    axios.put(`http://localhost:8081/api/history/${editingId}`, {
+      content: editingValue
+    }, {
+      withCredentials: true
     })
-    .catch((err) => {
-      if (err.response?.status === 401) {
-        alert("로그인 세션이 만료되었습니다.");
-      } else {
-        console.error("수정 실패:", err);
-      }
-    });
-};
+      .then(() => {
+        console.log("수정 성공");
+        setEditModalOpen(false);
+        setEditingId(null);
+        setEditingValue('');
+        fetchHistory(); // 새로고침
+      })
+      .catch((err) => {
+        if (err.response?.status === 401) {
+          alert("로그인 세션이 만료되었습니다.");
+        } else {
+          console.error("수정 실패:", err);
+        }
+      });
+  };
 
-//끗
+  //끗
 
   //  히스토리 불러오기
   const fetchHistory = () => {
@@ -56,7 +56,7 @@ export default function History({ patient, onClose }) {
       .then((res) => {
         console.log("visitId 확인:", patient.visitId);
         console.log("📌 히스토리 불러옴:", res.data); // 👈 여기 콘솔 추가!
-        setHistory(res.data); 
+        setHistory(res.data);
       })
       .catch((err) => {
         console.error("히스토리 로딩 실패", err);
@@ -69,7 +69,7 @@ export default function History({ patient, onClose }) {
 
 
   // 등록버튼
-    const handleRegister = () => {
+  const handleRegister = () => {
     if (!inputValue.trim()) return;
 
     const newEntry = {
@@ -79,39 +79,39 @@ export default function History({ patient, onClose }) {
     axios.post(`http://localhost:8081/api/visits/${patient.visitId}/history`, newEntry, {
       withCredentials: true
     })
-    .then((res) => {
-      console.log("히스토리 등록 성공:", res.data);
-      setInputValue('');
-      fetchHistory();
-    })
-    .catch((err) => {
-      if (err.response?.status === 401) {
-        alert("로그인 세션이 만료되었습니다.");
-      } else {
-        console.error("히스토리 등록 실패:", err);
-      }
-    });
+      .then((res) => {
+        console.log("히스토리 등록 성공:", res.data);
+        setInputValue('');
+        fetchHistory();
+      })
+      .catch((err) => {
+        if (err.response?.status === 401) {
+          alert("로그인 세션이 만료되었습니다.");
+        } else {
+          console.error("히스토리 등록 실패:", err);
+        }
+      });
   };
   // 등록끗
   // 삭제
   const handleDelete = (historyId) => {
-  if (!window.confirm("정말 삭제하시겠습니까?")) return;
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
-  axios.delete(`http://localhost:8081/api/history/${historyId}`, {
-    withCredentials: true,
-  })
-    .then(() => {
-      console.log("삭제 성공");
-      fetchHistory(); // 삭제 후 목록 다시 불러오기
+    axios.delete(`http://localhost:8081/api/history/${historyId}`, {
+      withCredentials: true,
     })
-    .catch((err) => {
-      if (err.response?.status === 401) {
-        alert("로그인 세션이 만료되었습니다.");
-      } else {
-        console.error("삭제 실패:", err);
-      }
-    });
-};
+      .then(() => {
+        console.log("삭제 성공");
+        fetchHistory(); // 삭제 후 목록 다시 불러오기
+      })
+      .catch((err) => {
+        if (err.response?.status === 401) {
+          alert("로그인 세션이 만료되었습니다.");
+        } else {
+          console.error("삭제 실패:", err);
+        }
+      });
+  };
 
   // 삭제 끗
 
@@ -146,9 +146,9 @@ export default function History({ patient, onClose }) {
               </div>
               <div className="history-buttons">
                 <button className="history-button" >
-                <span className="history-button-text" onClick={() => handleEditClick(entry)}>수정</span></button>
+                  <span className="history-button-text" onClick={() => handleEditClick(entry)}>수정</span></button>
                 <button className="history-button" onClick={() => handleDelete(entry.historyId)}>
-                <span className="history-button-text">삭제</span></button>
+                  <span className="history-button-text">삭제</span></button>
               </div>
             </div>
           ))}

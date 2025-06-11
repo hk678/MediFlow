@@ -21,18 +21,18 @@ import '../Style/Emergencymodal.css';
 //   }
 
 // 2순위: KTAS 값으로 판단
-  const getBedStatusFromKTAS = (ktas) => {
-    switch (ktas) {
-      case 1:
-      case 2:
-        return 'red';
-      case 3:
-        return 'yellow';
-      case 4:
-      case 5:
-        return 'green';
-      default:
-        return 'empty';
+const getBedStatusFromKTAS = (ktas) => {
+  switch (ktas) {
+    case 1:
+    case 2:
+      return 'red';
+    case 3:
+      return 'yellow';
+    case 4:
+    case 5:
+      return 'green';
+    default:
+      return 'empty';
   }
 };
 
@@ -48,7 +48,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
         onClose();
       }
     };
-    
+
     // 이벤트 리스너 추가
     document.addEventListener('keydown', handleEscapeKey);
     return () => {
@@ -63,7 +63,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
     }
   };
 
-  // 환자 필터링 (검색어 기반) - 🔧 안전한 필터링으로 수정
+  // 환자 필터링 (검색어 기반) - 안전한 필터링으로 수정
   const filteredPatients = patients.filter(patient =>
     (patient.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (patient.complaint || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -83,7 +83,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
     if (!selectedPatient) return;
 
     setIsAssigning(true);
-    
+
     try {
       console.log('배치 시작:', {
         patient: selectedPatient.name,
@@ -103,7 +103,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
 
       // 2. 병상 유형에 따른 disposition 결정
       let disposition = 1; // 기본값: 일반병동
-      
+
       if (bed?.name?.startsWith('B')) {
         disposition = 2; // ICU
       }
@@ -130,8 +130,8 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
 
       // 4. 성공 메시지 및 UI 업데이트
       alert(`${selectedPatient.name} 환자가 ${bed?.name} 병상에 성공적으로 배치되었습니다.`);
-      
-      // 🆕 5. 새로운 병상 상태 데이터 생성
+
+      // 5. 새로운 병상 상태 데이터 생성
       const newBedStatus = {
         patientId: selectedPatient.pid,
         patientName: selectedPatient.name,
@@ -143,7 +143,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
         chiefComplaint: selectedPatient.complaint
       };
 
-      // 🆕 6. 부모 컴포넌트에 새 병상 상태 전달
+      // 6. 부모 컴포넌트에 새 병상 상태 전달
       if (onAssign) {
         onAssign(selectedPatient, bed?.name, newBedStatus);
       }
@@ -153,9 +153,9 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
 
     } catch (error) {
       console.error('환자 배치 실패:', error);
-      
+
       let errorText = '환자 배치에 실패했습니다.';
-      
+
       if (error.response?.status === 404) {
         errorText = '환자 정보를 찾을 수 없습니다.';
       } else if (error.response?.status === 400) {
@@ -163,7 +163,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
       } else if (error.response?.data?.message) {
         errorText = error.response.data.message;
       }
-      
+
       alert(errorText);
 
     } finally {
@@ -181,7 +181,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
 
   // KTAS 레벨 텍스트
   const getKtasText = (ktas) => {
-    switch(ktas) {
+    switch (ktas) {
       case 1: return '소생';
       case 2: return '응급';
       case 3: return '긴급';
@@ -273,7 +273,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
           <button className="cancel-button" onClick={onClose}>
             취소
           </button>
-          <button 
+          <button
             className="assign-button"
             onClick={handleAssignConfirm}
             disabled={!selectedPatient || isAssigning}
