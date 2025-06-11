@@ -30,7 +30,8 @@ function Detail() {
 
   useEffect(() => {
     if (visitId) {
-      axios.get(`http://localhost:8081/api/visits/${visitId}/labs/abnormal`)
+      axios.get(`http://localhost:8081/api/visits/${visitId}/labs/abnormal`, {
+      })
         .then(res => setAbnormalLabs(res.data))
         .catch(err => console.error("이상수치 불러오기 실패", err));
     }

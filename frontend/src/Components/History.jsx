@@ -164,6 +164,11 @@ export default function History({ patient, onClose }) {
               placeholder="메모를 입력하세요..."
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e)=>{
+                if (e.key==='Enter'){
+                  handleRegister();
+                }
+              }}
             />
             <button className="register-button" onClick={handleRegister}>
               <span className="register-button-text">등록</span>

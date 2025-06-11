@@ -41,6 +41,7 @@ public class SpringSecurityConfig {
                     "/api/auth/login",
                     "/api/auth/logout",
                     "/api/auth/status",
+                    "/api/patients",
                     "/api/patients/**",
                     "/api/visits/**", 
                     "/api/history/**",

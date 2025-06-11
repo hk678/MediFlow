@@ -6,14 +6,26 @@
   width: 370px;
   height: 450px;
   border-radius: 10px;
-  position: relative;
+  position: fixed; /* ✅ 고정 위치 */
+  top: 50%;         /* ✅ 수직 중앙 */
+  left: 50%;        /* ✅ 수평 중앙 */
+  transform: translate(-50%, -50%); /* ✅ 정확히 가운데로 */
   overflow: hidden;
   background-color: white;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* 다른 요소 위에 나오도록 */
 }
 
 .patient-modal-content {
-  padding: 0;
+  background-color: #fff;
+  width: 370px;
+  /* height: 450px; 고정 높이 유지 */
+  display: flex;
+  flex-direction: column;
+  padding:  0 0 0;  /* ⛔ 위아래 여백 제거 */
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
 }
 
 .modal-header {
@@ -68,11 +80,13 @@
 
 /* 히스토리 엔트리 */
 .history-container {
-  padding-left: 13px;
-  padding-right: 13px;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 300px; /* ✅ 목록이 너무 길면 스크롤되도록 */
+  padding: 0 13px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px; 
 }
 
 .history-entry {
@@ -140,17 +154,15 @@
 .history-button-text {
   font-weight: 500;
   color: black;
-  font-size: 5px;
+  font-size: 10px;
   line-height: 12.8px;
   letter-spacing: -0.5px;
 }
 
 /* 등록 섹션 */
 .register-section {
-  position: absolute;
-  bottom: 15px;
-  left: 13px;
-  right: 13px;
+  padding: 0 13px 10px 13px;
+  margin-top: 6px;  /* 아래로 자동 정렬 */
 }
 
 .input-container {
@@ -201,7 +213,7 @@
 .register-button-text {
   font-weight: 500;
   color: white;
-  font-size: 5px;
+  font-size: 10px;
   line-height: 12.8px;
   letter-spacing: -0.5px;
 }
@@ -214,6 +226,7 @@
   }
 
   .history-container {
+    max-height: 300px;
     padding-left: 10px;
     padding-right: 10px;
   }
