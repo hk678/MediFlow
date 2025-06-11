@@ -29,11 +29,13 @@ const PastRecordModal = ({ patientName, patientPid, onClose }) => {
       setLoading(true);
       setError(null);
 
+
       // 정확한 API 엔드포인트 사용
       axios.get(`http://localhost:8081/api/visits/${patientPid}`)
         .then(response => {
           console.log("과거 기록 백엔드 응답:", response.data);
           const rawData = response.data;
+
 
           // 🔄 백엔드 VisitSummaryDto → Frontend 형식 변환
           const transformed = rawData.map(visit => ({
@@ -65,7 +67,6 @@ const PastRecordModal = ({ patientName, patientPid, onClose }) => {
           } else {
             setError('과거 기록을 불러오는 중 오류가 발생했습니다.');
           }
-
           setPastRecords([]);
           setLoading(false);
         });
@@ -92,12 +93,10 @@ const PastRecordModal = ({ patientName, patientPid, onClose }) => {
 
     const totalVisits = pastRecords.length;
     const lastVisit = pastRecords[0]?.date || 'N/A';
-
     // 주요 증상 계산 (안전한 처리)
     const complaints = pastRecords
       .map(r => (r.chiefComplaint || '').split(' ')[0])
       .filter(c => c && c !== '정보');
-
     const complaintCounts = complaints.reduce((acc, complaint) => {
       acc[complaint] = (acc[complaint] || 0) + 1;
       return acc;

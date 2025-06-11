@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Search, User, Users, Bed, AlertCircle, AlertTriangle, LogOut } from 'lucide-react';
 import logoutIcon from '../assets/images/logout-icon.png';
 import UserIcon from '../assets/images/user-icon.png';
-import MainPage from './MainPage';
+import MainPage from '../Pages/MainPage';
+
 import EmergencyModal from './EmergencyModal';
 import DischargeModal from './DischargeModal';
 import '../Style/Mainpage.css';
@@ -30,6 +31,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
     const minutes = Math.floor(Math.random() * 120) + 10;
     return `${minutes}분`;
   };
+
 
   // 병상 상태 가져오기 - 백엔드 연동 (정확한 필드명 사용)
   const getBedStatuses = async () => {
@@ -110,15 +112,15 @@ const EmergencyRoom = ({ hideHeader = false }) => {
       default:
         return 'empty';
     }
-  };
+  }; 
+
 
   // 대기 환자 목록 불러오기
   const getWaitingPatients = async () => {
     try {
       const response = await axios.get('http://localhost:8081/api/patients');
 
-      const waitingOnly = response.data.filter(patient => !patient.bedNumber);
-
+      const waitingOnly = response.data.filter(patient => !patient.bedNumber); 
       const transformedData = waitingOnly.map(patient => ({
         pid: patient.pid,
         name: patient.name || patient.patientName || patient.patient || `환자 ${patient.pid}`,
@@ -156,7 +158,6 @@ const EmergencyRoom = ({ hideHeader = false }) => {
   const handleBedClick = (bed) => {
     const bedData = bedStatuses[bed.name];
     const hasPatient = bedData && bedData.patientName;
-
     if (!hasPatient) {
       // 빈 병상 클릭 시 - 환자 배치 모달 열기
       setSelectedBed({
@@ -179,6 +180,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
     }
   };
 
+
   // 환자 배치 처리 - 매개변수 수정 및 즉시 UI 업데이트
   const handlePatientAssign = async (patient, bedName, newBedStatus) => {
     try {
@@ -189,6 +191,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
         ...prevStatuses,
         [bedName]: newBedStatus
       }));
+
 
       // 대기환자 목록에서 해당 환자 제거
       setWaitingPatients(prevPatients =>
@@ -225,7 +228,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
           }
         );
       }
-      */
+
 
       console.log(`병상 ${selectedBed.name}의 환자 퇴실 처리 완료 (로컬 처리)`);
 
@@ -334,7 +337,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
 
   const getBedClassName = (status) => {
     const baseClass = 'emergency-bed-card';
-    switch (status) {
+    switch(status) {
       case 'red': return `${baseClass} emergency-bed-red`;
       case 'yellow': return `${baseClass} emergency-bed-yellow`;
       case 'green': return `${baseClass} emergency-bed-green`;
@@ -345,7 +348,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
   };
 
   const BedCard = ({ bed }) => (
-    <div
+    <div 
       className={getBedClassName(bed.status)}
       onClick={() => handleBedClick(bed)}
       style={{ cursor: 'pointer' }}
@@ -418,6 +421,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
                   </div>
                 </div>
               </div>
+              
 
               <div className="stat-card">
                 <div className="stat-content">
@@ -427,7 +431,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
                   </div>
                 </div>
               </div>
-
+              
               <div className="stat-card stat-card-danger">
                 <div className="stat-content">
                   <AlertCircle className="stat-icon red" />
@@ -472,7 +476,8 @@ const EmergencyRoom = ({ hideHeader = false }) => {
         </div>
 
         {showPatientModal && (
-          <EmergencyModal
+          <EmergencyModal 
+
             bed={selectedBed}
             patients={waitingPatients}
             onAssign={handlePatientAssign}
@@ -481,7 +486,8 @@ const EmergencyRoom = ({ hideHeader = false }) => {
         )}
 
         {showDischargeModal && (
-          <DischargeModal
+          <DischargeModal 
+
             bed={selectedBed}
             onDischarge={handlePatientDischarge}
             onClose={closeModal}

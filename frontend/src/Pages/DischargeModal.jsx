@@ -99,7 +99,7 @@ const DischargeModal = ({ bed, onDischarge, onClose }) => {
             </div>
             <div className={`ktas-badge ${getKtasClass(bed?.patient?.ktas || 3)}`}>
               KTAS {bed?.patient?.ktas || 3}
-              <span className="discharge-ktas-text">{getKtasText(bed?.patient?.ktas || 3)}</span>
+              <span className="ktas-text">{getKtasText(bed?.patient?.ktas || 3)}</span>
             </div>
           </div>
 
