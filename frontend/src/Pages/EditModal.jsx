@@ -17,6 +17,11 @@ const EditModal = ({ value, onChange, onClose, onSubmit }) => {
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onKeyDown={(e)=>{
+            if (e.key==='Enter'){
+              onSubmit();
+            }
+          }}
         />
         <button className="edit-save-button" onClick={onSubmit}>
           저장

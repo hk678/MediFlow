@@ -3,7 +3,7 @@ import { Search, User, Users, Bed, AlertCircle, AlertTriangle } from 'lucide-rea
 import logoutIcon from '../assets/images/logout-icon.png';
 import UserIcon from '../assets/images/user-icon.png';
 import { useNavigate } from 'react-router-dom';
-import '../Style/Mainpage.css';
+import '../Style/mainpage.css';
 import History from '../Components/History';
 import axios from 'axios';
 import EmergencyRoom from './EmergencyRoom';
@@ -183,7 +183,7 @@ const MainPage = () => {
               <Bed className="stat-icon blue" />
               <div>
 
-                <div className="stat-number blue">{totalCount}/30<div>
+                <div className="stat-number blue">{totalCount}/30</div>
               </div>
             </div>
           </div>

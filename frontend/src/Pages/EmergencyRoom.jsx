@@ -7,7 +7,7 @@ import MainPage from '../Pages/MainPage';
 
 import EmergencyModal from './EmergencyModal';
 import DischargeModal from './DischargeModal';
-import '../Style/Mainpage.css';
+import '../Style/mainpage.css';
 import '../Style/Emergencyroom.css';
 import axios from "axios";
 
@@ -228,7 +228,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
           }
         );
       }
-
+      */
 
       console.log(`병상 ${selectedBed.name}의 환자 퇴실 처리 완료 (로컬 처리)`);
 
