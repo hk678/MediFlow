@@ -3,7 +3,24 @@ import { X, User, Clock, AlertCircle } from "lucide-react";
 import axios from "axios";
 import '../Style/Emergencymodal.css';
 
-// 🆕 KTAS 등급에 따른 병상 상태 결정 함수 추가
+// KTAS 등급과 Label에 따른 병상 상태 결정 (수정된 버전)
+// const getBedStatusFromKTAS = (ktas, label) => {
+//   // 1순위: label 필드가 있으면 우선 사용
+//   if (label !== undefined && label !== null) {
+//     switch (label) {
+//       case 1: // 위험
+//         return 'red';
+//       case 0: // 주의  
+//         return 'yellow';
+//       case -1: // 경미
+//         return 'green';
+//       default:
+//         // label이 있지만 알 수 없는 값인 경우 KTAS로 fallback
+//         break;
+//     }
+//   }
+
+// 2순위: KTAS 값으로 판단
 const getBedStatusFromKTAS = (ktas) => {
   switch (ktas) {
     case 1:
@@ -31,7 +48,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
         onClose();
       }
     };
-    
+
     // 이벤트 리스너 추가
     document.addEventListener('keydown', handleEscapeKey);
     return () => {
@@ -46,7 +63,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
     }
   };
 
-  // 환자 필터링 (검색어 기반) - 🔧 안전한 필터링으로 수정
+  // 환자 필터링 (검색어 기반) - 안전한 필터링으로 수정
   const filteredPatients = patients.filter(patient =>
     (patient.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (patient.complaint || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -66,7 +83,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
     if (!selectedPatient) return;
 
     setIsAssigning(true);
-    
+
     try {
       console.log('배치 시작:', {
         patient: selectedPatient.name,
@@ -86,7 +103,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
 
       // 2. 병상 유형에 따른 disposition 결정
       let disposition = 1; // 기본값: 일반병동
-      
+
       if (bed?.name?.startsWith('B')) {
         disposition = 2; // ICU
       }
@@ -94,6 +111,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
       // 3. 병상 배치 API 호출
       const assignmentData = {
         disposition: disposition,
+        bedNumber: bed?.name,
         reason: `응급실 ${bed?.name} 병상 배치 - ${selectedPatient.name} 환자`
       };
 
@@ -102,6 +120,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
           `http://localhost:8081/api/visits/${selectedPatient.visitId}/disposition`,
           assignmentData,
           {
+            withCredentials: true,
             headers: {
               'Content-Type': 'application/json',
             }
@@ -111,8 +130,8 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
 
       // 4. 성공 메시지 및 UI 업데이트
       alert(`${selectedPatient.name} 환자가 ${bed?.name} 병상에 성공적으로 배치되었습니다.`);
-      
-      // 🆕 5. 새로운 병상 상태 데이터 생성
+
+      // 5. 새로운 병상 상태 데이터 생성
       const newBedStatus = {
         patientId: selectedPatient.pid,
         patientName: selectedPatient.name,
@@ -124,7 +143,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
         chiefComplaint: selectedPatient.complaint
       };
 
-      // 🆕 6. 부모 컴포넌트에 새 병상 상태 전달
+      // 6. 부모 컴포넌트에 새 병상 상태 전달
       if (onAssign) {
         onAssign(selectedPatient, bed?.name, newBedStatus);
       }
@@ -134,9 +153,9 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
 
     } catch (error) {
       console.error('환자 배치 실패:', error);
-      
+
       let errorText = '환자 배치에 실패했습니다.';
-      
+
       if (error.response?.status === 404) {
         errorText = '환자 정보를 찾을 수 없습니다.';
       } else if (error.response?.status === 400) {
@@ -144,7 +163,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
       } else if (error.response?.data?.message) {
         errorText = error.response.data.message;
       }
-      
+
       alert(errorText);
 
     } finally {
@@ -162,7 +181,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
 
   // KTAS 레벨 텍스트
   const getKtasText = (ktas) => {
-    switch(ktas) {
+    switch (ktas) {
       case 1: return '소생';
       case 2: return '응급';
       case 3: return '긴급';
@@ -235,7 +254,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
                     <div className="patient-status">
                       <div className={`ktas-badge ${getKtasClass(patient.ktas)}`}>
                         KTAS {patient.ktas}
-                        <span className="ktas-text">{getKtasText(patient.ktas)}</span>
+                        <span className="emergency-ktas-text">{getKtasText(patient.ktas)}</span>
                       </div>
                       <div className="waiting-time">
                         <Clock className="clock-icon" />
@@ -254,7 +273,7 @@ const EmergencyModal = ({ bed, patients, onAssign, onClose }) => {
           <button className="cancel-button" onClick={onClose}>
             취소
           </button>
-          <button 
+          <button
             className="assign-button"
             onClick={handleAssignConfirm}
             disabled={!selectedPatient || isAssigning}

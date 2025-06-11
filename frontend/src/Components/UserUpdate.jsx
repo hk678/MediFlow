@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
-import axios from "axios"; // ✅ axios import
+import axios from "axios"; // axios import
 import '../Style/Userupdate.css';
 
-
 export default function UserUpdate({ onClose }) {
-  // ✅ 사용자 정보 상태
+  // 사용자 정보 상태
   const [userData, setUserData] = useState({
     id: '',
     password: '',
@@ -13,7 +12,7 @@ export default function UserUpdate({ onClose }) {
     position: ''
   });
 
-  // ✅ 저장 클릭 시 axios로 POST 요청
+  // 저장 클릭 시 axios로 POST 요청
   const handleSave = async () => {
     const payload = {
       userId: userData.id,

@@ -12,7 +12,7 @@ import axios from "axios";
 
 const EmergencyRoom = ({ hideHeader = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   // 모달 상태 관리
   const [showPatientModal, setShowPatientModal] = useState(false);
   const [showDischargeModal, setShowDischargeModal] = useState(false);
@@ -31,35 +31,63 @@ const EmergencyRoom = ({ hideHeader = false }) => {
     return `${minutes}분`;
   };
 
-  // 병상 상태 가져오기 - 백엔드 연동
+  // 병상 상태 가져오기 - 백엔드 연동 (정확한 필드명 사용)
   const getBedStatuses = async () => {
     try {
       setBedLoading(true);
-      
+
+      console.log('백엔드에서 병상 상태 조회 시작...');
       const response = await axios.get('http://localhost:8081/api/patients');
+
+      // 백엔드 응답 전체 디버깅
+      console.log('백엔드 응답 전체 데이터:', response.data);
+      console.log('총 환자 수:', response.data.length);
+
       const bedStatusMap = {};
-      
+
       for (const patient of response.data) {
-        if (patient.bedNumber) {
-        bedStatusMap[patient.bedNumber] = {
-          patientId: patient.pid,
-          patientName: patient.patient || patient.name || patient.patientName || `환자 ${patient.pid}`,
-          visitId: patient.visitId || patient.visit_id || patient.id,
-          ktas: patient.acuity,
-          status: getBedStatusFromKTAS(patient.acuity),
-          
-          age: patient.age || 0,
-          gender: patient.gender || 0,
-          chiefComplaint: patient.chiefComplaint || '증상 확인 중',
-          diagnosis: patient.diagnosis || '진단 대기',
-          pain: patient.pain || 0,
-          admissionTime: patient.admissionTime || new Date().toISOString(),
-          arrivalTransport: patient.arrivalTransport || 'UNKNOWN'
-        };
+        // 각 환자 데이터 상세 로깅
+        console.log('👤 환자 개별 데이터:', {
+          pid: patient.pid,
+          name: patient.name,
+          bed: patient.bed,              // ← PatientSummaryDto의 실제 필드
+          bedNumber: patient.bedNumber,  // ← 혹시 이 필드도 있는지 확인
+          acuity: patient.acuity,
+          visitId: patient.visitId,
+          전체객체: patient
+        });
+
+        // PatientSummaryDto에 맞는 필드명 사용 (bed 우선, bedNumber는 fallback)
+        const bedNumber = patient.bed || patient.bedNumber;
+
+        if (bedNumber) {
+          console.log(`🏥 병상 ${bedNumber}에 환자 ${patient.name} 배치 발견!`);
+
+          bedStatusMap[bedNumber] = {
+            patientId: patient.pid,
+            patientName: patient.name,
+            visitId: patient.visitId,
+            ktas: patient.acuity,
+            status: getBedStatusFromKTAS(patient.acuity),
+            age: patient.age || 0,
+            gender: patient.gender || 0,
+            chiefComplaint: patient.chiefComplaint || '증상 확인 중',
+            diagnosis: patient.diagnosis || '진단 대기',
+            pain: patient.pain || 0,
+            admissionTime: patient.admissionTime || new Date().toISOString(),
+            arrivalTransport: patient.arrivalTransport || 'UNKNOWN'
+          };
+        } else {
+          console.log(`⏳ 환자 ${patient.name || patient.pid}는 대기 중 (bed 필드 없음)`);
+        }
       }
-    }  
+
+      console.log('최종 병상 상태 맵:', bedStatusMap);
+      console.log('실제 배치된 병상 수:', Object.keys(bedStatusMap).length);
+      console.log('배치된 병상 목록:', Object.keys(bedStatusMap));
+
       setBedStatuses(bedStatusMap);
-      
+
     } catch (error) {
       console.error('병상 상태 조회 실패:', error);
       setBedStatuses({});
@@ -82,15 +110,15 @@ const EmergencyRoom = ({ hideHeader = false }) => {
       default:
         return 'empty';
     }
-  }; 
+  };
 
   // 대기 환자 목록 불러오기
   const getWaitingPatients = async () => {
     try {
       const response = await axios.get('http://localhost:8081/api/patients');
 
-      const waitingOnly = response.data.filter(patient => !patient.bedNumber); 
-      
+      const waitingOnly = response.data.filter(patient => !patient.bedNumber);
+
       const transformedData = waitingOnly.map(patient => ({
         pid: patient.pid,
         name: patient.name || patient.patientName || patient.patient || `환자 ${patient.pid}`,
@@ -101,14 +129,14 @@ const EmergencyRoom = ({ hideHeader = false }) => {
         waitingTime: calculateWaitingTime(),
         visitId: patient.visitId
       }));
-        
+
       setWaitingPatients(transformedData);
     } catch (error) {
       console.error('대기 환자 목록 불러오기 실패:', error);
       setWaitingPatients([]);
-    } 
+    }
   };
-   
+
   // 컴포넌트 마운트 시 데이터 로드 
   useEffect(() => {
     getBedStatuses();
@@ -128,7 +156,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
   const handleBedClick = (bed) => {
     const bedData = bedStatuses[bed.name];
     const hasPatient = bedData && bedData.patientName;
-    
+
     if (!hasPatient) {
       // 빈 병상 클릭 시 - 환자 배치 모달 열기
       setSelectedBed({
@@ -151,27 +179,27 @@ const EmergencyRoom = ({ hideHeader = false }) => {
     }
   };
 
-  // 🔧 환자 배치 처리 - 매개변수 수정 및 즉시 UI 업데이트
+  // 환자 배치 처리 - 매개변수 수정 및 즉시 UI 업데이트
   const handlePatientAssign = async (patient, bedName, newBedStatus) => {
     try {
       console.log(`환자 ${patient.name}을 병상 ${bedName}에 배치 완료`);
-      
-      // 🆕 즉시 UI 업데이트 - 로컬 상태에 새 병상 정보 추가
+
+      // 즉시 UI 업데이트 - 로컬 상태에 새 병상 정보 추가
       setBedStatuses(prevStatuses => ({
         ...prevStatuses,
         [bedName]: newBedStatus
       }));
-      
-      // 🆕 대기환자 목록에서 해당 환자 제거
-      setWaitingPatients(prevPatients => 
+
+      // 대기환자 목록에서 해당 환자 제거
+      setWaitingPatients(prevPatients =>
         prevPatients.filter(p => p.pid !== patient.pid)
       );
-      
+
       // 백엔드 새로고침 (백그라운드에서 실행)
       setTimeout(async () => {
         await getWaitingPatients();
       }, 1000);
-      
+
     } catch (error) {
       console.error('배치 후 데이터 새로고침 실패:', error);
     } finally {
@@ -180,9 +208,14 @@ const EmergencyRoom = ({ hideHeader = false }) => {
     }
   };
 
-  // 환자 퇴실 처리(DischargeModal에서 호출)
+  // 환자 퇴실 처리(DischargeModal에서 호출) - 안전한 버전
   const handlePatientDischarge = async () => {
     try {
+      console.log(`병상 ${selectedBed.name}의 환자 퇴실 처리 시작`);
+
+      // 안전한 처리: 백엔드 API 호출 제거 (환자 상태 변경 없음)
+      // 기존의 disposition API 호출을 주석처리하여 환자가 목록에서 사라지지 않도록 함
+      /*
       if (selectedBed.patient?.visitId) {
         await axios.post(
           `http://localhost:8081/api/visits/${selectedBed.patient.visitId}/disposition`,
@@ -192,20 +225,23 @@ const EmergencyRoom = ({ hideHeader = false }) => {
           }
         );
       }
+      */
 
-      console.log(`병상 ${selectedBed.name}의 환자 퇴실 처리 완료`);
-      
-      // ✅ 특정 병상만 제거 (다른 병상은 유지)
+      console.log(`병상 ${selectedBed.name}의 환자 퇴실 처리 완료 (로컬 처리)`);
+
+      // 안전한 UI 업데이트 - 해당 병상을 빈 상태로 변경만
       setBedStatuses(prevStatuses => {
         const newStatuses = { ...prevStatuses };
-        delete newStatuses[selectedBed.name]; // 해당 병상만 제거
+        delete newStatuses[selectedBed.name]; // 해당 병상 데이터 제거 (병상만 비움)
         return newStatuses;
       });
-      
-      // 백엔드 새로고침 --> 현재 백엔드에서 실제 데이터 반환하지 않은 상태
-      // await getWaitingPatients();
+
+      // 환자 목록 새로고침 (환자는 대기 목록으로 복귀)
+      await getWaitingPatients();
+
+      // 병상 상태도 새로고침 (선택사항)
       // await getBedStatuses();
-      
+
     } catch (error) {
       console.error('퇴실 처리 실패:', error);
       alert('퇴실 처리에 실패했습니다.');
@@ -236,7 +272,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
       { id: 'q1-9', name: 'B10', position: { row: 4, col: 1 } },
       { id: 'q1-10', name: 'B01', position: { row: 4, col: 4 } },
     ],
-    
+
     // 2사분면 (A구역 - 일반병동)
     quadrant2: [
       { id: 'q2-1', name: 'A07', position: { row: 1, col: 1 } },
@@ -270,7 +306,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
   // 백엔드 데이터를 병상 레이아웃에 적용하는 함수
   const applyBackendDataToQuadrants = (baseLayouts, bedStatuses) => {
     const result = {};
-    
+
     Object.keys(baseLayouts).forEach(quadrantKey => {
       result[quadrantKey] = baseLayouts[quadrantKey].map(bed => {
         if (bed.name) {
@@ -289,7 +325,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
         }
       });
     });
-    
+
     return result;
   };
 
@@ -298,7 +334,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
 
   const getBedClassName = (status) => {
     const baseClass = 'emergency-bed-card';
-    switch(status) {
+    switch (status) {
       case 'red': return `${baseClass} emergency-bed-red`;
       case 'yellow': return `${baseClass} emergency-bed-yellow`;
       case 'green': return `${baseClass} emergency-bed-green`;
@@ -309,7 +345,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
   };
 
   const BedCard = ({ bed }) => (
-    <div 
+    <div
       className={getBedClassName(bed.status)}
       onClick={() => handleBedClick(bed)}
       style={{ cursor: 'pointer' }}
@@ -382,7 +418,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="stat-card">
                 <div className="stat-content">
                   <Bed className="stat-icon blue" />
@@ -391,7 +427,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="stat-card stat-card-danger">
                 <div className="stat-content">
                   <AlertCircle className="stat-icon red" />
@@ -401,7 +437,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="stat-card stat-card-warning">
                 <div className="stat-content">
                   <AlertTriangle className="stat-icon yellow" />
@@ -436,7 +472,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
         </div>
 
         {showPatientModal && (
-          <EmergencyModal 
+          <EmergencyModal
             bed={selectedBed}
             patients={waitingPatients}
             onAssign={handlePatientAssign}
@@ -445,7 +481,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
         )}
 
         {showDischargeModal && (
-          <DischargeModal 
+          <DischargeModal
             bed={selectedBed}
             onDischarge={handlePatientDischarge}
             onClose={closeModal}
