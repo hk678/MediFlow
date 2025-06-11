@@ -1,7 +1,9 @@
+
 #!/usr/bin/env python
 # coding: utf-8
 
 # In[3]:
+
 
 
 from flask import Flask, request, jsonify
@@ -13,6 +15,7 @@ import time
 import json
 import re
 from langchain.schema import AIMessage
+
 from collections import OrderedDict  # 파일 상단 import!
 
 load_dotenv()
@@ -21,7 +24,8 @@ api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 
-# LangChain에서 PromptTemplate을 써서, 프롬프트 + 변수 값 넣는 형식으로 바꿈
+# 개선된 프롬프트 템플릿
+
 prompt_template = PromptTemplate(
     input_variables=[
         "gender", "age", "acuity", "pain", "chief_complaint", "arrival_transport",
@@ -34,6 +38,7 @@ prompt_template = PromptTemplate(
         "ph", "pco2", "po2", "ctco2", "bcb"
     ],
     template="""
+
 너는 경력 15년 이상의 응급의학과 전문의이다.
 아래 환자 정보에서 'acuity'는 미국 ESI(1~5) 등급이니, 이를 참고해 예상되는 KTAS 등급(1~5)로 임시 매핑하여 점수를 산정하라.
 (참고: ESI와 KTAS는 환자 분류 세부기준은 다르지만, 숫자 방향성(1=중증, 5=경증)은 동일함)
@@ -208,6 +213,7 @@ llm = ChatOpenAI(
 chain = prompt_template | llm
 
 
+
 def clean_json_codeblock(s):
     s = s.strip()
     if s.startswith("```"):
@@ -215,26 +221,135 @@ def clean_json_codeblock(s):
     return s
 
 
+def validate_and_adjust_result(result_dict, input_data):
+    """결과 검증 및 조정"""
+    
+    # 점수 범위 확인
+    score = result_dict.get("risk_score", 0)
+    if score < 0:
+        score = 0
+    elif score > 100:
+        score = 100
+    
+    # Disposition 재검증
+    disposition = result_dict.get("disposition")
+    
+    # 명백한 오판 교정
+    chief_complaint = str(input_data.get('chief_complaint', '')).upper()
+    age = input_data.get('age', 0)
+    acuity = input_data.get('acuity')
+    
+    # 경미한 증상들
+    minor_symptoms = ['HAND PAIN', 'FINGER PAIN', 'MINOR LACERATION', 'COMMON COLD', 
+                     'HEADACHE', 'MINOR ABRASION', 'ANKLE SPRAIN']
+    
+    is_minor = any(symptom in chief_complaint for symptom in minor_symptoms)
+    
+    # 활력징후 확인
+    hr = input_data.get('HR')
+    sbp = input_data.get('SBP') 
+    spo2 = input_data.get('SpO2')
+    
+    vital_stable = True
+    if hr and (hr < 50 or hr > 120):
+        vital_stable = False
+    if sbp and (sbp < 90 or sbp > 180):
+        vital_stable = False
+    if spo2 and spo2 < 90:
+        vital_stable = False
+    
+    # 오판 교정 로직
+    if is_minor and vital_stable and age < 65 and acuity and acuity >= 4:
+        if disposition == 2:  # ICU로 잘못 판정된 경우
+            disposition = 0  # 귀가로 교정
+            score = min(score, 35)
+    
+    # 위험 신호가 있는데 귀가로 판정된 경우
+    if (not vital_stable or age >= 80 or (acuity and acuity <= 2)) and disposition == 0:
+        disposition = max(disposition, 1)  # 최소 일반병동
+    
+    # 점수와 disposition 일치성 확인
+    if score >= 85 and disposition < 2:
+        disposition = 2
+    elif score >= 45 and disposition == 0:
+        disposition = 1
+    elif score < 45 and disposition > 1:
+        disposition = min(1, disposition)
+    
+    return {
+        "risk_score": int(score),
+        "disposition": int(disposition),
+        "clinical_reason": result_dict.get("clinical_reason", "")
+    }
+
+
 @app.route('/predict/admission', methods=['POST'])
 def predict():
     try:
-        data = request.get_json() # 프론트에서 보낸 JSON 데이터 받기
-        result = chain.invoke({
-            "gender": data['gender'],
-            "age": data['age'],
-            "acuity": data['acuity'],
-            "pain": data['pain'],
-            "chief_complaint": data['chief_complaint'],
-            "arrival_transport": data['arrival_transport'],
-            "HR": data.get('HR', None),
-            "RR": data.get('RR', None),
-            "SpO2": data.get('SpO2', None),
-            "SBP": data.get('SBP', None),
-            "DBP": data.get('DBP', None),
-            "BT": data.get('BT', None),
-        })
-                
-            # AIMessage → content 문자열로 변환 (핵심!!)
+
+        data = request.get_json()
+        
+        # 입력 데이터 전처리
+        input_vars = {
+            "gender": data.get('gender', 0),
+            "age": data.get('age', 0),
+            "acuity": data.get('acuity'),
+            "pain": data.get('pain'),
+            "chief_complaint": data.get('chief_complaint', ''),
+            "arrival_transport": data.get('arrival_transport', ''),
+            "HR": data.get('HR'),
+            "RR": data.get('RR'),
+            "SpO2": data.get('SpO2'),
+            "SBP": data.get('SBP'),
+            "DBP": data.get('DBP'),
+            "BT": data.get('BT'),
+            # 모든 검사 결과 포함
+            "hemoglobin": data.get('hemoglobin'),
+            "wbc": data.get('wbc'),
+            "plateletCount": data.get('plateletCount'),
+            "redBloodCells": data.get('redBloodCells'),
+            "sedimentationRate": data.get('sedimentationRate'),
+            "na": data.get('na'),
+            "k": data.get('k'),
+            "chloride": data.get('chloride'),
+            "ca": data.get('ca'),
+            "mg": data.get('mg'),
+            "ureaNitrogen": data.get('ureaNitrogen'),
+            "creatinine": data.get('creatinine'),
+            "ast": data.get('ast'),
+            "alt": data.get('alt'),
+            "bilirubin": data.get('bilirubin'),
+            "albumin": data.get('albumin'),
+            "ap": data.get('ap'),
+            "ggt": data.get('ggt'),
+            "ld": data.get('ld'),
+            "ammonia": data.get('ammonia'),
+            "glucose": data.get('glucose'),
+            "lactate": data.get('lactate'),
+            "acetone": data.get('acetone'),
+            "bhb": data.get('bhb'),
+            "crp": data.get('crp'),
+            "pt": data.get('pt'),
+            "inrPt": data.get('inrPt'),
+            "ptt": data.get('ptt'),
+            "dDimer": data.get('dDimer'),
+            "troponinT": data.get('troponinT'),
+            "ck": data.get('ck'),
+            "ckmb": data.get('ckmb'),
+            "ntprobnp": data.get('ntprobnp'),
+            "amylase": data.get('amylase'),
+            "lipase": data.get('lipase'),
+            "ph": data.get('ph'),
+            "pco2": data.get('pco2'),
+            "po2": data.get('po2'),
+            "ctco2": data.get('ctco2'),
+            "bcb": data.get('bcb'),
+        }
+        
+        result = chain.invoke(input_vars)
+        
+        # AIMessage → content 문자열로 변환
+
         if isinstance(result, AIMessage):
             result_str = result.content
         else:
@@ -244,6 +359,7 @@ def predict():
 
         result_str = clean_json_codeblock(result_str)
         result_dict = json.loads(result_str)
+
 
           # ** disposition이 문자열이면 에러! (여기서 바로 검증) **
         if not isinstance(result_dict.get("disposition"), int):
@@ -262,12 +378,34 @@ def predict():
                        
     except Exception as e:
         print("json.loads error:", e)
+
+        # 결과 검증 및 조정
+        validated_result = validate_and_adjust_result(result_dict, data)
+
+        # disposition이 정수인지 확인
+        if not isinstance(validated_result.get("disposition"), int):
+            return jsonify({"error": "disposition은 반드시 숫자(0,1,2)여야 합니다.", "result": validated_result}), 500
+
+        # 순서 맞추기
+        ordered_result = OrderedDict([
+            ("risk_score", validated_result.get("risk_score")),
+            ("disposition", validated_result.get("disposition")),
+            ("clinical_reason", validated_result.get("clinical_reason")),
+            ("promptNum", validated_result.get("promptNum", 3)),
+        ])
+        
+        return jsonify({"result": ordered_result})
+                       
+    except Exception as e:
+        print("Error:", e)
+
         return jsonify({"error": "서버 내부 오류", "detail": str(e)}), 500
 
 @app.route('/predict/discharge', methods=['POST'])
 def predict_discharge():
     try:
         data = request.get_json()
+
 
         # PatientRequest에서 쓸 수 있는 모든 값을 받아서 prompt에 넣을 수 있음
         input_vars = {
@@ -329,10 +467,71 @@ def predict_discharge():
 
         result = chain.invoke(input_vars)
         # 아래는 동일!
+
+        input_vars = {
+            "gender": data.get('gender', 0),
+            "age": data.get('age', 0),
+            "acuity": data.get('acuity'),
+            "pain": data.get('pain'),
+            "chief_complaint": data.get('chief_complaint', ''),
+            "arrival_transport": data.get('arrival_transport', ''),
+            "HR": data.get('HR'),
+            "RR": data.get('RR'),
+            "SpO2": data.get('SpO2'),
+            "SBP": data.get('SBP'),
+            "DBP": data.get('DBP'),
+            "BT": data.get('BT'),
+            # 모든 검사 결과
+            "hemoglobin": data.get('hemoglobin'),
+            "wbc": data.get('wbc'),
+            "plateletCount": data.get('plateletCount'),
+            "redBloodCells": data.get('redBloodCells'),
+            "sedimentationRate": data.get('sedimentationRate'),
+            "na": data.get('na'),
+            "k": data.get('k'),
+            "chloride": data.get('chloride'),
+            "ca": data.get('ca'),
+            "mg": data.get('mg'),
+            "ureaNitrogen": data.get('ureaNitrogen'),
+            "creatinine": data.get('creatinine'),
+            "ast": data.get('ast'),
+            "alt": data.get('alt'),
+            "bilirubin": data.get('bilirubin'),
+            "albumin": data.get('albumin'),
+            "ap": data.get('ap'),
+            "ggt": data.get('ggt'),
+            "ld": data.get('ld'),
+            "ammonia": data.get('ammonia'),
+            "glucose": data.get('glucose'),
+            "lactate": data.get('lactate'),
+            "acetone": data.get('acetone'),
+            "bhb": data.get('bhb'),
+            "crp": data.get('crp'),
+            "pt": data.get('pt'),
+            "inrPt": data.get('inrPt'),
+            "ptt": data.get('ptt'),
+            "dDimer": data.get('dDimer'),
+            "troponinT": data.get('troponinT'),
+            "ck": data.get('ck'),
+            "ckmb": data.get('ckmb'),
+            "ntprobnp": data.get('ntprobnp'),
+            "amylase": data.get('amylase'),
+            "lipase": data.get('lipase'),
+            "ph": data.get('ph'),
+            "pco2": data.get('pco2'),
+            "po2": data.get('po2'),
+            "ctco2": data.get('ctco2'),
+            "bcb": data.get('bcb'),
+        }
+
+        result = chain.invoke(input_vars)
+        
+
         if isinstance(result, AIMessage):
             result_str = result.content
         else:
             result_str = str(result)
+
         result_str = clean_json_codeblock(result_str)
         result_dict = json.loads(result_str)
         if not isinstance(result_dict.get("disposition"), int):
@@ -359,6 +558,7 @@ if __name__ == '__main__':
 
 
 # In[ ]:
+
 
 
 

@@ -131,6 +131,7 @@ function Detail() {
   return (
     <div className="detail-page">
       <div className={`detail-content ${!isLeftPanelOpen ? 'left-panel-closed' : ''}`}>
+        {/* 좌측 - 비정상 검사 결과 */}
         <div className={`left-section ${!isLeftPanelOpen ? 'collapsed' : ''}`}>
           {isLeftPanelOpen && (
             <>
@@ -169,9 +170,11 @@ function Detail() {
                   </div>
                 </div>
               ))}
+
             </>
           )}
         </div>
+
 
         <div className="toggle-button-container">
           <button className="panel-toggle-btn" onClick={() => setIsLeftPanelOpen(!isLeftPanelOpen)}>
@@ -183,6 +186,7 @@ function Detail() {
           <div className="detail-header">
             <div className="header-left">
               <button className="back-button" onClick={() => navigate('/')}> <ArrowLeft className="back-icon" /> </button>
+
               <div className="patient-title">
                 <span className="patient-name">{name}</span>
                 <span className="patient-info">{age}세 | {sex}</span>
@@ -197,18 +201,32 @@ function Detail() {
             </div>
           </div>
 
+
+          {/* 우측 - 상세 정보 */}
           <div className="right-section">
+            {/* Information 섹션 */}
             <div className="info-section">
               <div className="section-header">
                 <h3>Information</h3>
-                <button className={`btn-primary ${(!hasPastRecords || checkingPastRecords) ? 'btn-disabled' : ''}`}
-                  onClick={handlePastRecordClick} disabled={!hasPastRecords || checkingPastRecords}>
+                {/* 과거 기록 여부에 따른 버튼 활성화&비활성화 */}
+                <button 
+                  className={`btn-primary ${(!hasPastRecords || checkingPastRecords) ? 'btn-disabled' : ''}`}
+                  onClick={handlePastRecordClick}
+                  disabled={!hasPastRecords || checkingPastRecords}
+                  title={checkingPastRecords ? '과거 기록 확인 중...' : 
+                         !hasPastRecords ? '과거 기록이 없습니다' : '과거 기록 보기'}
+                >
                   {checkingPastRecords ? '확인 중...' : '과거기록'}
                 </button>
               </div>
               <div className="info-table">
                 <div className="info-table-header">
-                  <span>Date</span><span>ADM</span><span>Bed</span><span>Pain</span><span>Chief Complaint</span><span>Arrival Transport</span>
+                  <span>Date</span>
+                  <span>ADM</span>
+                  <span>Bed</span>
+                  <span>Pain</span>
+                  <span>Chief Complaint</span>
+                  <span>Arrival Transport</span>
                 </div>
                 <div className="info-table-row">
                   <span>{patientInfo?.admissionTime}</span>
@@ -221,6 +239,7 @@ function Detail() {
               </div>
             </div>
 
+            {/* Disposition 섹션 */}
             <div className="disposition-section">
               <h3>Disposition</h3>
               <div className="disposition-content">
@@ -229,29 +248,46 @@ function Detail() {
                     <div className="figure-needle"></div>
                     <div className="figure-center">{predictionScore}</div>
                   </div>
-                  <button className="disposition-btn-success" onClick={sendFinal}>최종 배치</button>
+                  <button className="disposition-btn-success" onClick={() => sendFinal(visitId, dischargePrediction, dischargeReason)}>최종 배치</button>
                 </div>
                 <div className="prediction-info">
-                  <div className="prediction-item"><span className="label">입실 시 예측:</span><span className="value">{renderPrediction()}</span></div>
-                  <div className="prediction-item"><span className="label">퇴실 시 예측:</span><span className="value">{renderDischargePrediction()}</span><span className="sub-value">(가용 병상 수: {bedInfo}/20)</span></div>
-                  <div className="prediction-item"><span className="label">예측 근거:</span><span className="value">{predictionReason}</span></div>
+                  <div className="prediction-item">
+                    <span className="label">입실 시 예측:</span>
+                    <span className="value">{renderPrediction()}</span>
+                  </div>
+                  <div className="prediction-item">
+                    <span className="label">퇴실 시 예측:</span>
+                    <span className="value">{renderDischargePrediction()}</span>
+                    <span className="sub-value">(가용 병상 수: {bedInfo}/20)</span>
+                  </div>
+                  <div className="prediction-item">
+                    <span className="label">예측 근거:</span>
+                    <span className="value">{predictionReason}</span>
+                  </div>
                 </div>
               </div>
             </div>
-
+            
+            {/* History 섹션 */}
             <div className="history-section">
               <h3>History</h3>
               <div className="history-table">
                 <div className="history-table-header">
-                  <span>Number</span><span>Created time</span><span>Content</span>
+
+                  <span>Number</span>
+                  <span>Created time</span>
+                  <span>Content</span>
                 </div>
-                {historyData.length > 0 ? historyData.map((item, idx) => (
-                  <div key={idx} className="history-table-row">
-                    <span>{item.number || idx + 1}</span>
-                    <span>{item.recordTime}</span>
-                    <span>{item.content}</span>
-                  </div>
-                )) : (
+            {/* 실험 시작 */}
+                {historyData.length > 0 ? (
+                  historyData.map((item, idx) => (
+                    <div key={idx} className="history-table-row">
+                      <span>{item.number || idx + 1}</span>
+                      <span>{item.recordTime}</span>
+                      <span>{item.content}</span>
+                    </div>
+                  ))
+                ) : (
                   <div className="history-table-row">
                     <span colSpan="3">과거 기록이 없습니다.</span>
                   </div>
@@ -266,6 +302,7 @@ function Detail() {
           {showLabModal && (
             <LabModal visitId={visitId} isOpen={showLabModal} onClose={handleCloseLab} />
           )}
+
         </div>
       </div>
     </div>
@@ -273,3 +310,4 @@ function Detail() {
 }
 
 export default Detail;
+

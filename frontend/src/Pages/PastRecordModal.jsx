@@ -17,7 +17,7 @@ const PastRecordModal = ({ patientName, patientPid, onClose }) => {
     };
 
     document.addEventListener('keydown', handleEscapeKey);
-    
+
     return () => {
       document.removeEventListener('keydown', handleEscapeKey);
     };
@@ -28,16 +28,18 @@ const PastRecordModal = ({ patientName, patientPid, onClose }) => {
     if (patientPid) {
       setLoading(true);
       setError(null);
-      
-      // 🔧 정확한 API 엔드포인트 사용
+
+
+      // 정확한 API 엔드포인트 사용
       axios.get(`http://localhost:8081/api/visits/${patientPid}`)
         .then(response => {
           console.log("과거 기록 백엔드 응답:", response.data);
           const rawData = response.data;
-          
+
+
           // 🔄 백엔드 VisitSummaryDto → Frontend 형식 변환
           const transformed = rawData.map(visit => ({
-            date: visit.admissionTime ? 
+            date: visit.admissionTime ?
               new Date(visit.admissionTime).toLocaleDateString('ko-KR', {
                 year: 'numeric',
                 month: '2-digit',
@@ -50,13 +52,13 @@ const PastRecordModal = ({ patientName, patientPid, onClose }) => {
             chiefComplaint: visit.chiefComplaint || '정보 없음',
             arrivalTransport: visit.arrivalTransport || 'Unknown'
           }));
-          
+
           setPastRecords(transformed);
           setLoading(false);
         })
         .catch(error => {
           console.error('과거 기록 불러오기 실패:', error);
-          
+
           // 구체적인 에러 메시지 설정
           if (error.response?.status === 404) {
             setError('환자 정보를 찾을 수 없습니다.');
@@ -65,7 +67,6 @@ const PastRecordModal = ({ patientName, patientPid, onClose }) => {
           } else {
             setError('과거 기록을 불러오는 중 오류가 발생했습니다.');
           }
-          
           setPastRecords([]);
           setLoading(false);
         });
@@ -92,29 +93,27 @@ const PastRecordModal = ({ patientName, patientPid, onClose }) => {
 
     const totalVisits = pastRecords.length;
     const lastVisit = pastRecords[0]?.date || 'N/A';
-    
     // 주요 증상 계산 (안전한 처리)
     const complaints = pastRecords
       .map(r => (r.chiefComplaint || '').split(' ')[0])
       .filter(c => c && c !== '정보');
-    
     const complaintCounts = complaints.reduce((acc, complaint) => {
       acc[complaint] = (acc[complaint] || 0) + 1;
       return acc;
     }, {});
-    
+
     const commonComplaint = Object.keys(complaintCounts).length > 0
-      ? Object.keys(complaintCounts).reduce((a, b) => 
-          complaintCounts[a] > complaintCounts[b] ? a : b
-        )
+      ? Object.keys(complaintCounts).reduce((a, b) =>
+        complaintCounts[a] > complaintCounts[b] ? a : b
+      )
       : 'N/A';
 
     // 평균 KTAS 계산 (안전한 처리)
     const ktasValues = pastRecords
       .map(r => parseInt(r.ktas))
       .filter(k => !isNaN(k) && k >= 1 && k <= 5);
-    
-    const averageKtas = ktasValues.length > 0 
+
+    const averageKtas = ktasValues.length > 0
       ? (ktasValues.reduce((a, b) => a + b, 0) / ktasValues.length).toFixed(1)
       : 'N/A';
 

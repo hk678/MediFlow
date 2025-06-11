@@ -18,37 +18,52 @@ const MainPage = () => {
   const [labelFilter, setLabelFilter] = useState('전체');
   const [showEmergencyRoom, setShowEmergencyRoom] = useState(false);
 
+  const [bedStatus, setBedStatus] = useState(null);
+  const [patientData, setPatientData] = useState([]);
 
   // AuthContext 사용
   const { user, isAuthenticated, logout } = useAuth();
 
-  // axios연결
-  const [patientData, setPatientData] = useState([]);
+  // 병상 정보 조회 (필요시 주석 해제)
+  // useEffect(() => {
+  //   axios.get(`http://localhost:8081/api/visits/${visitId}/available-beds`)
+  //     .then(res => setBedStatus(res.data))
+  //     .catch(err => {
+  //       console.error('병상 정보 조회 실패:', err);
+  //       setBedStatus(null);
+  //     });
+  // }, []);
 
+  // 환자 데이터 가져오기
   useEffect(() => {
-   axios.get('http://localhost:8081/api/patients')
-    .then(response => {
-      const rawData = response.data;
-      console.log(response)
-      const transformed = rawData.map(p => ({
-        pid: p.pid,
-        name: p.name,
-        age: p.age,
-        sex: p.gender ? 'M' : 'F', // boolean을 성별 문자열로
-        bed: p.bed,
-        ktas: p.acuity,
-        complaint: p.chiefComplaint,
-        label: p.label === 1 ? '위험' : (p.label === 0 ? '주의' : '경미'),
-        history: '확인',
-        visitId: p.visitId
-      }));
-      console.log(transformed)
-      setPatientData(transformed);
-    })
-    .catch(error => {
-      console.error('환자 데이터 불러오기 실패:', error);
-    });
-}, []);
+    axios.get('http://localhost:8081/api/patients')
+      .then(response => {
+        const rawData = response.data;
+        console.log(response);
+        const transformed = rawData.map(p => ({
+          pid: p.pid,
+          name: p.name,
+          age: p.age,
+          sex: p.gender ? 'M' : 'F', // boolean을 성별 문자열로
+          bed: p.bed,
+          ktas: p.acuity,
+          complaint: p.chiefComplaint,
+          label: p.label === 1 ? '위험' : (p.label === 0 ? '주의' : '경미'),
+          history: '확인',
+          visitId: p.visitId
+        }));
+        console.log(transformed);
+        setPatientData(transformed);
+      })
+      .catch(error => {
+        console.error('환자 데이터 불러오기 실패:', error);
+      });
+  }, []);
+
+  // 카운트 계산
+  const totalCount = patientData.length;
+  const dangerCount = patientData.filter(p => p.label === '위험').length;
+  const warningCount = patientData.filter(p => p.label === '주의').length;
 
   // 필터링(주의,위험,전체)환자보기
   const handleWarningClick = () => {
@@ -118,6 +133,7 @@ const MainPage = () => {
     return matchesSearch && matchesLabel;
   });
 
+
   return (
     <div className="medical-dashboard">
       <div className="dashboard-content">
@@ -157,6 +173,7 @@ const MainPage = () => {
               <Users className="stat-icon blue" />
               <div>
                 <div className="stat-number blue">{patientData.length}</div>
+
               </div>
             </div>
           </div>
@@ -165,7 +182,8 @@ const MainPage = () => {
             <div className="stat-content">
               <Bed className="stat-icon blue" />
               <div>
-                <div className="stat-number blue">{patientData.length}/30</div>
+
+                <div className="stat-number blue">{totalCount}/30<div>
               </div>
             </div>
           </div>
@@ -175,7 +193,8 @@ const MainPage = () => {
               <AlertCircle className="stat-icon red" />
               <div className="stat-text">
                 <div className="stat-label">위험 환자</div>
-                <div className="stat-number red">{patientData.filter(p => p.label === '위험').length}</div>
+
+                <div className="stat-number red">{dangerCount}</div>
               </div>
             </div>
           </div>
@@ -185,13 +204,14 @@ const MainPage = () => {
               <AlertTriangle className="stat-icon yellow" />
               <div className="stat-text">
                 <div className="stat-label">주의 환자</div>
-                <div className="stat-number yellow">{patientData.filter(p => p.label === '주의').length}</div>
+                <div className="stat-number yellow">{warningCount}</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Toggle Switch */}
+
+        {/* 토글 스위치 */}
         <div className="toggle-container">
           <div className="toggle-wrapper">
             <span className="toggle-label">
@@ -226,6 +246,7 @@ const MainPage = () => {
                 <tbody>
                   {filteredPatients.slice(0, 20).map((patient) => (
                     <tr key={patient.pid} className="table-row" >
+
                       <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.pid}</td>
                       <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.name}</td>
                       <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.age}</td>
@@ -245,7 +266,8 @@ const MainPage = () => {
               </table>
             </div>
 
-            {/* Pagination */}
+
+            {/* 페이지네이션 */}
             <div className="pagination">
               <div className="pagination-info">
                 <span className="pagination-text">&lt; 이전</span>

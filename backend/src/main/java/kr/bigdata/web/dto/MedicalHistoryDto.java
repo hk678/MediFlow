@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class MedicalHistoryDto {
     
     @Data
@@ -19,6 +21,7 @@ public class MedicalHistoryDto {
         private String userId;
         private String userName;
         private String userRole;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime recordTime;
         private String content;
     }

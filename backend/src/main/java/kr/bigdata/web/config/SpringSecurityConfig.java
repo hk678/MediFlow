@@ -47,9 +47,6 @@ public class SpringSecurityConfig {
                     "/api/admin/**"
                 ).permitAll()
                 // 인증 필요
-//                .requestMatchers(
-                    
-//                ).authenticated()
                 .anyRequest().authenticated()
             );
         

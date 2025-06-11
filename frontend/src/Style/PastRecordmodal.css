@@ -169,23 +169,28 @@
 }
 
 .ktas-1 {
-  background-color: #dc2626; /* 빨간색 - 응급 */
+  background-color: #dc2626;
+  /* 빨간색 - 응급 */
 }
 
 .ktas-2 {
-  background-color: #ea580c; /* 주황색 - 긴급 */
+  background-color: #ea580c;
+  /* 주황색 - 긴급 */
 }
 
 .ktas-3 {
-  background-color: #eab308; /* 노란색 - 준긴급 */
+  background-color: #eab308;
+  /* 노란색 - 준긴급 */
 }
 
 .ktas-4 {
-  background-color: #16a34a; /* 초록색 - 덜 긴급 */
+  background-color: #16a34a;
+  /* 초록색 - 덜 긴급 */
 }
 
 .ktas-5 {
-  background-color: #2563eb; /* 파란색 - 비응급 */
+  background-color: #2563eb;
+  /* 파란색 - 비응급 */
 }
 
 /* 통계 섹션 */
@@ -216,9 +221,13 @@
 }
 
 .stat-label {
-  font-size: 12px;
-  color: #6b7280;
-  font-weight: 500;
+  font-size: 20px;
+  line-height: 18px;
+  font-weight: 700;
+  color: #000000;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
 }
 
 .stat-value {
@@ -258,62 +267,70 @@
     width: 95%;
     max-height: 95vh;
   }
-  
+
   .modal-header {
     padding: 15px;
   }
-  
+
   .modal-title {
     font-size: 18px;
   }
-  
+
   .modal-content {
     padding: 15px;
   }
-  
+
   .past-records-table-header,
   .past-records-table-row {
     grid-template-columns: 80px 80px 50px 50px 50px 1fr 100px;
     gap: 5px;
     font-size: 11px;
   }
-  
+
   .ktas-text {
     padding: 2px 4px;
     font-size: 10px;
   }
-  
+
+  /* Stats cards - 개선된 반응형 */
   .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    /* 기본적으로 일자 배열 */
+    overflow-x: auto;
   }
-  
+
   .modal-footer {
     padding: 15px;
   }
-  
+
   .no-records-message {
     padding: 30px;
   }
-  
+
   .no-records-message p {
     font-size: 14px;
   }
 }
 
 @media (max-width: 480px) {
+
   .past-records-table-header,
   .past-records-table-row {
     grid-template-columns: 70px 70px 40px 40px 40px 1fr 80px;
     font-size: 10px;
     padding: 8px;
   }
-  
+
   .ktas-text {
     padding: 1px 2px;
     font-size: 9px;
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
