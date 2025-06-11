@@ -153,11 +153,11 @@ public class EmergencyVisitService {
         history.setContent(log);
         
         // 임시 강제 세팅
-        String currentUserId = "doctor01";
+        //String currentUserId = "doctor01";
         
         // 테스트일 때만 주석 
         //프론트 연동 시 주석 해제
-       // String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
         
         history.setUserId(currentUserId);
         medicalHistoryRepository.save(history);
@@ -183,11 +183,11 @@ public class EmergencyVisitService {
         history.setContent("[최종 배치 삭제] 이전:" + prevDisposition);
         
         // 임시 강제 세팅
-        String currentUserId = "doctor01";
+        //String currentUserId = "doctor01";
         
         // 테스트일 때만 주석 
         //프론트 연동 시 주석 해제
-        //String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
         
         history.setUserId(currentUserId);
         medicalHistoryRepository.save(history);

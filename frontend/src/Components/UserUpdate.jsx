@@ -42,7 +42,7 @@ export default function UserUpdate({ onClose }) {
 
         {/* 헤더 */}
         <div className="user-info-header">
-          <h2 className="user-info-title">사용자 정보</h2>
+          <h2 className="user-info-title">사용자 추가</h2>
           <button className="close-button" onClick={handleClose}>
             <X className="close-icon" />
           </button>
