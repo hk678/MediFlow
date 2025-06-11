@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search, User, Users, Bed, AlertCircle, AlertTriangle, LogOut } from 'lucide-react';
 import logoutIcon from '../assets/images/logout-icon.png';
 import UserIcon from '../assets/images/user-icon.png';
-import MainPage from './MainPage';
+import MainPage from '../Pages/MainPage';
 import EmergencyModal from './EmergencyModal';
 import DischargeModal from './DischargeModal';
 import '../Style/Mainpage.css';

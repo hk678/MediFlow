@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import '../Style/History.css';
 import axios from "axios";
-import EditModal from './EditModal'; 
+import EditModal from '../Pages/EditModal'; 
 
 export default function History({ patient, onClose }) {
   const [inputValue, setInputValue] = useState('');

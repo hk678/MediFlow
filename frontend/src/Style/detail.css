@@ -545,6 +545,12 @@
   background-color: #f9fafb;
 }
 
+.current-value-inline {
+  font-weight: bold;
+  color: red;  /* 여기서 항상 빨간색으로 표시 */
+  margin-left: 5px;
+}
+
 /* 반응형 */
 @media (max-width: 1024px) {
   .left-section {

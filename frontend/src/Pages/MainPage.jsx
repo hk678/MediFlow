@@ -4,10 +4,10 @@ import logoutIcon from '../assets/images/logout-icon.png';
 import UserIcon from '../assets/images/user-icon.png';
 import { useNavigate } from 'react-router-dom';
 import '../Style/Mainpage.css';
-import History from './History';
+import History from '../Components/History';
 import axios from 'axios';
 import EmergencyRoom from './EmergencyRoom';
-import { useAuth } from './AuthContext'; // AuthContext 추가
+import { useAuth } from '../Components/AuthContext'; // AuthContext 추가
 
 const MainPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -156,7 +156,7 @@ const MainPage = () => {
             <div className="stat-content">
               <Users className="stat-icon blue" />
               <div>
-                <div className="stat-number blue">29</div>
+                <div className="stat-number blue">{patientData.length}</div>
               </div>
             </div>
           </div>
@@ -165,7 +165,7 @@ const MainPage = () => {
             <div className="stat-content">
               <Bed className="stat-icon blue" />
               <div>
-                <div className="stat-number blue">19/28</div>
+                <div className="stat-number blue">{patientData.length}/30</div>
               </div>
             </div>
           </div>
@@ -175,7 +175,7 @@ const MainPage = () => {
               <AlertCircle className="stat-icon red" />
               <div className="stat-text">
                 <div className="stat-label">위험 환자</div>
-                <div className="stat-number red">6</div>
+                <div className="stat-number red">{patientData.filter(p => p.label === '위험').length}</div>
               </div>
             </div>
           </div>
@@ -185,7 +185,7 @@ const MainPage = () => {
               <AlertTriangle className="stat-icon yellow" />
               <div className="stat-text">
                 <div className="stat-label">주의 환자</div>
-                <div className="stat-number yellow">7</div>
+                <div className="stat-number yellow">{patientData.filter(p => p.label === '주의').length}</div>
               </div>
             </div>
           </div>
