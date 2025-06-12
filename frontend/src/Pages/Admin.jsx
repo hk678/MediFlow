@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
-import "../Style/mainpage.css";  // 공통 헤더/스탯카드 스타일
-=======
 import "../Style/MainPage.css";  // 공통 헤더/스탯카드 스타일
->>>>>>> Stashed changes
 import "../Style/Admin.css";     // Admin 전용 스타일
 import React, { useState, useEffect, useCallback } from "react";
 import { Search, User, Users, Bed, AlertCircle, AlertTriangle } from 'lucide-react';

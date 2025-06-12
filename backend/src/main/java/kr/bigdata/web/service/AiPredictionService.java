@@ -46,6 +46,8 @@ public class AiPredictionService {
 	// ai_prediction 테이블 값 덮어쓰기 공통 함수
 	public AiPrediction saveOrUpdatePrediction(EmergencyVisit visit, String preType, int preDisposition, int preScore,
 			String reason) {
+		
+		preType = preType.toLowerCase(); // ← 항상 소문자!
 
 		// 1. 기존 예측 결과 있는지 확인
 		AiPrediction existing = aiPredictionRepository

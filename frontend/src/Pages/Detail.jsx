@@ -55,7 +55,10 @@ function Detail() {
   };
   useEffect(() => {
     if (visitId) {
-      axios.post(`http://localhost:8081/api/visits/${visitId}/predict/discharge`)
+      axios.post(`http://localhost:8081/api/visits/${visitId}/predict/discharge`,
+        {},
+        { withCredentials: true }
+      )
         .then(res => {
           setDischargePrediction(res.data.preDisposition);
           setDischargeReason(res.data.reason);
@@ -66,7 +69,10 @@ function Detail() {
 
   useEffect(() => {
     if (visitId) {
-      axios.post(`http://localhost:8081/api/visits/${visitId}/predict/admission`)
+      axios.post(`http://localhost:8081/api/visits/${visitId}/predict/admission`,
+        {},
+      { withCredentials: true }   // ← 이것도 추가!
+      )
         .then(res => {
           setPrediction(res.data.preDisposition);
           setPredictionReason(res.data.reason);
