@@ -17,7 +17,7 @@ import kr.bigdata.web.repository.AvailableBedsRepository;
 import kr.bigdata.web.service.AiPredictionService;
 import kr.bigdata.web.service.BedInfoService;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/visits")
 public class AiPredictionController {
