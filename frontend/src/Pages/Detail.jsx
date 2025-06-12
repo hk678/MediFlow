@@ -67,6 +67,7 @@ function Detail() {
     console.log('최종배치 요청:', dischargePrediction, dischargeReason);
     axios.post(`http://localhost:8081/api/visits/${visitId}/disposition`, {
       disposition: Number(dischargePrediction),
+
       reason: dischargeReason
     },
     { 
@@ -94,9 +95,13 @@ const runSecondPrediction = () => {
 };
   //끝끝
 
+
   useEffect(() => {
     if (visitId) {
-      axios.post(`http://localhost:8081/api/visits/${visitId}/predict/admission`)
+      axios.post(`http://localhost:8081/api/visits/${visitId}/predict/admission`,
+        {},
+      { withCredentials: true }   // ← 이것도 추가!
+      )
         .then(res => {
           setPrediction(res.data.preDisposition);
           setPredictionReason(res.data.reason);

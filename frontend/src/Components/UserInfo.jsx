@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import '../Style/Userinfo.css';
+import '../Style/UserInfo.css';
 import axios from "axios";
 
 export default function UserInfo({ user, onClose }) {
