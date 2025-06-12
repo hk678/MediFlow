@@ -35,6 +35,7 @@ public class EmergencyVisitService {
 	@Autowired
 	private AvailableBedsRepository availableBedsRepository;
 
+	// 2차 예측
 	// 병상 관리 로직도 포함한 최종 배치 확정/수정/퇴실 처리 로직
 	@Transactional // 트랜잭션 처리로 동시성 문제 예방
 	public void finalizeDisposition(String visitId, Integer disposition, String reason) {
@@ -71,8 +72,6 @@ public class EmergencyVisitService {
 					availableBedsRepository.save(lastBeds);
 				}
 			}
-			visit.setStatus("DISCHARGED"); // 퇴실 상태로 변경
-			visit.setDischargeTime(LocalDateTime.now()); // 퇴실 시간 기록
 		}
 
 		// 2. FINAL_DISPOSITION(최종 배치) 업데이트
@@ -129,68 +128,71 @@ public class EmergencyVisitService {
 		return new BedStatusDto(wardType, bed.getAvailableCount(), bed.getTotalBeds());
 	}
 
-	// 최종 배치 수정
+	// 최종 배치
 	@Transactional
-	 public void updateDisposition(String visitId, Integer disposition, String reason) {
-        Optional<EmergencyVisit> optVisit = emergencyVisitRepository.findById(visitId);
-        if (!optVisit.isPresent()) {
-            throw new IllegalArgumentException("방문 정보를 찾을 수 없습니다: " + visitId);
-        }
-        EmergencyVisit visit = optVisit.get();
-        Integer prevDisposition = visit.getFinalDisposition();
+	public void updateDisposition(String visitId, Integer disposition, String reason) {
+		Optional<EmergencyVisit> optVisit = emergencyVisitRepository.findById(visitId);
+		if (!optVisit.isPresent()) {
+			throw new IllegalArgumentException("방문 정보를 찾을 수 없습니다: " + visitId);
+		}
+		EmergencyVisit visit = optVisit.get();
+		Integer prevDisposition = visit.getFinalDisposition();
 
-        // 이전 병상 반납/회수 (입실/퇴실 로직과 유사, 필요에 따라 상세 구현)
-        // 예: 변경 전 병동 반납, 변경 후 병동 배정 등 추가로 구현 가능
-        
-        visit.setFinalDisposition(disposition);
-        emergencyVisitRepository.save(visit);
-        
-        // MedicalHistory 이력
-        String log = String.format("[최종 배치 수정] 이전:%s → 변경:%s. 사유:%s",
-                prevDisposition, disposition, reason);
-        MedicalHistory history = new MedicalHistory();
-        history.setVisitId(visitId);
-        history.setContent(log);
-        
-        // 임시 강제 세팅
-        //String currentUserId = "doctor01";
-        
-        // 테스트일 때만 주석 
-        //프론트 연동 시 주석 해제
-        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
-        
-        history.setUserId(currentUserId);
-        medicalHistoryRepository.save(history);
-    }
+		// 이전 병상 반납/회수 (입실/퇴실 로직과 유사, 필요에 따라 상세 구현)
+		// 예: 변경 전 병동 반납, 변경 후 병동 배정 등 추가로 구현 가능
+
+		visit.setFinalDisposition(disposition);
+
+		// 최종 배치 수정 시 환자 status -> discharged로 변경 로직
+		visit.setStatus("DISCHARGED");
+
+		emergencyVisitRepository.save(visit);
+
+		// MedicalHistory 이력
+		String log = String.format("[최종 배치 수정] 이전:%s → 변경:%s. 사유:%s", prevDisposition, disposition, reason);
+		MedicalHistory history = new MedicalHistory();
+		history.setVisitId(visitId);
+		history.setContent(log);
+
+		// 임시 강제 세팅
+		// String currentUserId = "doctor01";
+
+		// 테스트일 때만 주석
+		// 프론트 연동 시 주석 해제
+		String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+		history.setUserId(currentUserId);
+		medicalHistoryRepository.save(history);
+	}
 
 	// 최종 배치 삭제
 	@Transactional
-	 public void deleteDisposition(String visitId) {
-        Optional<EmergencyVisit> optVisit = emergencyVisitRepository.findById(visitId);
-        if (!optVisit.isPresent()) {
-            throw new IllegalArgumentException("방문 정보를 찾을 수 없습니다: " + visitId);
-        }
-        EmergencyVisit visit = optVisit.get();
-        Integer prevDisposition = visit.getFinalDisposition();
+	public void deleteDisposition(String visitId) {
+		Optional<EmergencyVisit> optVisit = emergencyVisitRepository.findById(visitId);
+		if (!optVisit.isPresent()) {
+			throw new IllegalArgumentException("방문 정보를 찾을 수 없습니다: " + visitId);
+		}
+		EmergencyVisit visit = optVisit.get();
+		Integer prevDisposition = visit.getFinalDisposition();
 
-        // 필요시: 이전 배정 병상 회수 등 구현
-        visit.setFinalDisposition(null); // 초기화
-        emergencyVisitRepository.save(visit);
+		// 필요시: 이전 배정 병상 회수 등 구현
+		visit.setFinalDisposition(null); // 초기화
+		emergencyVisitRepository.save(visit);
 
-        // MedicalHistory 이력
-        MedicalHistory history = new MedicalHistory();
-        history.setVisitId(visitId);
-        history.setContent("[최종 배치 삭제] 이전:" + prevDisposition);
-        
-        // 임시 강제 세팅
-        //String currentUserId = "doctor01";
-        
-        // 테스트일 때만 주석 
-        //프론트 연동 시 주석 해제
-        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
-        
-        history.setUserId(currentUserId);
-        medicalHistoryRepository.save(history);
-    }
+		// MedicalHistory 이력
+		MedicalHistory history = new MedicalHistory();
+		history.setVisitId(visitId);
+		history.setContent("[최종 배치 삭제] 이전:" + prevDisposition);
+
+		// 임시 강제 세팅
+		// String currentUserId = "doctor01";
+
+		// 테스트일 때만 주석
+		// 프론트 연동 시 주석 해제
+		String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+		history.setUserId(currentUserId);
+		medicalHistoryRepository.save(history);
+	}
 
 }
