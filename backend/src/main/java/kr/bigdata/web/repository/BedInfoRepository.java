@@ -7,8 +7,10 @@ import kr.bigdata.web.entity.BedInfo;
 
 @Repository
 public interface BedInfoRepository extends JpaRepository<BedInfo, String> {
-    // STATUS 값으로 개수 세기
+    
+	// STATUS 값으로 개수 세기
     long countByStatus(String status);
+    
     // 전체 개수
     long count();
 }

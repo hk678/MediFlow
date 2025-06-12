@@ -49,7 +49,8 @@ public class SpringSecurityConfig {
                     "/api/patients/**",
                     "/api/visits/**", 
                     "/api/history/**",
-                    "/api/admin/**"
+                    "/api/admin/**",
+                    "/api/beds/**"
                 ).permitAll()
                 // 인증 필요
                 .anyRequest().authenticated()

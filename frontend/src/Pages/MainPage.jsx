@@ -5,10 +5,9 @@ import UserIcon from '../assets/images/user-icon.png';
 import { useNavigate } from 'react-router-dom';
 import '../Style/MainPage.css';
 
-
 import History from '../Components/History';
 import axios from 'axios';
-import EmergencyRoom from './EmergencyRoom';
+import EmergencyRoomLayout from '../Components/EmergencyRoomLayout';
 import { useAuth } from '../Components/AuthContext';
 
 const MainPage = () => {
@@ -18,7 +17,7 @@ const MainPage = () => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [labelFilter, setLabelFilter] = useState('전체');
-  const [showEmergencyRoom, setShowEmergencyRoom] = useState(false);
+  const [showEmergencyRoomLayout, setShowEmergencyRoomLayout] = useState(false);
   const [bedStatus, setBedStatus] = useState(null);
   const [patientData, setPatientData] = useState([]);
 
@@ -45,11 +44,11 @@ const MainPage = () => {
           pid: p.pid,
           name: p.name,
           age: p.age,
-          sex: p.gender ? 'M' : 'F', // boolean을 성별 문자열로
+          sex: p.gender ? 'F' : 'M', // boolean을 성별 문자열로
           bed: p.bed,
           ktas: p.acuity,
           complaint: p.chiefComplaint,
-          label: p.label === 1 ? '위험' : (p.label === 0 ? '주의' : '경미'),
+          label: p.label === 2 ? '위험' : (p.label === 1 ? '주의' : '경미'),
           history: '확인',
           visitId: p.visitId
         }));
@@ -66,6 +65,10 @@ const MainPage = () => {
   const dangerCount = patientData.filter(p => p.label === '위험').length;
   const warningCount = patientData.filter(p => p.label === '주의').length;
 
+  // 침대가 배정된 환자 수 계산 (null, undefined, 빈 문자열이 아닌 경우)
+  const bedAssignedCount = patientData.filter(p => p.bed && p.bed !== '').length;
+
+
   // 필터링(주의,위험,전체)환자보기
   const handleWarningClick = () => {
     setLabelFilter('주의');
@@ -81,7 +84,7 @@ const MainPage = () => {
 
   // 리스트 전환 토글
   const handleToggle = () => {
-    setShowEmergencyRoom(!showEmergencyRoom);
+    setShowEmergencyRoomLayout(!showEmergencyRoomLayout);
   };
 
   // 모달 열기
@@ -181,7 +184,7 @@ const MainPage = () => {
             <div className="stat-content">
               <Users className="stat-icon blue" />
               <div>
-                <div className="stat-number blue">29</div>
+                <div className="stat-number blue">{totalCount}</div>
               </div>
             </div>
           </div>
@@ -190,12 +193,10 @@ const MainPage = () => {
             <div className="stat-content">
               <Bed className="stat-icon blue" />
               <div>
-
-                <div className="stat-number blue">{totalCount}/30</div>
-
-              </div>
-            </div>
-          </div>
+                <div className="stat-number blue">{bedAssignedCount}/28</div>
+              </div >
+            </div >
+          </div >
 
           <div className="stat-card stat-card-danger" onClick={handleDangerClick}>
             <div className="stat-content">
@@ -216,83 +217,101 @@ const MainPage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div >
 
         {/* 토글 스위치 */}
-        <div className="toggle-container">
+        < div className="toggle-container" >
           <div className="toggle-wrapper">
             <span className="toggle-label">
-              {showEmergencyRoom ? '환자 리스트 보기' : '응급실 배치도 보기'}
+              {showEmergencyRoomLayout ? '환자 리스트 보기' : '응급실 배치도 보기'}
             </span>
-            <div className={`toggle-switch ${showEmergencyRoom ? 'active' : ''}`} onClick={handleToggle}>
+            <div className={`toggle-switch ${showEmergencyRoomLayout ? 'active' : ''}`} onClick={handleToggle}>
               <div className="toggle-slider"></div>
             </div>
           </div>
-        </div>
+        </div >
 
         {/* 조건부 렌더링 */}
-        {showEmergencyRoom ? (
-          <EmergencyRoom hideHeader={true} />
-        ) : (
-          <div className="table-container">
-            <div className="table-wrapper">
-              <table className="table">
-                <thead className="table-header">
-                  <tr>
-                    <th className="table-header-cell">PID</th>
-                    <th className="table-header-cell">Name</th>
-                    <th className="table-header-cell">Age</th>
-                    <th className="table-header-cell">Gender</th>
-                    <th className="table-header-cell">Bed</th>
-                    <th className="table-header-cell">KTAS</th>
-                    <th className="table-header-cell">Chief Complaint</th>
-                    <th className="table-header-cell">Label</th>
-                    <th className="table-header-cell">History</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredPatients.slice(0, 20).map((patient) => (
-                    <tr key={patient.pid} className="table-row">
-                      <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.pid}</td>
-                      <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.name}</td>
-                      <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.age}</td>
-                      <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.sex}</td>
-                      <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.bed}</td>
-                      <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.ktas}</td>
-                      <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.complaint}</td>
-                      <td className="table-cell">
-                        <span className={getLabelClass(patient.label)}>{patient.label}</span>
-                      </td>
-                      <td className="table-cell">
-                        <span className="history-link" onClick={() => openHistoryModal(patient)}>{patient.history}</span>
-                      </td>
+        {
+          showEmergencyRoomLayout ? (
+            <EmergencyRoomLayout
+              patientData={patientData}
+              onPatientClick={goToDetail}
+              onBedAssign={(patient, bedId) => {
+                // 환자 데이터 업데이트 로직
+                setPatientData(prev =>
+                  prev.map(p =>
+                    p.pid === patient.pid
+                      ? { ...p, bed: bedId }
+                      : p
+                  )
+                );
+              }}
+              hideHeader={true}
+            />
+          ) : (
+            <div className="table-container">
+              <div className="table-wrapper">
+                <table className="table">
+                  <thead className="table-header">
+                    <tr>
+                      <th className="table-header-cell">PID</th>
+                      <th className="table-header-cell">Name</th>
+                      <th className="table-header-cell">Age</th>
+                      <th className="table-header-cell">Gender</th>
+                      <th className="table-header-cell">Bed</th>
+                      <th className="table-header-cell">KTAS</th>
+                      <th className="table-header-cell">Chief Complaint</th>
+                      <th className="table-header-cell">Label</th>
+                      <th className="table-header-cell">History</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {filteredPatients.slice(0, 20).map((patient) => (
+                      <tr key={patient.pid} className="table-row">
+                        <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.pid}</td>
+                        <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.name}</td>
+                        <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.age}</td>
+                        <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.sex}</td>
+                        <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.bed}</td>
+                        <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.ktas}</td>
+                        <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.complaint}</td>
+                        <td className="table-cell">
+                          <span className={getLabelClass(patient.label)}>{patient.label}</span>
+                        </td>
+                        <td className="table-cell">
+                          <span className="history-link" onClick={() => openHistoryModal(patient)}>{patient.history}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
-            {/* 페이지네이션 */}
-            <div className="pagination">
-              <div className="pagination-info">
-                <span className="pagination-text">&lt; 이전</span>
-                <span className="pagination-current">1</span>
-                <span className="pagination-text">다음 &gt;</span>
+              {/* 페이지네이션 */}
+              <div className="pagination">
+                <div className="pagination-info">
+                  <span className="pagination-text">&lt; 이전</span>
+                  <span className="pagination-current">1</span>
+                  <span className="pagination-text">다음 &gt;</span>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )
+        }
 
         {/* 모달창 */}
-        {showModal && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <History patient={selectedPatient} onClose={closeHistoryModal} />
+        {
+          showModal && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <History patient={selectedPatient} onClose={closeHistoryModal} />
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-    </div>
+          )
+        }
+      </div >
+    </div >
   );
 };
 

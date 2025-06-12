@@ -280,7 +280,7 @@
   display: flex;
   justify-content: flex-end;
   margin-bottom: 1rem;
-  padding: 0 20px;
+  padding: 0 40px;
 }
 
 .toggle-wrapper {
@@ -301,7 +301,7 @@
   display: inline-block;
   width: 2.5rem;
   height: 1.5rem;
-  background-color: #d1d5db;
+  background-color: #2E81FD;
   border-radius: 9999px;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -309,7 +309,7 @@
 }
 
 .toggle-switch.active {
-  background-color: #3b82f6;
+  background-color: #2E81FD;
 }
 
 .toggle-slider {
@@ -565,7 +565,7 @@
   }
 
   .toggle-container {
-    padding: 0 10px;
+    padding: 0 20px;
   }
 }
 
