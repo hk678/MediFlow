@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import axios from "axios";
-import '../Style/PastRecordmodal.css';
+import '../Style/PastRecordModal.css';
 
 const PastRecordModal = ({ patientName, patientPid, onClose }) => {
   const [pastRecords, setPastRecords] = useState([]);

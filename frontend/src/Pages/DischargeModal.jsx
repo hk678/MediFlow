@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { X, User, AlertTriangle, Calendar, Clock } from "lucide-react";
-import '../Style/Dischargemodal.css';
+import '../Style/DischargeModal.css';
 
 const DischargeModal = ({ bed, onDischarge, onClose }) => {
 

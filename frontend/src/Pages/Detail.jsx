@@ -70,7 +70,7 @@ const runSecondPrediction = () => {
       });
   }
 };
-  //끝끝
+
 
   useEffect(() => {
     if (visitId) {

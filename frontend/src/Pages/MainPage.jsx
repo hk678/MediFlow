@@ -189,9 +189,7 @@ const MainPage = () => {
             <div className="stat-content">
               <Bed className="stat-icon blue" />
               <div>
-
                 <div className="stat-number blue">{totalCount}/30</div>
-
               </div>
             </div>
           </div>
