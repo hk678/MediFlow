@@ -27,6 +27,7 @@ function Detail() {
   const [hasPastRecords, setHasPastRecords] = useState(false);
   const [checkingPastRecords, setCheckingPastRecords] = useState(true);
   const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
+  const [buttonState, setButtonState] = useState('predict'); // 버튼 상황황
 
   useEffect(() => {
     if (visitId) {
@@ -41,23 +42,35 @@ function Detail() {
   const handleCloseLab = () => setShowLabModal(false);
 
   const sendFinal = () => {
+    console.log('최종배치 요청:', dischargePrediction, dischargeReason);
     axios.post(`http://localhost:8081/api/visits/${visitId}/disposition`, {
+
       disposition: Number(dischargePrediction),
+
       reason: dischargeReason
-    }).then(res => console.log("최종배치 확인", res))
+    },
+    { 
+      withCredentials: true 
+    }
+  )
+    .then(res => console.log("최종배치 확인", res))
       .catch(err => console.error("실패", err));
   };
-
-  useEffect(() => {
-    if (visitId) {
-      axios.post(`http://localhost:8081/api/visits/${visitId}/predict/discharge`)
-        .then(res => {
-          setDischargePrediction(res.data.preDisposition);
-          setDischargeReason(res.data.reason);
-        })
-        .catch(err => setDischargePrediction('예측 실패'));
-    }
-  }, [visitId]);
+// 2차 예측 이니까 일단 분리
+const runSecondPrediction = () => {
+  if (visitId) {
+    axios.post(`http://localhost:8081/api/visits/${visitId}/predict/discharge`)
+      .then(res => {
+        setDischargePrediction(res.data.preDisposition);
+        setDischargeReason(res.data.reason);
+      })
+      .catch(err => {
+        setDischargePrediction('예측 실패');
+        setDischargeReason('사유 없음');
+      });
+  }
+};
+  //끝끝
 
   useEffect(() => {
     if (visitId) {
@@ -249,7 +262,19 @@ function Detail() {
                     <div className="figure-needle"></div>
                     <div className="figure-center">{predictionScore}</div>
                   </div>
-                  <button className="disposition-btn-success" onClick={() => sendFinal(visitId, dischargePrediction, dischargeReason)}>최종 배치</button>
+                  <button
+                    className="disposition-btn-success"
+                    onClick={() => {
+                      if (buttonState === 'predict') {
+                        runSecondPrediction(); // 2차 예측 실행
+                        setButtonState('final'); // 버튼 상태 변경
+                      } else if (buttonState === 'final') {
+                        sendFinal(); // 최종배치 실행
+                      }
+                    }}
+                  >
+                    {buttonState === 'predict' ? '2차 예측' : '최종배치'}
+                  </button>
                 </div>
                 <div className="prediction-info">
                   <div className="prediction-item">

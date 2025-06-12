@@ -218,7 +218,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
 
       // 안전한 처리: 백엔드 API 호출 제거 (환자 상태 변경 없음)
       // 기존의 disposition API 호출을 주석처리하여 환자가 목록에서 사라지지 않도록 함
-      /*
+      
       if (selectedBed.patient?.visitId) {
         await axios.post(
           `http://localhost:8081/api/visits/${selectedBed.patient.visitId}/disposition`,
@@ -228,7 +228,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
           }
         );
       }
-      */
+      
 
       console.log(`병상 ${selectedBed.name}의 환자 퇴실 처리 완료 (로컬 처리)`);
 

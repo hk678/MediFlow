@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Search, User, Users, Bed, AlertCircle, AlertTriangle } from 'lucide-react';
+import { Search, Users, Bed, AlertCircle, AlertTriangle } from 'lucide-react';
 import logoutIcon from '../assets/images/logout-icon.png';
 import UserIcon from '../assets/images/user-icon.png';
 import { useNavigate } from 'react-router-dom';
 import '../Style/mainpage.css';
+
 import History from '../Components/History';
 import axios from 'axios';
 import EmergencyRoom from './EmergencyRoom';
-import { useAuth } from '../Components/AuthContext'; // AuthContext 추가
+import { useAuth } from '../Components/AuthContext';
 
 const MainPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,7 +18,6 @@ const MainPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [labelFilter, setLabelFilter] = useState('전체');
   const [showEmergencyRoom, setShowEmergencyRoom] = useState(false);
-
   const [bedStatus, setBedStatus] = useState(null);
   const [patientData, setPatientData] = useState([]);
 
@@ -133,6 +133,14 @@ const MainPage = () => {
     return matchesSearch && matchesLabel;
   });
 
+  // 디버깅용 useEffect
+  useEffect(() => {
+    console.log("=== 진단용 출력 ===");
+    console.log("검색어:", searchTerm);
+    console.log("라벨 필터:", labelFilter);
+    console.log("전체 환자 수:", patientData.length);
+    console.log("필터링 후:", filteredPatients.length);
+  }, [searchTerm, labelFilter, patientData, filteredPatients]);
 
   return (
     <div className="medical-dashboard">
@@ -157,7 +165,7 @@ const MainPage = () => {
             </div>
             <div className="user-info">
               <img src={UserIcon} alt="user" className="user-icon" />
-              <span className="user-name">{user.userRole} {user.userName}</span>
+              <span className="user-name">{user?.userRole} {user?.userName}</span>
               <div className="logout-button" onClick={handleLogout}>
                 <img src={logoutIcon} alt="logout" className="logout-icon" />
                 <span className="logout-text">Logout</span>
@@ -172,8 +180,7 @@ const MainPage = () => {
             <div className="stat-content">
               <Users className="stat-icon blue" />
               <div>
-                <div className="stat-number blue">{patientData.length}</div>
-
+                <div className="stat-number blue">29</div>
               </div>
             </div>
           </div>
@@ -184,6 +191,7 @@ const MainPage = () => {
               <div>
 
                 <div className="stat-number blue">{totalCount}/30</div>
+
               </div>
             </div>
           </div>
@@ -193,7 +201,6 @@ const MainPage = () => {
               <AlertCircle className="stat-icon red" />
               <div className="stat-text">
                 <div className="stat-label">위험 환자</div>
-
                 <div className="stat-number red">{dangerCount}</div>
               </div>
             </div>
@@ -209,7 +216,6 @@ const MainPage = () => {
             </div>
           </div>
         </div>
-
 
         {/* 토글 스위치 */}
         <div className="toggle-container">
@@ -245,8 +251,7 @@ const MainPage = () => {
                 </thead>
                 <tbody>
                   {filteredPatients.slice(0, 20).map((patient) => (
-                    <tr key={patient.pid} className="table-row" >
-
+                    <tr key={patient.pid} className="table-row">
                       <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.pid}</td>
                       <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.name}</td>
                       <td className="table-cell" onClick={() => goToDetail(patient)}>{patient.age}</td>
@@ -265,7 +270,6 @@ const MainPage = () => {
                 </tbody>
               </table>
             </div>
-
 
             {/* 페이지네이션 */}
             <div className="pagination">

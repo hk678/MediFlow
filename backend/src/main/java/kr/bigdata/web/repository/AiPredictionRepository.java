@@ -16,7 +16,7 @@ public interface AiPredictionRepository extends JpaRepository<AiPrediction, Long
 	// visitId + preType으로 예측 결과 "1개만" 조회 (없으면 Optional.empty)
 	Optional<AiPrediction> findByEmergencyVisit_VisitIdAndPreType(String visitId, String preType);
 
-	// visitId + preType(discharge) 기준 최신 예측 1건
+	// 상세페이지에 들어갈 1차 예측 조회  visitId + preType 조건 조회
 	Optional<AiPrediction> findTopByEmergencyVisit_VisitIdAndPreTypeOrderByPreTimeDesc(String visitId, String preType);
 
 	// 특정 방문에 대한 모든 예측 기록(이력)이 필요할 때 사용
@@ -24,7 +24,7 @@ public interface AiPredictionRepository extends JpaRepository<AiPrediction, Long
 
 	// visitId로 최신 예측 1건만 보고 싶을 때 사용
 	Optional<AiPrediction> findTopByEmergencyVisit_VisitIdOrderByPreTimeDesc(String visitId);
-
+	
 	@Query(value = """
 			SELECT
 			    FLOOR(pre_score / 10) * 10 as score_range,
