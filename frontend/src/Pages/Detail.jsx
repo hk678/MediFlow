@@ -41,13 +41,18 @@ function Detail() {
   const handleCloseLab = () => setShowLabModal(false);
 
   const sendFinal = () => {
+    console.log('최종배치 요청:', dischargePrediction, dischargeReason);
     axios.post(`http://localhost:8081/api/visits/${visitId}/disposition`, {
-      disposition: dischargePrediction,
+      disposition: Number(dischargePrediction),   // ← 중요!
       reason: dischargeReason
-    }).then(res => console.log("최종배치 확인", res))
+    },
+    { 
+      withCredentials: true 
+    }
+  )
+    .then(res => console.log("최종배치 확인", res))
       .catch(err => console.error("실패", err));
   };
-
   useEffect(() => {
     if (visitId) {
       axios.post(`http://localhost:8081/api/visits/${visitId}/predict/discharge`)

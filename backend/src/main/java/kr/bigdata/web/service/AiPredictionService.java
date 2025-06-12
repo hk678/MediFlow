@@ -15,10 +15,12 @@ import kr.bigdata.web.dto.LLMResult;
 import kr.bigdata.web.dto.LLMResultWrapper;
 import kr.bigdata.web.dto.PatientRequest;
 import kr.bigdata.web.entity.AiPrediction;
+import kr.bigdata.web.entity.AvailableBeds;
 import kr.bigdata.web.entity.EmergencyVisit;
 import kr.bigdata.web.entity.LabResults;
 import kr.bigdata.web.entity.Patient;
 import kr.bigdata.web.repository.AiPredictionRepository;
+import kr.bigdata.web.repository.AvailableBedsRepository;
 import kr.bigdata.web.repository.EmergencyVisitRepository;
 import kr.bigdata.web.repository.LabResultsRepository;
 
@@ -36,7 +38,10 @@ public class AiPredictionService {
 	@Autowired
 	private LLMService llmService;
 	@Autowired
-	private LabResultsRepository labResultsRepository; // 혹시 선언 안 했으면 추가
+	private LabResultsRepository labResultsRepository; 
+	 // 병상 정보용 레포지토리
+    @Autowired
+    private AvailableBedsRepository availableBedsRepository;
 
 	// ai_prediction 테이블 값 덮어쓰기 공통 함수
 	public AiPrediction saveOrUpdatePrediction(EmergencyVisit visit, String preType, int preDisposition, int preScore,
@@ -68,18 +73,42 @@ public class AiPredictionService {
 		}
 	}
 
-	public AiPredictionResponseDto toDto(AiPrediction prediction) {
-		AiPredictionResponseDto dto = new AiPredictionResponseDto();
-		dto.setPreId(prediction.getPreId());
-		dto.setPreType(prediction.getPreType());
-		dto.setPreDisposition(prediction.getPreDisposition());
-		dto.setPreScore(prediction.getPreScore());
-		dto.setReason(prediction.getReason());
-		dto.setVisitId(prediction.getEmergencyVisit().getVisitId());
-		dto.setPreTime(prediction.getPreTime());
-		return dto;
-	}
+	// 예측 결과 + 병상 정보 한 번에 DTO로 변환
+	 public AiPredictionResponseDto toDtoWithBeds(AiPrediction prediction) {
+	        AiPredictionResponseDto dto = new AiPredictionResponseDto();
+	        dto.setPreId(prediction.getPreId());
+	        dto.setPreType(prediction.getPreType());
+	        dto.setPreDisposition(prediction.getPreDisposition());
+	        dto.setPreScore(prediction.getPreScore());
+	        dto.setReason(prediction.getReason());
+	        dto.setVisitId(prediction.getEmergencyVisit().getVisitId());
+	        dto.setPreTime(prediction.getPreTime());
 
+	        // ↓↓↓ 병상 정보까지 한 번에 세팅
+	        Integer disp = dto.getPreDisposition();
+	        String wardType = null;
+	        if (disp != null && disp != 0) {
+	            if (disp == 1) wardType = "WARD";
+	            else if (disp == 2) wardType = "ICU";
+	        }
+
+	        if (wardType != null) {
+	            AvailableBeds beds = availableBedsRepository.findTopByWardTypeOrderByUpdatedTimeDesc(wardType);
+	            if (beds != null) {
+	                dto.setAvailableBeds(beds.getAvailableCount());
+	                dto.setTotalBeds(beds.getTotalBeds());
+	            } else {
+	                dto.setAvailableBeds(null);
+	                dto.setTotalBeds(null);
+	            }
+	        } else {
+	            dto.setAvailableBeds(null);
+	            dto.setTotalBeds(null);
+	        }
+
+	        return dto;
+	    }
+ 
 	// 1차 예측: 입실 시
 	public AiPrediction predictAdmission(String visitId) {
 		EmergencyVisit visit = emergencyVisitRepository.findById(visitId)
@@ -210,9 +239,9 @@ public class AiPredictionService {
 				llmResult.getRiskScore(), llmResult.getClinicalReason());
 	}
 
-	public AiPrediction getPredictionByVisitId(String visitId) {
-		return aiPredictionRepository.findTopByEmergencyVisit_VisitIdOrderByPreTimeDesc(visitId)
-				.orElseThrow(() -> new IllegalArgumentException("예측 결과 없음"));
+	// 1차 예측 결과 조회
+	public AiPrediction getPredictionByVisitIdAndPreType(String visitId, String preType) {
+	    return aiPredictionRepository.findTopByEmergencyVisit_VisitIdAndPreTypeOrderByPreTimeDesc(visitId, preType)
+	        .orElseThrow(() -> new IllegalArgumentException("예측 결과 없음"));
 	}
-
 }

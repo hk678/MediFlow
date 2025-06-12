@@ -7,8 +7,13 @@ import MainPage from '../Pages/MainPage';
 
 import EmergencyModal from './EmergencyModal';
 import DischargeModal from './DischargeModal';
+<<<<<<< Updated upstream
 import '../Style/mainpage.css';
 import '../Style/Emergencyroom.css';
+=======
+import '../Style/MainPage.css';
+import '../Style/EmergencyRoom.css';
+>>>>>>> Stashed changes
 import axios from "axios";
 
 const EmergencyRoom = ({ hideHeader = false }) => {
@@ -218,7 +223,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
 
       // 안전한 처리: 백엔드 API 호출 제거 (환자 상태 변경 없음)
       // 기존의 disposition API 호출을 주석처리하여 환자가 목록에서 사라지지 않도록 함
-      /*
+      
       if (selectedBed.patient?.visitId) {
         await axios.post(
           `http://localhost:8081/api/visits/${selectedBed.patient.visitId}/disposition`,
