@@ -5,6 +5,7 @@ import { ArrowLeft, User, ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from "axios";
 import PastRecordModal from './PastRecordModal'; 
 import LabModal from '../Components/LabModal';
+import FinalizeModal from '../Components/FinalizeModal';
 
 function Detail() {
   const { pid } = useParams();
@@ -27,7 +28,28 @@ function Detail() {
   const [hasPastRecords, setHasPastRecords] = useState(false);
   const [checkingPastRecords, setCheckingPastRecords] = useState(true);
   const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
-  const [buttonState, setButtonState] = useState('predict'); // 버튼 상황황
+  const [buttonState, setButtonState] = useState('predict'); // 버튼 상황
+  const [showFinalizeModal, setShowFinalizeModal] = useState(false); // 최종 배치 모달달
+
+
+
+
+
+  const updateFinal = (newDisposition, reason) => {
+  axios.put(`http://localhost:8081/api/visits/${visitId}/disposition`, {
+    disposition: Number(newDisposition),
+    reason: reason
+  }, {
+    withCredentials: true
+  })
+  .then(res => {
+    console.log("수정 완료", res);
+    navigate('/');  
+  })
+  .catch(err => console.error("수정 실패", err));
+};
+
+
 
   useEffect(() => {
     if (visitId) {
@@ -41,12 +63,10 @@ function Detail() {
   const handleOpenLab = () => setShowLabModal(true);
   const handleCloseLab = () => setShowLabModal(false);
 
-  const sendFinal = () => {
+  const sendFinal = (reason) => {
     console.log('최종배치 요청:', dischargePrediction, dischargeReason);
     axios.post(`http://localhost:8081/api/visits/${visitId}/disposition`, {
-
       disposition: Number(dischargePrediction),
-
       reason: dischargeReason
     },
     { 
@@ -56,7 +76,9 @@ function Detail() {
     .then(res => console.log("최종배치 확인", res))
       .catch(err => console.error("실패", err));
   };
-// 2차 예측 이니까 일단 분리
+
+
+// 2차 예측 
 const runSecondPrediction = () => {
   if (visitId) {
     axios.post(`http://localhost:8081/api/visits/${visitId}/predict/discharge`)
@@ -265,11 +287,13 @@ const runSecondPrediction = () => {
                   <button
                     className="disposition-btn-success"
                     onClick={() => {
+                      //임시 주석처리리
                       if (buttonState === 'predict') {
                         runSecondPrediction(); // 2차 예측 실행
                         setButtonState('final'); // 버튼 상태 변경
                       } else if (buttonState === 'final') {
-                        sendFinal(); // 최종배치 실행
+                        //sendFinal(); // 최종배치 실행
+                        setShowFinalizeModal(true);
                       }
                     }}
                   >
@@ -327,6 +351,21 @@ const runSecondPrediction = () => {
           )}
           {showLabModal && (
             <LabModal visitId={visitId} isOpen={showLabModal} onClose={handleCloseLab} />
+          )}
+          {showFinalizeModal && (
+            <FinalizeModal
+              prediction={dischargePrediction}
+              reason={dischargeReason} // 이유
+              onClose={() => setShowFinalizeModal(false)}
+              onConfirm={(selectedDisposition, reason) => {
+                if (String(selectedDisposition) === String(dischargePrediction)) {
+                  sendFinal(dischargeReason);
+                } else {
+                  updateFinal(selectedDisposition, reason); // 수정된 값으로 PUT 요청
+                }
+                setShowFinalizeModal(false);
+              }}
+            />
           )}
 
         </div>
