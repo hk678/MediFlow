@@ -42,7 +42,7 @@ function Detail() {
 
   const sendFinal = () => {
     axios.post(`http://localhost:8081/api/visits/${visitId}/disposition`, {
-      disposition: dischargePrediction,
+      disposition: Number(dischargePrediction),
       reason: dischargeReason
     }).then(res => console.log("최종배치 확인", res))
       .catch(err => console.error("실패", err));
