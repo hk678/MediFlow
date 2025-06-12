@@ -7,6 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class BedStatusDto {
     private String wardType; // "일반병동" 또는 "중환자실"
-    private int availableCount; // 가용 병상 수
-    private int totalBeds;      // 전체 병상 수
+    private Integer availableCount; // 가용 병상 수
+    private Integer totalBeds;      // 전체 병상 수
 }

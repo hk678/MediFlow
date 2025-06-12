@@ -76,6 +76,11 @@ public class EmergencyVisitService {
 
 		// 2. FINAL_DISPOSITION(최종 배치) 업데이트
 		visit.setFinalDisposition(disposition);
+		
+		// 퇴실시간 저장
+		if (disposition != null && disposition == 0) {
+		    visit.setDischargeTime(LocalDateTime.now());
+		}
 
 		// 3. DB에 저장
 		emergencyVisitRepository.save(visit);
@@ -92,41 +97,39 @@ public class EmergencyVisitService {
 		}
 	}
 
+	// 병동 병상 정보 조회
 	public BedStatusDto getAvailableBedInfoForVisit(String visitId) {
-		// 1. 해당 visitId의 최신 퇴실 예측 결과 찾기
-		Optional<AiPrediction> predOpt = aiPredictionRepository
-				.findTopByEmergencyVisit_VisitIdAndPreTypeOrderByPreTimeDesc(visitId, "DISCHARGE");
+	    Optional<AiPrediction> predOpt = aiPredictionRepository
+	            .findTopByEmergencyVisit_VisitIdAndPreTypeOrderByPreTimeDesc(visitId, "DISCHARGE");
 
-		// 2. 예측 결과가 없으면 "NONE", 0, 0 반환 (프론트에서 '정보 없음'으로 처리)
-		if (!predOpt.isPresent()) {
-			return new BedStatusDto("NONE", 0, 0);
-		}
+	    if (!predOpt.isPresent()) {
+	        // 예측 결과 자체가 없음(정보 없음)
+	        return null;
+	    }
 
-		AiPrediction pred = predOpt.get();
-		int dispo = pred.getPreDisposition();
+	    AiPrediction pred = predOpt.get();
+	    int dispo = pred.getPreDisposition();
 
-		// 병동 종류
-		// dispo == 1이면 일반병동, dispo == 2면 중환자실
-		String wardType;
-		if (dispo == 1) {
-			wardType = "WARD";
-		} else if (dispo == 2) {
-			wardType = "ICU";
-		} else {
-			// 퇴원이거나 알 수 없는 값이면 "NONE" 반환
-			return new BedStatusDto("NONE", 0, 0);
-		}
+	    // 일반/ICU만 병상 제공, 그 외는 null 반환
+	    //프론트는 병상 관련 UI 자체를 숨기거나 "정보 없음"으로 표시해주세요!
+	    String wardType;
+	    if (dispo == 1) {
+	        wardType = "WARD";
+	    } else if (dispo == 2) {
+	        wardType = "ICU";
+	    } else {
+	        // 퇴원, 귀가, 기타 disposition: 아예 정보 없음
+	        return null;   
+	    }
 
-		// 해당 wardType의 available_beds 조회
-		AvailableBeds bed = availableBedsRepository.findTopByWardTypeOrderByUpdatedTimeDesc(wardType);
+	    AvailableBeds bed = availableBedsRepository.findTopByWardTypeOrderByUpdatedTimeDesc(wardType);
 
-		// available_beds 데이터가 없으면 0/0 반환
-		if (bed == null)
-			return new BedStatusDto(wardType, 0, 0);
+	    if (bed == null)
+	        return new BedStatusDto(wardType, null, null);
 
-		// 정상 데이터면 그대로 반환
-		return new BedStatusDto(wardType, bed.getAvailableCount(), bed.getTotalBeds());
+	    return new BedStatusDto(wardType, bed.getAvailableCount(), bed.getTotalBeds());
 	}
+
 
 	// 최종 배치
 	@Transactional
@@ -145,6 +148,11 @@ public class EmergencyVisitService {
 
 		// 최종 배치 수정 시 환자 status -> discharged로 변경 로직
 		visit.setStatus("DISCHARGED");
+		
+		// 퇴실시간 저장
+		if (disposition != null && disposition == 0) {
+		    visit.setDischargeTime(LocalDateTime.now());
+		}
 
 		emergencyVisitRepository.save(visit);
 
