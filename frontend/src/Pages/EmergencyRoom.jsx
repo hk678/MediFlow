@@ -229,6 +229,7 @@ const EmergencyRoom = ({ hideHeader = false }) => {
         );
       }
 
+
       console.log(`병상 ${selectedBed.name}의 환자 퇴실 처리 완료 (로컬 처리)`);
 
       // 안전한 UI 업데이트 - 해당 병상을 빈 상태로 변경만
