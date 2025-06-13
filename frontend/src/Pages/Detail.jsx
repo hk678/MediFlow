@@ -21,7 +21,8 @@ function Detail() {
   const [predictionScore, setPredictionScore] = useState('');
   const [dischargePrediction, setDischargePrediction] = useState('');
   const [dischargeReason, setDischargeReason] = useState('');
-  const [bedInfo, setBedInfo] = useState('');
+  const [bedTotal, setBedTotal] = useState('');
+  const [bedInfo,setBedInfo] = useState('');
   const [showLabModal, setShowLabModal] = useState(false);
   const [abnormalLabs, setAbnormalLabs] = useState([]);
   const [showPastRecordModal, setShowPastRecordModal] = useState(false);
@@ -67,14 +68,16 @@ function Detail() {
     console.log('최종배치 요청:', dischargePrediction, dischargeReason);
     axios.post(`http://localhost:8081/api/visits/${visitId}/disposition`, {
       disposition: Number(dischargePrediction),
-
       reason: dischargeReason
     },
     { 
       withCredentials: true 
     }
   )
-    .then(res => console.log("최종배치 확인", res))
+   .then(res => {
+      console.log("최종배치 확인", res);
+      navigate('/');
+    })
       .catch(err => console.error("실패", err));
   };
 
@@ -84,6 +87,7 @@ const runSecondPrediction = () => {
   if (visitId) {
     axios.post(`http://localhost:8081/api/visits/${visitId}/predict/discharge`)
       .then(res => {
+        console.log(res.data)
         setDischargePrediction(res.data.preDisposition);
         setDischargeReason(res.data.reason);
       })
@@ -113,7 +117,12 @@ const runSecondPrediction = () => {
 
   useEffect(() => {
     axios.get(`http://localhost:8081/api/visits/${visitId}/available-beds`)
-      .then(res => setBedInfo(res.data.availableCount));
+      .then(res =>{
+        console.log("침대정보:",res.data)
+        setBedTotal(res.data.totalBeds)
+        setBedInfo(res.data.availableCount)
+
+      });
   }, [visitId]);
 
   useEffect(() => {
@@ -153,7 +162,7 @@ const runSecondPrediction = () => {
   };
 
   const renderDischargePrediction = () => {
-    if (dischargePrediction === '') return '예측 중...';
+    if (dischargePrediction === '') return '2차 예측 대기중';
     switch (String(dischargePrediction)) {
       case '0': return '귀가';
       case '1': return '일반 병동';
@@ -236,7 +245,7 @@ const runSecondPrediction = () => {
             <div className="header-right">
               <div className="doctor-info">
                 <User className="doctor-icon" />
-                <span className="doctor-name">의사이도은</span>
+                <span className="doctor-name">이도은</span>
               </div>
               <button className="logout-btn">Logout</button>
             </div>
@@ -309,11 +318,16 @@ const runSecondPrediction = () => {
                   <div className="prediction-item">
                     <span className="label">입실 시 예측:</span>
                     <span className="value">{renderPrediction()}</span>
+                      {!(bedInfo === 0 && bedTotal === 0) && (
+                        <span className="sub-value">(가용 병상 수: {bedInfo}/{bedTotal})</span>
+                        )}
                   </div>
                   <div className="prediction-item">
-                    <span className="label">퇴실 시 예측:</span>
+                    <span className="label">2차 예측:</span>
                     <span className="value">{renderDischargePrediction()}</span>
-                    <span className="sub-value">(가용 병상 수: {bedInfo}/20)</span>
+                      {buttonState === 'final' && !(bedInfo === 0 && bedTotal === 0) && (
+                        <span className="sub-value">(가용 병상 수: {bedInfo}/{bedTotal})</span>
+                      )}
                   </div>
                   <div className="prediction-item">
                     <span className="label">예측 근거:</span>

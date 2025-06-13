@@ -181,7 +181,7 @@ const MainPage = () => {
             <div className="stat-content">
               <Users className="stat-icon blue" />
               <div>
-                <div className="stat-number blue">29</div>
+                <div className="stat-number blue">{totalCount}</div>
               </div>
             </div>
           </div>

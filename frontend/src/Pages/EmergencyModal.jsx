@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X, User, Clock, AlertCircle } from "lucide-react";
 import axios from "axios";
-import '../Style/EmergencyModal.css';
+import '../Style/Emergencymodal.css';
 
 
 // KTAS 등급과 Label에 따른 병상 상태 결정 (수정된 버전)
