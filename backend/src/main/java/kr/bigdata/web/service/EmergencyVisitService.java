@@ -11,10 +11,12 @@ import jakarta.transaction.Transactional;
 import kr.bigdata.web.dto.BedStatusDto;
 import kr.bigdata.web.entity.AiPrediction;
 import kr.bigdata.web.entity.AvailableBeds;
+import kr.bigdata.web.entity.BedInfo;
 import kr.bigdata.web.entity.EmergencyVisit;
 import kr.bigdata.web.entity.MedicalHistory;
 import kr.bigdata.web.repository.AiPredictionRepository;
 import kr.bigdata.web.repository.AvailableBedsRepository;
+import kr.bigdata.web.repository.BedInfoRepository;
 import kr.bigdata.web.repository.EmergencyVisitRepository;
 import kr.bigdata.web.repository.MedicalHistoryRepository;
 
@@ -27,17 +29,41 @@ public class EmergencyVisitService {
 	@Autowired
 	private MedicalHistoryRepository medicalHistoryRepository;
 
-	// 가용 병상 정보
+	// 전체 병동 병상
 	@Autowired
 	private AiPredictionRepository aiPredictionRepository;
 
-	// 가용 병상 정보
+	// 전체 병동 병상
 	@Autowired
 	private AvailableBedsRepository availableBedsRepository;
+	
+	// 응급실 병상
+	@Autowired
+	private BedInfoRepository bedInfoRepository;
+
+	
+	 // 응급실 침대 occupied
+    private void occupyERBed(String bedNumber) {
+        if (bedNumber != null && !bedNumber.isEmpty()) {
+            bedInfoRepository.findByBedNumber(bedNumber).ifPresent(bed -> {
+                bed.setStatus("OCCUPIED");
+                bedInfoRepository.save(bed);
+            });
+        }
+    }
+
+    //응급실 침대 available
+    private void releaseERBed(String bedNumber) {
+        if (bedNumber != null && !bedNumber.isEmpty()) {
+            bedInfoRepository.findByBedNumber(bedNumber).ifPresent(bed -> {
+                bed.setStatus("AVAILABLE");
+                bedInfoRepository.save(bed);
+            });
+        }
+    }
 
 	// 2차 예측
-	// 병상 관리 로직도 포함한 최종 배치 확정/수정/퇴실 처리 로직
-	@Transactional // 트랜잭션 처리로 동시성 문제 예방
+	@Transactional 
 	public void finalizeDisposition(String visitId, Integer disposition, String reason) {
 		// 1. EMERGENCY_VISIT 테이블에서 방문 정보 찾기
 		Optional<EmergencyVisit> optVisit = emergencyVisitRepository.findById(visitId);
@@ -141,12 +167,21 @@ public class EmergencyVisitService {
 		EmergencyVisit visit = optVisit.get();
 		Integer prevDisposition = visit.getFinalDisposition();
 
-		// 이전 병상 반납/회수 (입실/퇴실 로직과 유사, 필요에 따라 상세 구현)
-		// 예: 변경 전 병동 반납, 변경 후 병동 배정 등 추가로 구현 가능
+		// 2. 응급실 침대 occupied
+	    if (disposition != null && (disposition == 1 || disposition == 2)) {
+	        occupyERBed(visit.getBedNumber());
+	    }
+
+	    // 3. 응급실 침대 available
+	    if (disposition != null && disposition == 0) {
+	        releaseERBed(visit.getBedNumber());
+	        visit.setDischargeTime(LocalDateTime.now());
+	    }
+	
 
 		visit.setFinalDisposition(disposition);
 
-		// 최종 배치 수정 시 환자 status -> discharged로 변경 로직
+		// 최종 배치 수정 status -> discharged로 변경
 		visit.setStatus("DISCHARGED");
 		
 		// 퇴실시간 저장

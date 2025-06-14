@@ -17,6 +17,7 @@ public class AiPredictionResponseDto {
 	    
 	    // 상세페이지 입,퇴실 예측 옆 가용 병상수 노출
 	    // 귀가면 null
+	    private String wardType;      // "WARD", "ICU", 귀가면 null
 	    private Integer availableBeds; 
 	    private Integer totalBeds;     
 
