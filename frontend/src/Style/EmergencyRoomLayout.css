@@ -1,0 +1,491 @@
+.emergency-room-container {
+    width: 93%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    font-family: Arial, sans-serif;
+    position: relative;
+    min-height: 700px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.emergency-room-header {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.emergency-room-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.legend-container {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+}
+
+.legend-empty {
+    background-color: #e0e0e0;
+    border: 2px solid #ccc;
+}
+
+.legend-minor {
+    background-color: #4CAF50;
+}
+
+.legend-caution {
+    background-color: #FF9800;
+}
+
+.legend-danger {
+    background-color: #f44336;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    gap: 8px;
+    height: 600px;
+    width: 100%;
+}
+
+.bed-base {
+    border: 2px solid;
+    background-color: #fff;
+    padding: 8px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 650;
+    border-radius: 4px;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.bed-base:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.bed-empty {
+    border-color: #e0e0e0;
+    color: #666;
+}
+
+.bed-danger {
+    border-color: #f44336;
+    background-color: #ffebee;
+}
+
+.bed-caution {
+    border-color: #FF9800;
+    background-color: #fff3e0;
+}
+
+.bed-minor {
+    border-color: #4CAF50;
+    background-color: #e8f5e8;
+}
+
+.bed-default {
+    border-color: #2196F3;
+    background-color: #e3f2fd;
+    color: #0d47a1;
+}
+
+.bed-patient-name {
+    font-size: 15px;
+    font-weight: 580;
+    margin-top: 2px;
+}
+
+.bed-patient-info {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.nurse-station {
+    grid-column: 8;
+    grid-row: 6 / 8;
+    background-color: #d0d0d0;
+    border: 2px solid #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    border-radius: 4px;
+    transform: rotate(180deg);
+}
+
+/* 구역 라벨 스타일 */
+.zone-label {
+    position: absolute;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #444343;
+    opacity: 0.7;
+    user-select: none;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.zone-a {
+    bottom: 50%;
+    left: 26%;
+    transform: translateX(-50%);
+}
+
+.zone-b {
+    bottom: 50%;
+    right: 26%;
+    transform: translateX(50%);
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.modal-close-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+}
+
+.modal-body {
+    flex: 1;
+    overflow: auto;
+    padding: 1rem;
+}
+
+.patients-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.patient-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    gap: 1rem;
+    background: white;
+}
+
+.patient-card:hover {
+    border-color: #3b82f6;
+    background: #f8fafc;
+}
+
+.patient-info {
+    flex: 1;
+}
+
+.patient-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.patient-name {
+    font-weight: 800;
+    color: #1f2937;
+}
+
+.patient-label {
+    top: 0;
+    right: 0;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.patient-label-danger {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.patient-label-caution {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.patient-label-minor {
+    background-color: #dcfce7;
+    color: #059669;
+}
+
+.patient-meta {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+}
+
+.patient-complaint {
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+.no-patients {
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
+    font-style: italic;
+}
+
+.alert-icon-danger {
+    color: #dc2626;
+}
+
+.alert-icon-caution {
+    color: #d97706;
+}
+
+/* 모달 내 버튼 스타일 */
+.btn-primary {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin: 0.25rem;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #1976D2;
+}
+
+.btn-warning {
+    background-color: #FF9800;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin: 0.25rem;
+    transition: background-color 0.2s;
+}
+
+.btn-warning:hover {
+    background-color: #F57C00;
+}
+
+.btn-danger {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin: 0.25rem;
+    transition: background-color 0.2s;
+}
+
+.btn-danger:hover {
+    background-color: #d32f2f;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin: 0.25rem;
+    transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* 배치 확인 모달 스타일 */
+.disposition-warning {
+    text-align: center;
+    padding: 1rem;
+}
+
+.warning-icon {
+    color: #FF9800;
+    size: 48px;
+    margin-bottom: 1rem;
+}
+
+.disposition-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.confirmation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.longpress-confirmation {
+    text-align: center;
+    padding: 1rem;
+}
+
+.longpress-confirmation p {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    color: #374151;
+}
+
+.bed-longpress {
+    animation: longpress-pulse 1s ease-in-out;
+    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.3);
+}
+
+@keyframes longpress-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(244, 67, 54, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
+    }
+}
+
+.longpress-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(244, 67, 54, 0.1);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.longpress-progress {
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(244, 67, 54, 0.3);
+    border-top: 3px solid #f44336;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 태블릿 환경 최적화 */
+@media (max-width: 768px) {
+    .bed-base {
+        min-height: 70px;
+        font-size: 14px;
+    }
+
+    .bed-base:hover {
+        transform: none;
+        /* 태블릿에서는 호버 효과 제거 */
+    }
+
+    .bed-base:active {
+        transform: scale(0.95);
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+}

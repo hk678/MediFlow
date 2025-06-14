@@ -72,7 +72,7 @@ public class EmergencyVisitService {
 		}
 		EmergencyVisit visit = optVisit.get();
 
-		// ▶️ 입실(배정): disposition이 1(일반병동) 또는 2(ICU)이면 해당 병동의 가용병상 -1
+		// 1차 예측: disposition이 1(일반병동) 또는 2(ICU)이면 해당 병동의 가용병상 -1
 		if (disposition != null && (disposition == 1 || disposition == 2)) {
 			String wardType = (disposition == 1) ? "WARD" : "ICU";
 			AvailableBeds beds = availableBedsRepository.findTopByWardTypeOrderByUpdatedTimeDesc(wardType);
@@ -84,7 +84,7 @@ public class EmergencyVisitService {
 			}
 		}
 
-		// ▶️ 퇴실(퇴원): disposition이 0이면, 기존에 입실했던 병동의 가용병상 +1
+		// 2차 예측: disposition이 0이면, 기존에 입실했던 병동의 가용병상 +1
 		if (disposition != null && disposition == 0) {
 			// 기존에 배정됐던 병동(최종 배치값) 추적
 			Integer lastDisposition = visit.getFinalDisposition();
@@ -116,7 +116,7 @@ public class EmergencyVisitService {
 			MedicalHistory history = new MedicalHistory();
 			history.setVisitId(visitId);
 			history.setContent("[최종 배치 사유] " + reason);
-			// ★ 로그인 사용자 아이디 기록
+			// 로그인 사용자 아이디 기록
 			String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
 			history.setUserId(currentUserId);
 			medicalHistoryRepository.save(history);
@@ -155,7 +155,6 @@ public class EmergencyVisitService {
 
 	    return new BedStatusDto(wardType, bed.getAvailableCount(), bed.getTotalBeds());
 	}
-
 
 	// 최종 배치
 	@Transactional
@@ -197,11 +196,6 @@ public class EmergencyVisitService {
 		history.setVisitId(visitId);
 		history.setContent(log);
 
-		// 임시 강제 세팅
-		// String currentUserId = "doctor01";
-
-		// 테스트일 때만 주석
-		// 프론트 연동 시 주석 해제
 		String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		history.setUserId(currentUserId);
@@ -227,11 +221,6 @@ public class EmergencyVisitService {
 		history.setVisitId(visitId);
 		history.setContent("[최종 배치 삭제] 이전:" + prevDisposition);
 
-		// 임시 강제 세팅
-		// String currentUserId = "doctor01";
-
-		// 테스트일 때만 주석
-		// 프론트 연동 시 주석 해제
 		String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		history.setUserId(currentUserId);

@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - spring
+
+  flask:
+    build: ./flask-api
+    ports:
+      - "5000:5000"
+
+  spring:
+    build: ./backend
+    ports:
+      - "8081:8080"
