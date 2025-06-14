@@ -155,8 +155,6 @@ public class LabResults {
 	    @Column(name = "BCB")
 	    private Double bcb;
 
-
-	    // + Getter/Setter (Lombok @Getter, @Setter 추천)
 	}
 
 

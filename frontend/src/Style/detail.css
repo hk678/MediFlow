@@ -112,18 +112,6 @@
   gap: 8px;
 }
 
-.doctor-icon {
-  width: 20px;
-  height: 20px;
-  color: #3b82f6;
-}
-
-.doctor-name {
-  font-size: 16px;
-  color: #3b82f6;
-  font-weight: 600;
-}
-
 .logout-btn {
   background-color: #ef4444;
   color: white;
@@ -181,7 +169,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;  /* 아이콘 크기 조정 */
+  padding: 0;
+  /* 아이콘 크기 조정 */
   width: 23px;
   height: 40px;
   overflow: visible;
@@ -193,7 +182,8 @@
 }
 
 .panel-toggle-btn svg {
-  width: 18px;   /* 23px 버튼에 맞는 적절한 크기 */
+  width: 18px;
+  /* 23px 버튼에 맞는 적절한 크기 */
   height: 20px;
   color: #7a806b;
 }
@@ -452,7 +442,7 @@
 }
 
 .disposition-btn-success {
-  background-color: #10b981;
+  background-color: #2E81FD;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -460,6 +450,19 @@
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
+}
+
+.disposition-btn-success:hover {
+  background-color: #1976D2;
+}
+
+/* 최종 배치 상태 버튼 스타일 */
+.disposition-btn-success.final {
+  background-color: #34C759;
+}
+
+.disposition-btn-success.final:hover {
+  background-color: #2DB84A;
 }
 
 .prediction-info {
@@ -547,7 +550,8 @@
 
 .current-value-inline {
   font-weight: bold;
-  color: red;  /* 여기서 항상 빨간색으로 표시 */
+  color: red;
+  /* 여기서 항상 빨간색으로 표시 */
   margin-left: 5px;
 }
 
@@ -560,29 +564,23 @@
     transform: none;
     margin-bottom: 20px;
   }
-  
+
   .left-section.collapsed {
     display: none;
   }
-  
+
   .right-container {
     margin-left: 0;
     width: 100%;
   }
-  
+
   .toggle-button-container {
     position: static;
     transform: none;
     margin: 10px auto;
     text-align: center;
   }
-  
-  /* .panel-toggle-btn {
-    border-radius: 6px;
-    width: 40px;
-    height: 40px;
-  } */
-  
+
   .detail-header {
     padding: 15px;
   }
@@ -595,25 +593,25 @@
     align-items: flex-start;
     padding: 15px;
   }
-  
+
   .patient-title {
     flex-direction: column;
     align-items: flex-start;
     gap: 5px;
   }
-  
+
   .disposition-content {
     flex-direction: column;
     align-items: center;
     gap: 20px;
   }
-  
+
   .info-table-header,
   .info-table-row {
     grid-template-columns: repeat(3, 1fr);
     gap: 5px;
   }
-  
+
   .history-table-header,
   .history-table-row {
     grid-template-columns: 60px 1fr;

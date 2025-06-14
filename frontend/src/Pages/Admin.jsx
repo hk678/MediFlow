@@ -210,7 +210,7 @@ const Admin = () => {
             <div className="admin-user-info">
               {/* 사용자 아이콘을 AdminUserIcon 이미지로 변경 */}
               <img src={AdminUserIcon} alt="user" className="admin-user-icon" />
-              <span className="admin-user-name">{user?.userRole} {user?.userName}</span>
+              <span className="admin-user-name">{user?.userName}</span>
 
               {/* 로그아웃 버튼에 클릭 이벤트 추가 */}
               <div className="logout-button" onClick={handleLogout}>

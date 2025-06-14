@@ -9,7 +9,6 @@ import Admin from './Pages/Admin';
 import History from './Components/History';
 import UserInfo from './Components/UserInfo';
 import UserUpdate from './Components/UserUpdate';
-import EmergencyRoom from './Pages/EmergencyRoom';
 
 function App() {
   return (
@@ -26,14 +25,6 @@ function App() {
               element={
                 <ProtectedRoute>
                   <MainPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/emergency"
-              element={
-                <ProtectedRoute>
-                  <EmergencyRoom />
                 </ProtectedRoute>
               }
             />

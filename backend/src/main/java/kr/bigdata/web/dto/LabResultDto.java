@@ -2,6 +2,8 @@ package kr.bigdata.web.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +13,7 @@ public class LabResultDto {
 	
 	private Long labId;
     private String visitId;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime labTime;
     private Double wbc;
     private Double hemoglobin;

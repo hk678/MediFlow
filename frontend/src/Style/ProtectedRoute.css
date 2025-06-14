@@ -71,12 +71,6 @@
     backdrop-filter: blur(10px);
 }
 
-.user-name {
-    color: #333;
-    font-weight: 500;
-    font-size: 0.95rem;
-}
-
 /* 다크모드에서의 사용자 프로필 */
 @media (prefers-color-scheme: dark) {
     .user-profile {

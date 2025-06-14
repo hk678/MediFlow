@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
-import "../Style/detail.css";
+import "../Style/Detail.css";
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from "axios";
 import PastRecordModal from './PastRecordModal';
 import LabModal from '../Components/LabModal';
 import FinalizeModal from '../Components/FinalizeModal';
+import { useAuth } from '../Components/AuthContext';
+import UserIcon from '../assets/images/user-icon.png';
+import logoutIcon from '../assets/images/logout-icon.png';
 
 function Detail() {
   const { pid } = useParams();
   const location = useLocation();
   const { name, age, sex, visitId } = location.state || {};
   const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const [historyData, setHistoryData] = useState([]);
   const [info, setInfo] = useState([]);
@@ -30,7 +34,20 @@ function Detail() {
   const [checkingPastRecords, setCheckingPastRecords] = useState(true);
   const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
   const [buttonState, setButtonState] = useState('predict'); // 버튼 상황
-  const [showFinalizeModal, setShowFinalizeModal] = useState(false); // 최종 배치 모달달
+  const [showFinalizeModal, setShowFinalizeModal] = useState(false); // 최종 배치 모달
+
+  // 인증되지 않은 경우 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
+
+  // 로그아웃 핸들러 추가
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const updateFinal = (newDisposition, reason) => {
     axios.put(`http://localhost:8081/api/visits/${visitId}/disposition`, {
@@ -46,11 +63,10 @@ function Detail() {
       .catch(err => console.error("수정 실패", err));
   };
 
-
-
   useEffect(() => {
     if (visitId) {
       axios.get(`http://localhost:8081/api/visits/${visitId}/labs/abnormal`, {
+        withCredentials: true
       })
         .then(res => setAbnormalLabs(res.data))
         .catch(err => console.error("이상수치 불러오기 실패", err));
@@ -77,11 +93,12 @@ function Detail() {
       .catch(err => console.error("실패", err));
   };
 
-
   // 2차 예측 
   const runSecondPrediction = () => {
     if (visitId) {
-      axios.post(`http://localhost:8081/api/visits/${visitId}/predict/discharge`)
+      axios.post(`http://localhost:8081/api/visits/${visitId}/predict/discharge`, {}, {
+        withCredentials: true
+      })
         .then(res => {
           console.log(res.data)
           setDischargePrediction(res.data.preDisposition);
@@ -93,14 +110,12 @@ function Detail() {
         });
     }
   };
-  //끝끝
-
 
   useEffect(() => {
     if (visitId) {
       axios.post(`http://localhost:8081/api/visits/${visitId}/predict/admission`,
         {},
-        { withCredentials: true }   // ← 이것도 추가!
+        { withCredentials: true }
       )
         .then(res => {
           setPrediction(res.data.preDisposition);
@@ -112,16 +127,21 @@ function Detail() {
   }, [visitId]);
 
   useEffect(() => {
-    axios.get(`http://localhost:8081/api/visits/${visitId}/available-beds`)
+    axios.get(`http://localhost:8081/api/visits/${visitId}/available-beds`, {
+      withCredentials: true
+    })
       .then(res => {
-        console.log("침대정보:", res.data)
+        console.log("침대정보:", res.data.availableCount)
         setBedTotal(res.data.totalBeds)
         setBedInfo(res.data.availableCount)
-      });
+      })
+      .catch(() => setBedInfo(null))
   }, [visitId]);
 
   useEffect(() => {
-    axios.get(`http://localhost:8081/api/visits/${pid}`)
+    axios.get(`http://localhost:8081/api/visits/${pid}`, {
+      withCredentials: true
+    })
       .then(res => {
         setInfo(res.data[0]);
         setPatientInfo(res.data[0]);
@@ -136,7 +156,9 @@ function Detail() {
 
   useEffect(() => {
     if (visitId) {
-      axios.get(`http://localhost:8081/api/visits/${visitId}/history`)
+      axios.get(`http://localhost:8081/api/visits/${visitId}/history`, {
+        withCredentials: true
+      })
         .then(res => setHistoryData(res.data))
         .catch(err => console.error("히스토리 불러오기 실패", err));
     }
@@ -215,11 +237,9 @@ function Detail() {
                   </div>
                 </div>
               ))}
-
             </>
           )}
         </div>
-
 
         <div className="toggle-button-container">
           <button className="panel-toggle-btn" onClick={() => setIsLeftPanelOpen(!isLeftPanelOpen)}>
@@ -230,22 +250,25 @@ function Detail() {
         <div className="right-container">
           <div className="detail-header">
             <div className="header-left">
-              <button className="back-button" onClick={() => navigate('/')}> <ArrowLeft className="back-icon" /> </button>
-
+              <button className="back-button" onClick={() => navigate('/')}>
+                <ArrowLeft className="back-icon" />
+              </button>
               <div className="patient-title">
                 <span className="patient-name">{name}</span>
                 <span className="patient-info">{age}세 | {sex}</span>
               </div>
             </div>
             <div className="header-right">
-              <div className="doctor-info">
-                <User className="doctor-icon" />
-                <span className="doctor-name">이도은</span>
+              <div className="user-info">
+                <img src={UserIcon} alt="user" className="user-icon" />
+                <span className="user-name">{user?.userName}</span>
+                <div className="logout-button" onClick={handleLogout}>
+                  <img src={logoutIcon} alt="logout" className="logout-icon" />
+                  <span className="logout-text">Logout</span>
+                </div>
               </div>
-              <button className="logout-btn">Logout</button>
             </div>
           </div>
-
 
           {/* 우측 - 상세 정보 */}
           <div className="right-section">
@@ -261,7 +284,7 @@ function Detail() {
                   title={checkingPastRecords ? '과거 기록 확인 중...' :
                     !hasPastRecords ? '과거 기록이 없습니다' : '과거 기록 보기'}
                 >
-                  {checkingPastRecords ? '확인 중...' : '과거기록'}
+                  {checkingPastRecords ? '확인 중...' : '과거 기록'}
                 </button>
               </div>
               <div className="info-table">
@@ -294,24 +317,22 @@ function Detail() {
                     <div className="figure-center">{predictionScore}</div>
                   </div>
                   <button
-                    className="disposition-btn-success"
+                    className={`disposition-btn-success ${buttonState === 'final' ? 'final' : ''}`}
                     onClick={() => {
-                      //임시 주석처리리
                       if (buttonState === 'predict') {
                         runSecondPrediction(); // 2차 예측 실행
                         setButtonState('final'); // 버튼 상태 변경
                       } else if (buttonState === 'final') {
-                        //sendFinal(); // 최종배치 실행
                         setShowFinalizeModal(true);
                       }
                     }}
                   >
-                    {buttonState === 'predict' ? '2차 예측' : '최종배치'}
+                    {buttonState === 'predict' ? '2차 예측' : '최종 배치'}
                   </button>
                 </div>
                 <div className="prediction-info">
                   <div className="prediction-item">
-                    <span className="label">입실 시 예측:</span>
+                    <span className="label">1차 예측:</span>
                     <span className="value">{renderPrediction()}</span>
                     {!(bedInfo === 0 && bedTotal === 0) && (
                       <span className="sub-value">(가용 병상 수: {bedInfo}/{bedTotal})</span>
@@ -324,7 +345,6 @@ function Detail() {
                       <span className="sub-value">(가용 병상 수: {bedInfo}/{bedTotal})</span>
                     )}
                   </div>
-
                   <div className="prediction-item">
                     <span className="label">예측 근거:</span>
                     <span className="value">{predictionReason}</span>
@@ -338,12 +358,10 @@ function Detail() {
               <h3>History</h3>
               <div className="history-table">
                 <div className="history-table-header">
-
                   <span>Number</span>
                   <span>Created time</span>
                   <span>Content</span>
                 </div>
-                {/* 실험 시작 */}
                 {historyData.length > 0 ? (
                   historyData.map((item, idx) => (
                     <div key={idx} className="history-table-row">
@@ -354,38 +372,38 @@ function Detail() {
                   ))
                 ) : (
                   <div className="history-table-row">
-                    <span colSpan="3">과거 기록이 없습니다.</span>
+                    <span>과거 기록이 없습니다.</span>
                   </div>
                 )}
               </div>
             </div>
           </div>
-
-          {showPastRecordModal && (
-            <PastRecordModal patientName={name} patientPid={pid} onClose={() => setShowPastRecordModal(false)} />
-          )}
-          {showLabModal && (
-            <LabModal visitId={visitId} isOpen={showLabModal} onClose={handleCloseLab} />
-          )}
-          {showFinalizeModal && (
-            <FinalizeModal
-              prediction={dischargePrediction}
-              reason={dischargeReason} // 이유
-              onClose={() => setShowFinalizeModal(false)}
-              onConfirm={(selectedDisposition, reason) => {
-                if (String(selectedDisposition) === String(dischargePrediction)) {
-                  sendFinal(dischargeReason);
-                } else {
-                  updateFinal(selectedDisposition, reason); // 수정된 값으로 PUT 요청
-                }
-                setShowFinalizeModal(false);
-              }}
-            />
-          )}
-
         </div>
       </div>
+
+      {showPastRecordModal && (
+        <PastRecordModal patientName={name} patientPid={pid} onClose={() => setShowPastRecordModal(false)} />
+      )}
+      {showLabModal && (
+        <LabModal visitId={visitId} isOpen={showLabModal} onClose={handleCloseLab} />
+      )}
+      {showFinalizeModal && (
+        <FinalizeModal
+          prediction={dischargePrediction}
+          reason={dischargeReason} // 이유
+          onClose={() => setShowFinalizeModal(false)}
+          onConfirm={(selectedDisposition, reason) => {
+            if (String(selectedDisposition) === String(dischargePrediction)) {
+              sendFinal(dischargeReason);
+            } else {
+              updateFinal(selectedDisposition, reason); // 수정된 값으로 PUT 요청
+            }
+            setShowFinalizeModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }
+
 export default Detail;

@@ -89,7 +89,6 @@ public class EmergencyVisitController {
 	}
 
 	//  최종 배치 정보 수정 (PUT: 수정)
-
 	@PutMapping("/visits/{visitId}/disposition")
 	public ResponseEntity<?> updateDisposition(@PathVariable String visitId,
 			@RequestBody FinalizeDispositionRequest request) {
@@ -99,7 +98,6 @@ public class EmergencyVisitController {
 	}
 
 	// 최종 배치 정보 삭제 (DELETE: 취소/초기화)
-
 	@DeleteMapping("/visits/{visitId}/disposition")
 	public ResponseEntity<?> deleteDisposition(@PathVariable String visitId) {
 		emergencyVisitService.deleteDisposition(visitId);
