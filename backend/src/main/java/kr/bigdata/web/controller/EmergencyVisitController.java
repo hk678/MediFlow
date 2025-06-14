@@ -79,7 +79,7 @@ public class EmergencyVisitController {
 		return ResponseEntity.ok().build();
 	}
 
-	//  가용 병상 조회 api
+	// 전체 병동 병상 조회 api
 	@GetMapping("/visits/{visitId}/available-beds")
 	public ResponseEntity<BedStatusDto> getAvailableBeds(@PathVariable String visitId) {
 		BedStatusDto result = emergencyVisitService.getAvailableBedInfoForVisit(visitId);

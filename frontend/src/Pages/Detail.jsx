@@ -32,10 +32,6 @@ function Detail() {
   const [buttonState, setButtonState] = useState('predict'); // 버튼 상황
   const [showFinalizeModal, setShowFinalizeModal] = useState(false); // 최종 배치 모달달
 
-
-
-
-
   const updateFinal = (newDisposition, reason) => {
   axios.put(`http://localhost:8081/api/visits/${visitId}/disposition`, {
     disposition: Number(newDisposition),
@@ -117,11 +113,24 @@ const runSecondPrediction = () => {
 
   useEffect(() => {
     axios.get(`http://localhost:8081/api/visits/${visitId}/available-beds`)
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
       .then(res =>{
         console.log("침대정보:",res.data)
         setBedTotal(res.data.totalBeds)
         setBedInfo(res.data.availableCount)
       });
+=======
+=======
+>>>>>>> Stashed changes
+      .then(res => {
+        setBedInfo(res.data.availableCount);
+      })  
+      .catch(() => setBedInfo(null));  // 404면 null로!
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
   }, [visitId]);
 
   useEffect(() => {
@@ -324,9 +333,21 @@ const runSecondPrediction = () => {
                   <div className="prediction-item">
                     <span className="label">2차 예측:</span>
                     <span className="value">{renderDischargePrediction()}</span>
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
                       {buttonState === 'final' && !(bedInfo === 0 && bedTotal === 0) && (
                         <span className="sub-value">(가용 병상 수: {bedInfo}/{bedTotal})</span>
                       )}
+=======
+                    {bedInfo != null && (
+                      <span className="sub-value">(가용 병상 수: {bedInfo}/20)</span>
+                    )}
+>>>>>>> Stashed changes
+=======
+                    {bedInfo != null && (
+                      <span className="sub-value">(가용 병상 수: {bedInfo}/20)</span>
+                    )}
+>>>>>>> Stashed changes
                   </div>
                   <div className="prediction-item">
                     <span className="label">예측 근거:</span>

@@ -93,6 +93,9 @@ public class AiPredictionService {
 	            if (disp == 1) wardType = "WARD";
 	            else if (disp == 2) wardType = "ICU";
 	        }
+	        
+	        // 프론트에 wardType값 전달
+	        dto.setWardType(wardType);
 
 	        if (wardType != null) {
 	            AvailableBeds beds = availableBedsRepository.findTopByWardTypeOrderByUpdatedTimeDesc(wardType);
