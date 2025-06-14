@@ -16,7 +16,7 @@ import kr.bigdata.web.entity.Patient;
 import kr.bigdata.web.repository.EmergencyVisitRepository;
 import kr.bigdata.web.repository.PatientRepository;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:*")
 @RestController
 @RequestMapping("/api/patients")
 public class PatientController {
