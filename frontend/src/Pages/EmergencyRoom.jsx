@@ -8,7 +8,7 @@ import MainPage from '../Pages/MainPage';
 import EmergencyModal from './EmergencyModal';
 import DischargeModal from './DischargeModal';
 import '../Style/mainpage.css';
-import '../Style/Emergencyroom.css';
+import '../Style/emergencyroom.css';
 import axios from "axios";
 
 const EmergencyRoom = ({ hideHeader = false }) => {
