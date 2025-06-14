@@ -3,7 +3,7 @@ import "../Style/detail.css";
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from "axios";
-import PastRecordModal from './PastRecordModal'; 
+import PastRecordModal from './PastRecordModal';
 import LabModal from '../Components/LabModal';
 import FinalizeModal from '../Components/FinalizeModal';
 
@@ -22,7 +22,7 @@ function Detail() {
   const [dischargePrediction, setDischargePrediction] = useState('');
   const [dischargeReason, setDischargeReason] = useState('');
   const [bedTotal, setBedTotal] = useState('');
-  const [bedInfo,setBedInfo] = useState('');
+  const [bedInfo, setBedInfo] = useState('');
   const [showLabModal, setShowLabModal] = useState(false);
   const [abnormalLabs, setAbnormalLabs] = useState([]);
   const [showPastRecordModal, setShowPastRecordModal] = useState(false);
@@ -33,18 +33,18 @@ function Detail() {
   const [showFinalizeModal, setShowFinalizeModal] = useState(false); // 최종 배치 모달달
 
   const updateFinal = (newDisposition, reason) => {
-  axios.put(`http://localhost:8081/api/visits/${visitId}/disposition`, {
-    disposition: Number(newDisposition),
-    reason: reason
-  }, {
-    withCredentials: true
-  })
-  .then(res => {
-    console.log("수정 완료", res);
-    navigate('/');  
-  })
-  .catch(err => console.error("수정 실패", err));
-};
+    axios.put(`http://localhost:8081/api/visits/${visitId}/disposition`, {
+      disposition: Number(newDisposition),
+      reason: reason
+    }, {
+      withCredentials: true
+    })
+      .then(res => {
+        console.log("수정 완료", res);
+        navigate('/');
+      })
+      .catch(err => console.error("수정 실패", err));
+  };
 
 
 
@@ -66,33 +66,33 @@ function Detail() {
       disposition: Number(dischargePrediction),
       reason: dischargeReason
     },
-    { 
-      withCredentials: true 
-    }
-  )
-   .then(res => {
-      console.log("최종배치 확인", res);
-      navigate('/');
-    })
+      {
+        withCredentials: true
+      }
+    )
+      .then(res => {
+        console.log("최종배치 확인", res);
+        navigate('/');
+      })
       .catch(err => console.error("실패", err));
   };
 
 
-// 2차 예측 
-const runSecondPrediction = () => {
-  if (visitId) {
-    axios.post(`http://localhost:8081/api/visits/${visitId}/predict/discharge`)
-      .then(res => {
-        console.log(res.data)
-        setDischargePrediction(res.data.preDisposition);
-        setDischargeReason(res.data.reason);
-      })
-      .catch(err => {
-        setDischargePrediction('예측 실패');
-        setDischargeReason('사유 없음');
-      });
-  }
-};
+  // 2차 예측 
+  const runSecondPrediction = () => {
+    if (visitId) {
+      axios.post(`http://localhost:8081/api/visits/${visitId}/predict/discharge`)
+        .then(res => {
+          console.log(res.data)
+          setDischargePrediction(res.data.preDisposition);
+          setDischargeReason(res.data.reason);
+        })
+        .catch(err => {
+          setDischargePrediction('예측 실패');
+          setDischargeReason('사유 없음');
+        });
+    }
+  };
   //끝끝
 
 
@@ -100,7 +100,7 @@ const runSecondPrediction = () => {
     if (visitId) {
       axios.post(`http://localhost:8081/api/visits/${visitId}/predict/admission`,
         {},
-      { withCredentials: true }   // ← 이것도 추가!
+        { withCredentials: true }   // ← 이것도 추가!
       )
         .then(res => {
           setPrediction(res.data.preDisposition);
@@ -113,24 +113,11 @@ const runSecondPrediction = () => {
 
   useEffect(() => {
     axios.get(`http://localhost:8081/api/visits/${visitId}/available-beds`)
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-      .then(res =>{
-        console.log("침대정보:",res.data)
+      .then(res => {
+        console.log("침대정보:", res.data)
         setBedTotal(res.data.totalBeds)
         setBedInfo(res.data.availableCount)
       });
-=======
-=======
->>>>>>> Stashed changes
-      .then(res => {
-        setBedInfo(res.data.availableCount);
-      })  
-      .catch(() => setBedInfo(null));  // 404면 null로!
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   }, [visitId]);
 
   useEffect(() => {
@@ -267,12 +254,12 @@ const runSecondPrediction = () => {
               <div className="section-header">
                 <h3>Information</h3>
                 {/* 과거 기록 여부에 따른 버튼 활성화&비활성화 */}
-                <button 
+                <button
                   className={`btn-primary ${(!hasPastRecords || checkingPastRecords) ? 'btn-disabled' : ''}`}
                   onClick={handlePastRecordClick}
                   disabled={!hasPastRecords || checkingPastRecords}
-                  title={checkingPastRecords ? '과거 기록 확인 중...' : 
-                         !hasPastRecords ? '과거 기록이 없습니다' : '과거 기록 보기'}
+                  title={checkingPastRecords ? '과거 기록 확인 중...' :
+                    !hasPastRecords ? '과거 기록이 없습니다' : '과거 기록 보기'}
                 >
                   {checkingPastRecords ? '확인 중...' : '과거기록'}
                 </button>
@@ -326,29 +313,18 @@ const runSecondPrediction = () => {
                   <div className="prediction-item">
                     <span className="label">입실 시 예측:</span>
                     <span className="value">{renderPrediction()}</span>
-                      {!(bedInfo === 0 && bedTotal === 0) && (
-                        <span className="sub-value">(가용 병상 수: {bedInfo}/{bedTotal})</span>
-                        )}
+                    {!(bedInfo === 0 && bedTotal === 0) && (
+                      <span className="sub-value">(가용 병상 수: {bedInfo}/{bedTotal})</span>
+                    )}
                   </div>
                   <div className="prediction-item">
                     <span className="label">2차 예측:</span>
                     <span className="value">{renderDischargePrediction()}</span>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-                      {buttonState === 'final' && !(bedInfo === 0 && bedTotal === 0) && (
-                        <span className="sub-value">(가용 병상 수: {bedInfo}/{bedTotal})</span>
-                      )}
-=======
-                    {bedInfo != null && (
-                      <span className="sub-value">(가용 병상 수: {bedInfo}/20)</span>
+                    {buttonState === 'final' && !(bedInfo === 0 && bedTotal === 0) && (
+                      <span className="sub-value">(가용 병상 수: {bedInfo}/{bedTotal})</span>
                     )}
->>>>>>> Stashed changes
-=======
-                    {bedInfo != null && (
-                      <span className="sub-value">(가용 병상 수: {bedInfo}/20)</span>
-                    )}
->>>>>>> Stashed changes
                   </div>
+
                   <div className="prediction-item">
                     <span className="label">예측 근거:</span>
                     <span className="value">{predictionReason}</span>
@@ -356,7 +332,7 @@ const runSecondPrediction = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* History 섹션 */}
             <div className="history-section">
               <h3>History</h3>
@@ -367,7 +343,7 @@ const runSecondPrediction = () => {
                   <span>Created time</span>
                   <span>Content</span>
                 </div>
-            {/* 실험 시작 */}
+                {/* 실험 시작 */}
                 {historyData.length > 0 ? (
                   historyData.map((item, idx) => (
                     <div key={idx} className="history-table-row">
@@ -412,6 +388,4 @@ const runSecondPrediction = () => {
     </div>
   );
 }
-
 export default Detail;
-
